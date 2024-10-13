@@ -3,8 +3,18 @@ const router = Router();
 const userMiddleware = require("../middleware/user");
 
 // User Routes
-router.post('/signup', (req, res) => {
+router.post('/signup', async(req, res) => {
     //  user signup 
+    const username = req.body.username;
+    const password = req.body.password;
+
+    await Admin.create({
+        username : username,
+        password : password
+    })
+    res.json({
+        message : 'Admin created successfully!'
+    })
 });
 
 router.post('/signin', (req, res) => {

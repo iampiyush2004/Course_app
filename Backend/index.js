@@ -1,18 +1,25 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const app = express();
-const adminRouter = require("./routes/admin")
+const cors = require('cors'); // Import CORS
+const adminRouter = require("./routes/admin");
 const userRouter = require("./routes/user");
 
+const app = express();
 
 
-// Middleware for parsing request bodies
+app.use(
+  cors({
+    origin: "http://localhost:5173", 
+  })
+);
+
 app.use(bodyParser.json());
-app.use("/admin", adminRouter)
-app.use("/user", userRouter)
 
-const PORT = 3000;
+
+app.use("/admin", adminRouter);
+app.use("/user", userRouter);
+
+const PORT = 3000; 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
-//module.exports = {jwt_secret};
