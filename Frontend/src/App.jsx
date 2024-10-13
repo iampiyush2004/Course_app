@@ -1,13 +1,11 @@
 import { useState } from 'react'
 import Navbar from './components/Navbar'
-
+import { RouterProvider } from 'react-router-dom'
+import { router } from './Routes/routes'
 function App() {
-
-
   return (
     <>
-    <h1 className='text-green-400'>Hello Hello</h1>
-    <Navbar />
+    <RouterProvider router={router}></RouterProvider>
     </>
   )
 }
