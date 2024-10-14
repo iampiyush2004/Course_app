@@ -1,10 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-function Login() {
+function Login(props) {
   const [hasAccount, setHasAccount] = useState(true);
   const [message, setMessage] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      autoLogin(token);
+    }
+  }, []); // Empty dependency array ensures this runs only once, on mount
+
+  const autoLogin = async (token) => {
+    try {
+      const response = await fetch(`http://localhost:3000/${props.person}/verify-token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        setMessage('Auto-login successful!');
+        // Redirect or update state to reflect logged-in status
+      } else {
+        localStorage.removeItem('token'); // Clear invalid token
+        setMessage('Token expired. Please log in again.');
+      }
+    } catch (error) {
+      setMessage('Auto-login failed: ' + error.message);
+    }
+  };
 
   const toggleForm = () => {
     setHasAccount(!hasAccount);
@@ -14,8 +45,15 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const url = hasAccount ? '/admin/signin' : '/admin/signup';
+    if (!username || !password) {
+      setMessage('Please fill in both fields.');
+      return;
+    }
+
+    const url = hasAccount ? `/${props.person}/signin` : `/${props.person}/signup`;
     const data = { username, password };
+
+    setIsLoading(true); // Start loading
 
     try {
       const response = await fetch(`http://localhost:3000${url}`, {
@@ -31,19 +69,22 @@ function Login() {
 
       if (response.ok) {
         if (hasAccount) {
-          // Store JWT token in local storage or context for further use
+          // Store JWT token in local storage 
           localStorage.setItem('token', result.token);
           setMessage('Login successful!');
-          // Redirect or take user to the admin dashboard after login
+          // Redirect or update state to reflect logged-in status
+          
         } else {
           setMessage('Signup successful! You can now log in.');
           setHasAccount(true); // Switch to login after signup
         }
       } else {
-        setMessage(result.message || 'Something went wrong.');
+        setMessage(result.message || `Error: ${response.status}`);
       }
     } catch (error) {
       setMessage('Error: ' + error.message);
+    } finally {
+      setIsLoading(false); // End loading
     }
   };
 
@@ -75,8 +116,8 @@ function Login() {
           />
         </div>
 
-        <button type="submit" className="btn btn-primary">
-          {hasAccount ? 'Login' : 'Sign Up'}
+        <button type="submit" className="btn btn-primary" disabled={isLoading}>
+          {isLoading ? 'Submitting...' : hasAccount ? 'Login' : 'Sign Up'}
         </button>
       </form>
 
