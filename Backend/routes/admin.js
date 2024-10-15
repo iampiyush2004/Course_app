@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const adminMiddleware = require("../middleware/admin");
+const tokenMiddleware = require("../middleware/tokenmiddleware");
 const {Admin , User , Course} = require('../db')
 const router = Router();
 const jwt = require('jsonwebtoken');
@@ -24,7 +25,7 @@ router.post('/signup', async(req, res) => {
 });
 
 router.post('/signin', async(req, res) => {
-    //  admin signup 
+    //  admin signin
 
     const username = req.body.username;
     const password = req.body.password;
@@ -50,8 +51,13 @@ router.post('/signin', async(req, res) => {
    
 
 });
+router.post('/verify-token', tokenMiddleware, (req, res) => {
+    console.log(req.username);
+    res.status(200).json({ message: 'Token is valid', user: req.user });
+    
+  });
 
-router.post('/courses', adminMiddleware, async(req, res) => {
+router.post('/courses',  async(req, res) => {
     //  course creation logic
     const title = req.body.title;
     const description = req.body.description;

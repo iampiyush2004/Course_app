@@ -27,9 +27,10 @@ function Login(props) {
       const result = await response.json();
       if (response.ok) {
         setMessage('Auto-login successful!');
-        // Redirect or update state to reflect logged-in status
+        navigate('/');
+        
       } else {
-        localStorage.removeItem('token'); // Clear invalid token
+        localStorage.removeItem('token'); 
         setMessage('Token expired. Please log in again.');
       }
     } catch (error) {
@@ -39,7 +40,7 @@ function Login(props) {
 
   const toggleForm = () => {
     setHasAccount(!hasAccount);
-    setMessage(''); // Clear message when toggling
+    setMessage(''); 
   };
 
   const handleSubmit = async (e) => {
@@ -72,7 +73,7 @@ function Login(props) {
           // Store JWT token in local storage 
           localStorage.setItem('token', result.token);
           setMessage('Login successful!');
-          // Redirect or update state to reflect logged-in status
+          navigate('/');
           
         } else {
           setMessage('Signup successful! You can now log in.');
