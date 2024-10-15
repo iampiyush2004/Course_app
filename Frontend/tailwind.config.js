@@ -9,4 +9,9 @@ export default {
   },
   plugins: [],
 }
-
+module.exports = {
+  corePlugins: {
+    preflight: false, // Disable Tailwind's preflight styles
+  },
+  // Other configurations...
+}
