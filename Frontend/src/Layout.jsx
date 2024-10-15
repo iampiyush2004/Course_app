@@ -4,11 +4,11 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 function Layout() {
   return (
-    <>
+    <div className="bg-gradient-to-b from-green-50 to-green-100">
       <Header/>
       <Outlet/>
-      <Footer/>
-    </>
+      {/* <Footer/> */}
+    </div>
   )
 }
 

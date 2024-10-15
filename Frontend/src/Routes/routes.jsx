@@ -2,6 +2,7 @@ import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } 
 import Home from '../pages/Home'
 import Layout from '../Layout'
 import Login from '../pages/Login'
+import Courses from '../pages/Courses'
 export const router = createBrowserRouter([
   {
     path:"/",
@@ -12,7 +13,11 @@ export const router = createBrowserRouter([
         element:<Home/>,
       },
       {
-        path:"user",
+        path:"/courses",
+        element:<Courses/>,
+      },
+      {
+        path:"admin",
         element:<Login/>,
         // children:[
         //   {
