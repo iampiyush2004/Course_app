@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
-function Login(props) {
+function Login({
+  person="admin"
+}) {
   const [hasAccount, setHasAccount] = useState(true);
   const [message, setMessage] = useState('');
   const [username, setUsername] = useState('');
@@ -16,7 +18,7 @@ function Login(props) {
 
   const autoLogin = async (token) => {
     try {
-      const response = await fetch(`http://localhost:3000/${props.person}/verify-token`, {
+      const response = await fetch(`http://localhost:3000/${person}/verify-token`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -27,7 +29,7 @@ function Login(props) {
       const result = await response.json();
       if (response.ok) {
         setMessage('Auto-login successful!');
-        navigate('/');
+        navigate('/courses');
         
       } else {
         localStorage.removeItem('token'); 
@@ -51,7 +53,7 @@ function Login(props) {
       return;
     }
 
-    const url = hasAccount ? `/${props.person}/signin` : `/${props.person}/signup`;
+    const url = hasAccount ? `/${person}/signin` : `/${person}/signup`;
     const data = { username, password };
 
     setIsLoading(true); // Start loading
@@ -73,7 +75,7 @@ function Login(props) {
           // Store JWT token in local storage 
           localStorage.setItem('token', result.token);
           setMessage('Login successful!');
-          navigate('/');
+          navigate('/courses');
           
         } else {
           setMessage('Signup successful! You can now log in.');
