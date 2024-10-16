@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
-function Login({
-  person="admin"
-}) {
+function Login({ person = "admin" }) {
+  const navigate = useNavigate(); // Get the navigate function
   const [hasAccount, setHasAccount] = useState(true);
   const [message, setMessage] = useState('');
   const [username, setUsername] = useState('');
@@ -29,7 +29,7 @@ function Login({
       const result = await response.json();
       if (response.ok) {
         setMessage('Auto-login successful!');
-        navigate('/courses');
+        navigate('/courses'); // Navigate to /courses
         
       } else {
         localStorage.removeItem('token'); 
@@ -75,7 +75,7 @@ function Login({
           // Store JWT token in local storage 
           localStorage.setItem('token', result.token);
           setMessage('Login successful!');
-          navigate('/courses');
+          navigate('/courses'); // Navigate to /courses
           
         } else {
           setMessage('Signup successful! You can now log in.');
