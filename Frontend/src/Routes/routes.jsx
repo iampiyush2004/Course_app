@@ -1,8 +1,9 @@
 import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
 import Home from '../pages/Home'
 import Layout from '../Layout'
-import Login from '../pages/Login'
+import AdminLogin from '../pages/Admin/adminLogin'
 import Courses from '../pages/Courses'
+import Admin from '../pages/Admin/admin'
 export const router = createBrowserRouter([
   {
     path:"/",
@@ -18,32 +19,13 @@ export const router = createBrowserRouter([
       },
       {
         path:"admin",
-        element:<Login/>,
-        // children:[
-        //   {
-        //     path:"/signup",
-        //     element:<Login/>
-        //   },
-        //   {
-        //     path:"/signup",
-        //     element:<Login/>
-        //   }
-        // ]
+        element:<AdminLogin/>,
       },
-      // {
-      //   path:"seller",
-      //   element:<Seller/>,
-      //   children:[
-      //     {
-      //       path:"/signup",
-      //       element:<sellerSignup/>
-      //     },
-      //     {
-      //       path:"/signup",
-      //       element:<sellerLogin/>
-      //     }
-      //   ]
-      // }
+      {
+        path:"/adminName",
+        element:<Admin/>
+      },
+      
     ]
   }
 ])

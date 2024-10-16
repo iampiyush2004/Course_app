@@ -1,24 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-
-function Login({ person = "admin" }) {
-  const navigate = useNavigate(); // Get the navigate function
+import { useNavigate } from 'react-router-dom';
+import { Context } from '../../Context/Context';
+import { useContext } from 'react';
+function AdminLogin() {
+  const navigate = useNavigate(); 
   const [hasAccount, setHasAccount] = useState(true);
   const [message, setMessage] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
+  const {changeLoggedIn} = useContext(Context)
+ 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       autoLogin(token);
     }
-  }, []); // Empty dependency array ensures this runs only once, on mount
+  }, []); 
 
   const autoLogin = async (token) => {
     try {
-      const response = await fetch(`http://localhost:3000/${person}/verify-token`, {
+      const response = await fetch(`http://localhost:3000/admin/verify-token`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -29,7 +31,8 @@ function Login({ person = "admin" }) {
       const result = await response.json();
       if (response.ok) {
         setMessage('Auto-login successful!');
-        navigate('/courses'); // Navigate to /courses
+        changeLoggedIn(true)
+        navigate('/adminName');
         
       } else {
         localStorage.removeItem('token'); 
@@ -53,7 +56,7 @@ function Login({ person = "admin" }) {
       return;
     }
 
-    const url = hasAccount ? `/${person}/signin` : `/${person}/signup`;
+    const url = hasAccount ? `/admin/signin` : `/admin/signup`;
     const data = { username, password };
 
     setIsLoading(true); // Start loading
@@ -75,11 +78,12 @@ function Login({ person = "admin" }) {
           // Store JWT token in local storage 
           localStorage.setItem('token', result.token);
           setMessage('Login successful!');
-          navigate('/courses'); // Navigate to /courses
+          changeLoggedIn(true)
+          navigate('/adminName'); 
           
         } else {
           setMessage('Signup successful! You can now log in.');
-          setHasAccount(true); // Switch to login after signup
+          setHasAccount(true); 
         }
       } else {
         setMessage(result.message || `Error: ${response.status}`);
@@ -102,8 +106,8 @@ function Login({ person = "admin" }) {
             className="form-control"
             id="username"
             placeholder="Enter your username"
-            value={username} // Bind value to state
-            onChange={(e) => setUsername(e.target.value)} // Update state on change
+            value={username} 
+            onChange={(e) => setUsername(e.target.value)} 
           />
         </div>
         
@@ -114,8 +118,8 @@ function Login({ person = "admin" }) {
             className="form-control"
             id="password"
             placeholder="Enter your password"
-            value={password} // Bind value to state
-            onChange={(e) => setPassword(e.target.value)} // Update state on change
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
 
@@ -124,7 +128,7 @@ function Login({ person = "admin" }) {
         </button>
       </form>
 
-      {message && <div className="alert alert-info mt-3">{message}</div>} {/* Display messages */}
+      {message && <div className="alert alert-info mt-3">{message}</div>}
 
       <div className="mt-3">
         <p>
@@ -138,4 +142,4 @@ function Login({ person = "admin" }) {
   );
 }
 
-export default Login;
+export default AdminLogin;
