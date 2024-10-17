@@ -1,8 +1,11 @@
 import React, { createContext, useState } from "react";
 
 export const Context = createContext({
+  // isUser: false,
+  // isAdmin: false,
   isLoggedIn: false,
   changeLoggedIn: () => {},
+  // toggleUser: () => {}
 });
 
 export const ContextProvider = ({ children }) => {
