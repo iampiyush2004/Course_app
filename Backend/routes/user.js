@@ -25,10 +25,23 @@ router.get('/courses', (req, res) => {
     //  listing all courses 
 });
 
-router.post('/courses/:courseId', userMiddleware, (req, res) => {
+router.post('/courses/:courseId',  (req, res) => {
     //  course purchase 
-    const username = req.username;
-    console.log(username);
+    const courseId = req.params.courseId;
+    const username = req.headers.username;
+
+    User.updateOne({
+        username : username
+    },{
+        "$push": {
+            purchasedCourses : courseId
+        }
+    }).catch((e) => {
+        console.log(e);
+    });
+    res.json({
+        message : "Purchase Complete!"
+    })
 
 });
 

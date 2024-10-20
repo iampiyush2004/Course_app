@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar } from '@fortawesome/free-solid-svg-icons';
+//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+//import { faStar } from '@fortawesome/free-solid-svg-icons';
 
 function Card({ 
   title = "title", 
@@ -19,11 +19,11 @@ function Card({
         <p className="mt-2 text-gray-600">{description}</p>
         <div className="flex justify-between items-center mt-4">
           <p className="text-lg font-semibold text-gray-800">₹{price}</p>
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             {Array.from({ length: rating }, (_, index) => (
               <FontAwesomeIcon key={index} icon={faStar} className="text-yellow-500" />
             ))}
-          </div>
+          </div> */}
         </div>
         <div className="mt-6">
           <Link to="" className="inline-flex items-center justify-center px-4 py-2 text-white bg-orange-500 hover:bg-orange-600 rounded transition duration-200">

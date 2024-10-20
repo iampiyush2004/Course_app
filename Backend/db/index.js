@@ -5,9 +5,14 @@ mongoose.connect('mongodb+srv://iampiyush2004:YnnM6IeExRLcQBo0@cluster0.u7ws2.mo
 
 // Define schemas
 const AdminSchema = new mongoose.Schema({
-   username : String,
-   password : String
-});
+    username: String,
+    password: String,
+    createdCourses: [{
+       type: mongoose.Schema.Types.ObjectId,
+       ref: 'Course'
+    }]
+ });
+ 
 
 const UserSchema = new mongoose.Schema({
     username : String,
