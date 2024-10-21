@@ -5,7 +5,7 @@ function Courses() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/admin/courses")
+    fetch("http://localhost:3000/allCourses")
       .then((res) => res.json())
       .then((res) => setData(res.courses));
   }, []);
