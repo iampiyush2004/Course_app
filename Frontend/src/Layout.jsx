@@ -1,7 +1,7 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 import Header from './components/Header'
-// import Footer from './components/Footer'
+import Footer from './components/Footer'
 import { ContextProvider } from './Context/Context'
 function Layout() {
   return (
@@ -9,7 +9,7 @@ function Layout() {
       <div className="bg-gradient-to-b from-green-50 to-green-100">
         <Header/>
         <Outlet/>
-        {/* //   <Footer/> */}
+        <Footer/>
       </div>
     </ContextProvider>
   )
