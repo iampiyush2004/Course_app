@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 function Admin({
@@ -8,8 +8,30 @@ function Admin({
   totalUsers = 12,
   bestSelling = "AI"
 }) {
+  // const token = localStorage.getItem('token');  // Retrieve the token from localStorage
+
+  // useEffect(() => {
+  //   fetch('/courses', {
+  //     method: 'GET',
+  //     headers: {
+  //       'Authorization': `Bearer ${token}`,
+  //       'Content-Type': 'application/json'
+  //     }
+  //   })
+  //   .then(response => {
+  //     console.log('Response:', response);
+  //     return response.json();  // Only attempt to parse if the response is OK
+  //   })
+  //   .then(data => {
+  //     console.log('Courses:', data);
+  //   })
+  //   .catch(error => {
+  //     console.error('Error:', error);
+  //   });
+  // }, [token]);
+  
   return (
-    <div className='mt-16 w-screen flex  justify-center'>
+    <div className='mt-16 flex  justify-center '>
       <div className="flex bg-white shadow-2xl rounded-lg overflow-hidden w-[60vw] h-[70vh] transform transition-transform duration-300 hover:scale-105">
         <div className="w-1/3 p-4">
           <img 
@@ -39,11 +61,15 @@ function Admin({
             </div>
           </div>
           <div className='flex justify-around mt-8 gap-3'>
-            {["Edit Your Profile", "Add More Course", "Edit Courses"].map((buttonText, index) => (
-              <Link className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                {buttonText}
-              </Link>
-            ))}
+            <Link to="/editProfile" className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300">
+            Edit Your Profile
+            </Link>
+            <Link to="/AddCourse" className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300">
+            Add More Course
+            </Link>
+            <Link to="/editCourse" className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300">
+            Edit Courses
+            </Link>
           </div>
         </div>
       </div>

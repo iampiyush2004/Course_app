@@ -4,6 +4,7 @@ import Layout from '../Layout'
 import AdminLogin from '../pages/Admin/adminLogin'
 import Courses from '../pages/Courses'
 import Admin from '../pages/Admin/admin'
+import AddCourse from '../pages/Admin/AddCourse'
 export const router = createBrowserRouter([
   {
     path:"/",
@@ -24,6 +25,10 @@ export const router = createBrowserRouter([
       {
         path:"/adminName",
         element:<Admin/>
+      },
+      {
+        path:"/addCourse",
+        element:<AddCourse/>
       },
       
     ]
