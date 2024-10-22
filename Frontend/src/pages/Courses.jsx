@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Card from "../components/card";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUp,faArrowDown } from '@fortawesome/free-solid-svg-icons';
+//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+//import { faArrowUp,faArrowDown } from '@fortawesome/free-solid-svg-icons';
 
 function Courses() {
   const [data, setData] = useState([]);
@@ -21,13 +21,13 @@ function Courses() {
         <button>
           <div className="flex items-center gap-1">
             <div>Price</div>
-            <FontAwesomeIcon icon={faArrowDown} />
+            
           </div>
         </button>
         <button>
           <div className="flex items-center gap-1">
             <div>Rating</div>
-            <FontAwesomeIcon icon={faArrowDown} />
+            
           </div>
         </button>
       </div>
