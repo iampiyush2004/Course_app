@@ -8,27 +8,6 @@ function Admin({
   totalUsers = 12,
   bestSelling = "AI"
 }) {
-  // const token = localStorage.getItem('token');  // Retrieve the token from localStorage
-
-  // useEffect(() => {
-  //   fetch('/courses', {
-  //     method: 'GET',
-  //     headers: {
-  //       'Authorization': `Bearer ${token}`,
-  //       'Content-Type': 'application/json'
-  //     }
-  //   })
-  //   .then(response => {
-  //     console.log('Response:', response);
-  //     return response.json();  // Only attempt to parse if the response is OK
-  //   })
-  //   .then(data => {
-  //     console.log('Courses:', data);
-  //   })
-  //   .catch(error => {
-  //     console.error('Error:', error);
-  //   });
-  // }, [token]);
   
   return (
     <div className='mt-16 flex  justify-center '>
@@ -65,10 +44,10 @@ function Admin({
             Edit Your Profile
             </Link>
             <Link to="/AddCourse" className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300">
-            Add More Course
+            Add More Courses
             </Link>
-            <Link to="/editCourse" className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300">
-            Edit Courses
+            <Link to="Courses" className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300">
+            Your All Courses
             </Link>
           </div>
         </div>

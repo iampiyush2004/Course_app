@@ -50,6 +50,7 @@ router.post('/verify-token', tokenMiddleware, (req, res) => {
 });
 
 router.post('/createCourse', async (req, res) => {
+    console.log("entered here")
     const token = req.headers.authorization;
     
     if (!token) {
