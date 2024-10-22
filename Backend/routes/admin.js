@@ -10,8 +10,18 @@ const { jwt_secret } = require("../config");
 router.post('/signup', async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
+    const name = req.body.name;
+    const age = req.body.age;
+    const experience = req.body.experience;
+    const gender = req.body.gender;
+    const company = req.body.company;
 
     await Admin.create({
+        name : name,
+        age : age,
+        company : company ,
+        gender : gender ,
+        experience : experience,
         username: username,
         password: password
     });
