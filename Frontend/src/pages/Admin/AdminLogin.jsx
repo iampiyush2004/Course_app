@@ -96,50 +96,66 @@ function AdminLogin() {
   };
 
   return (
-    <div className="container mt-5">
-      <h2>{hasAccount ? 'Login' : 'Sign Up'}</h2>
+    <div className="container mx-auto mt-10 max-w-md p-6 bg-white rounded-lg shadow-lg">
+      <h2 className="text-2xl font-bold text-center mb-6">
+        {hasAccount ? 'Login' : 'Sign Up'}
+      </h2>
       <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label htmlFor="username" className="form-label">Username</label>
+        <div className="mb-4">
+          <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+            Username
+          </label>
           <input
             type="text"
-            className="form-control"
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             id="username"
             placeholder="Enter your username"
-            value={username} 
-            onChange={(e) => setUsername(e.target.value)} 
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
         </div>
         
-        <div className="mb-3">
-          <label htmlFor="password" className="form-label">Password</label>
+        <div className="mb-4">
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            Password
+          </label>
           <input
             type="password"
-            className="form-control"
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             id="password"
             placeholder="Enter your password"
-            value={password} 
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-
-        <button type="submit" className="btn btn-primary" disabled={isLoading}>
+  
+        <button
+          type="submit"
+          className={`w-full py-2 px-4 rounded-md text-white bg-blue-500 hover:bg-blue-600 transition duration-200 ${
+            isLoading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
+          disabled={isLoading}
+        >
           {isLoading ? 'Submitting...' : hasAccount ? 'Login' : 'Sign Up'}
         </button>
       </form>
-
-      {message && <div className="alert alert-info mt-3">{message}</div>}
-
-      <div className="mt-3">
-        <p>
+  
+      {message && <div className="mt-4 text-center text-blue-600">{message}</div>}
+  
+      <div className="mt-4 text-center">
+        <p className="text-sm">
           {hasAccount ? "Don't have an account?" : "Already have an account?"}
-          <button className="btn btn-link" onClick={toggleForm}>
+          <button
+            className="text-blue-500 font-semibold hover:underline"
+            onClick={toggleForm}
+          >
             {hasAccount ? 'Sign Up' : 'Login'}
           </button>
         </p>
       </div>
     </div>
   );
+  
 }
 
 export default AdminLogin;
