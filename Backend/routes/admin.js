@@ -8,27 +8,39 @@ const jwt = require('jsonwebtoken');
 const { jwt_secret } = require("../config");
 
 router.post('/signup', async (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
-    const name = req.body.name;
-    const age = req.body.age;
-    const experience = req.body.experience;
-    const gender = req.body.gender;
-    const company = req.body.company;
+    const { username, password, name, age, experience, gender, company } = req.body;
 
-    await Admin.create({
-        name : name,
-        age : age,
-        company : company ,
-        gender : gender ,
-        experience : experience,
-        username: username,
-        password: password
-    });
-    res.json({
-        message: 'Admin created successfully!'
-    });
+    try {
+       
+        const existingAdmin = await Admin.findOne({ username: username });
+        if (existingAdmin) {
+            return res.status(400).json({
+                message: 'Username already taken. Please choose a different one.'
+            });
+        }
+
+        
+        await Admin.create({
+            name: name,
+            age: age,
+            company: company,
+            gender: gender,
+            experience: experience,
+            username: username,
+            password: password
+        });
+
+        res.json({
+            message: 'Admin created successfully!'
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error creating admin. Please try again.',
+            error: error.message
+        });
+    }
 });
+
 
 router.post('/signin', async (req, res) => {
     const { username, password } = req.body;
