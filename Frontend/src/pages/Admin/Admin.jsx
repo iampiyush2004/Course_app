@@ -8,27 +8,27 @@ function Admin({
   totalUsers = 12,
   bestSelling = "AI"
 }) {
-  // const token = localStorage.getItem('token');  // Retrieve the token from localStorage
+  const token = localStorage.getItem('token');  // Retrieve the token from localStorage
 
-  // useEffect(() => {
-  //   fetch('/courses', {
-  //     method: 'GET',
-  //     headers: {
-  //       'Authorization': `Bearer ${token}`,
-  //       'Content-Type': 'application/json'
-  //     }
-  //   })
-  //   .then(response => {
-  //     console.log('Response:', response);
-  //     return response.json();  // Only attempt to parse if the response is OK
-  //   })
-  //   .then(data => {
-  //     console.log('Courses:', data);
-  //   })
-  //   .catch(error => {
-  //     console.error('Error:', error);
-  //   });
-  // }, [token]);
+  useEffect(() => {
+    fetch(`http://localhost:3000/admin/courses`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => {
+      console.log('Response:', response);
+      return response.json();  // Only attempt to parse if the response is OK
+    })
+    .then(data => {
+      console.log('Courses:', data);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  }, [token]);
   
   return (
     <div className='mt-16 flex  justify-center '>
