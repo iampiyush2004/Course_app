@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Context } from '../../Context/Context';
 import { useContext } from 'react';
+import SignUp from './SignUp';
+import SignIn from './SignIn';
 function AdminLogin() {
   const navigate = useNavigate(); 
   const [hasAccount, setHasAccount] = useState(true);
@@ -160,7 +162,6 @@ function AdminLogin() {
           </button>
         </p>
       </div>
-    </div>
     </div>
   );
   
