@@ -17,7 +17,7 @@ const EditCourse = () => {
   const deleteCourse = async() => {
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch(`http://localhost:3000/admin/delete/${val._id}`, {
+      const response = await fetch(`http://localhost:3000/admin/deleteCourse/${val._id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
