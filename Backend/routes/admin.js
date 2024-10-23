@@ -190,5 +190,52 @@ router.delete('/deleteCourse/:courseId', async (req, res) => {
     }
 });
 
+router.put('/editCourse/:courseId', async (req, res) => {
+    const token = req.headers.authorization;
+    
+    if (!token) {
+        return res.status(401).json({ message: "No token provided" });
+    }
+
+    const words = token.split(" ");
+    const jwtToken = words[1];
+
+    try {
+        const decodedValue = jwt.verify(jwtToken, jwt_secret);
+        const adminId = decodedValue._id;
+        const courseId = req.params.courseId;
+
+        const { title, description, imageLink, price } = req.body;
+
+        if (!title && !description && !imageLink && !price) {
+            return res.status(400).json({ message: "At least one field is required to update." });
+        }
+
+        
+        const course = await Course.findById(courseId);
+        if (!course) {
+            return res.status(404).json({ message: "Course not found." });
+        }
+
+        const updatedCourse = await Course.findByIdAndUpdate(courseId, {
+            $set: {
+                ...(title && { title }),
+                ...(description && { description }),
+                ...(imageLink && { imageLink }),
+                ...(price && { price })
+            }
+        }, { new: true });
+
+        res.status(200).json({
+            message: "Course updated successfully!",
+            updatedCourse
+        });
+    } catch (error) {
+        console.error("Error editing course:", error);
+        res.status(500).json({ message: "Internal server error while editing course." });
+    }
+});
+
+
 
 module.exports = router;
