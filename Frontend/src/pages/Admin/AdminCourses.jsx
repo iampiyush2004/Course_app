@@ -38,9 +38,8 @@ function AdminCourses() {
     }
   }, [search, data]);
 
-  const handleClick = (title) => {
-    navigate("edit")
-    // navigate("/admin/edit", { state: { courseId, title } });
+  const handleClick = (val) => {
+    navigate("/admin/edit", { state: { val } });
   }
 
   return (

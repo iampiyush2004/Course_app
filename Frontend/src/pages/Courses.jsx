@@ -42,6 +42,7 @@ function Courses() {
             description={val.description} 
             imageLink={val.imageLink} 
             price={val.price} 
+            buttonText={"Enroll Now"}
           />
         ))}
         </div>
