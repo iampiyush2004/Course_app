@@ -235,6 +235,35 @@ router.put('/editCourse/:courseId', async (req, res) => {
         res.status(500).json({ message: "Internal server error while editing course." });
     }
 });
+router.get('/teacherInfo', async (req, res) => {
+    const token = req.headers.authorization;
+
+    if (!token) {
+        return res.status(401).json({ message: "No token provided" });
+    }
+
+    const words = token.split(" ");
+    const jwtToken = words[1];
+
+    try {
+        const decodedValue = jwt.verify(jwtToken, jwt_secret);
+        const adminId = decodedValue._id;
+
+        //  excluding 'username' and 'password'
+        const adminData = await Admin.findById(adminId)
+            .select('-username -password')
+            .populate('createdCourses');  // reference ki jagah pura course data
+
+        if (!adminData) {
+            return res.status(404).json({ message: "Admin not found" });
+        }
+
+        res.status(200).json(adminData);
+    } catch (error) {
+        console.error("Error fetching admin data:", error);
+        res.status(500).json({ message: "Internal server error while fetching admin data." });
+    }
+});
 
 
 
