@@ -153,4 +153,42 @@ router.get('/courses', async (req, res) => {
     }
 });
 
+
+
+router.delete('/deleteCourse/:courseId', async (req, res) => {
+    const token = req.headers.authorization;
+    
+    if (!token) {
+        return res.status(401).json({ message: "No token provided" });
+    }
+
+    const words = token.split(" ");
+    const jwtToken = words[1];
+
+    try {
+        const decodedValue = jwt.verify(jwtToken, jwt_secret);
+        const adminId = decodedValue._id;
+        const courseId = req.params.courseId;
+
+       
+        const course = await Course.findById(courseId);
+        if (!course) {
+            return res.status(404).json({ message: "Course not found." });
+        }
+
+        
+        await Admin.findByIdAndUpdate(adminId, {
+            $pull: { createdCourses: courseId }
+        });
+
+        await Course.findByIdAndDelete(courseId);
+
+        res.status(200).json({ message: "Course deleted successfully!" });
+    } catch (error) {
+        console.error("Error deleting course:", error);
+        res.status(500).json({ message: "Internal server error while deleting course." });
+    }
+});
+
+
 module.exports = router;
