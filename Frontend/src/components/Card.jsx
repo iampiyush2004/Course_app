@@ -17,7 +17,7 @@ function Card({
         <h2 className="text-xl font-bold text-gray-800">{title}</h2>
         <p className="mt-2 text-gray-600">{description}</p>
         <div className="flex justify-between items-center mt-4">
-          <p className="text-lg font-semibold text-gray-800">₹{price}</p>
+          <p className="text-lg font-semibold text-gray-800">{price==0?"FREE":`₹ ${price}`}</p>
           <div className="flex items-center">
             {Array.from({ length: rating }, (_, index) => (
               <span key={index}>⭐</span>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 function AddCourse() {
@@ -16,8 +16,17 @@ function AddCourse() {
     setImageLink("")
     setPrice(0)
   }
+
+  useEffect(()=>{
+    setMessage('')
+  },[title,description,imageLink,price])
+
   const handleSubmit = async(e) => {
     e.preventDefault();
+    if (!title || !description || !imageLink || !price) {
+      setMessage("All fields are required.")
+      return
+    }
     try {
       const response = await fetch("http://localhost:3000/admin/createCourse", {
         method: 'POST',
@@ -34,11 +43,12 @@ function AddCourse() {
       if (response.ok) {
         clearForm()
         setMessage("Course Created Successfully!!!")
-        // console.log()
       } else {
+        setMessage(result.message)
         console.log("Error!!!")
       }
     } catch (error) {
+      setMessage("Network error. Please check your connection.");
       console.log("Error")
     }
   }
@@ -74,12 +84,13 @@ function AddCourse() {
               className='border border-gray-300 p-3 mb-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 w-full'
               value={imageLink}
               onChange={(e)=>setImageLink(e.target.value)}
-            />
+              />
             <input
               type='number'
               placeholder='Enter Price'
               className='border border-gray-300 p-3 mb-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 w-full'
               value={price}
+              min={0}
               onChange={(e)=>setPrice(e.target.value)}
             />
             <input
