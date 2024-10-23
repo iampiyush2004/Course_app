@@ -6,6 +6,7 @@ import Courses from '../pages/Courses'
 import Admin from '../pages/Admin/admin'
 import AddCourse from '../pages/Admin/AddCourse'
 import AdminCourses from '../pages/Admin/AdminCourses'
+import EditCourse from '../pages/Admin/EditCourse'
 export const router = createBrowserRouter([
   {
     path:"/",
@@ -34,6 +35,10 @@ export const router = createBrowserRouter([
       {
         path:"/addCourse",
         element:<AddCourse/>
+      },
+      {
+        path:"/admin/edit",
+        element:<EditCourse/>
       },
       
     ]
