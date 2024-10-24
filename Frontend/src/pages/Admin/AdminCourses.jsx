@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Card from "../../components/card";
-import { Link, useNavigate } from "react-router-dom";
+import {  } from "module";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 function AdminCourses() {
   const [data, setData] = useState([]);
@@ -60,8 +61,18 @@ function AdminCourses() {
             className="pl-3 py-2 pr-24 rounded-lg"
           />
         </div>
-        {filteredData.length === 0 ? (
-          <div className="w-full text-center">Good Things Take Time</div>
+        { !Array.isArray(filteredData) || filteredData.length === 0 ? (
+          <div className="flex flex-col items-center justify-center p-4">
+            <div className="w-full text-center text-red-600 text-xl font-semibold mb-4">
+              No Results Found
+            </div>
+            <Link 
+              to="/AddCourse" 
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition duration-300 shadow-lg"
+            >
+              Add Course
+            </Link>
+          </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredData.map((val) => (

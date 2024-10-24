@@ -7,7 +7,7 @@ function Admin() {
   const [totalCourses, setTotalCourses] = useState(0);
   const [totalUsers, setTotalUsers] = useState(12);
   const [bestSelling, setBestSelling] = useState("AI");
-  const [data, setData] = useState(null); // Initialize with null
+  const [data, setData] = useState(null); 
   const token = localStorage.getItem('token');
 
   useEffect(() => {
@@ -26,6 +26,7 @@ function Admin() {
     })
     .then(data => {
       setData(data); // Store fetched data
+      console.log(data)
       setName(data.name); // Update name from fetched data
       setTotalCourses(data.createdCourses.length); // Update total courses
     })
@@ -71,7 +72,10 @@ function Admin() {
             <Link to="/AddCourse" className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300">
               Add More Courses
             </Link>
-            <Link to="/adminName/Courses" className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300">
+            <Link 
+              to="/adminName/Courses"
+              className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300"
+            >
               All Your Courses
             </Link>
           </div>
