@@ -7,6 +7,7 @@ import Admin from '../pages/Admin/Admin'
 import AddCourse from '../pages/Admin/AddCourse'
 import AdminCourses from '../pages/Admin/AdminCourses'
 import EditCourse from '../pages/Admin/EditCourse'
+import EditInfo from '../pages/Admin/editInfo'
 export const router = createBrowserRouter([
   {
     path:"/",
@@ -33,14 +34,17 @@ export const router = createBrowserRouter([
         element:<AdminCourses/>,
       },
       {
-        path:"/addCourse",
+        path:"/adminName/addCourse",
         element:<AddCourse/>
       },
       {
         path:"/admin/edit",
         element:<EditCourse/>
       },
-      
+      {
+        path:"/adminName/editProfile",
+        element:<EditInfo/>
+      },
     ]
   }
 ])

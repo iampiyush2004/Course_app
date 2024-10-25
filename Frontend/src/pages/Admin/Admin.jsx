@@ -26,7 +26,6 @@ function Admin() {
     })
     .then(data => {
       setData(data); // Store fetched data
-      console.log(data)
       setName(data.name); // Update name from fetched data
       setTotalCourses(data.createdCourses.length); // Update total courses
     })
@@ -66,10 +65,11 @@ function Admin() {
             </div>
           </div>
           <div className='flex justify-around mt-8 gap-3'>
-            <Link to="/editProfile" className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300">
+            <Link to="/adminName/editProfile" state={data}
+            className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300">
               Edit Your Profile
             </Link>
-            <Link to="/AddCourse" className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300">
+            <Link to="/adminName/AddCourse" className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300">
               Add More Courses
             </Link>
             <Link 
