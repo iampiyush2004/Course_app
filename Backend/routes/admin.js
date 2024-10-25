@@ -265,6 +265,56 @@ router.get('/teacherInfo', async (req, res) => {
     }
 });
 
+router.put('/editProfile', async (req, res) => {
+    const token = req.headers.authorization;
+
+    if (!token) {
+        return res.status(401).json({ message: "No token provided" });
+    }
+
+    const words = token.split(" ");
+    const jwtToken = words[1];
+
+    try {
+        const decodedValue = jwt.verify(jwtToken, jwt_secret);
+        const adminId = decodedValue._id;
+
+        const { name, age, experience, gender, company, bio } = req.body;
+
+        // Check if at least one field is provided to update
+        if (!name && !age && !experience && !gender && !company && !bio) {
+            return res.status(400).json({ message: "At least one field is required to update." });
+        }
+
+        const admin = await Admin.findById(adminId);
+        if (!admin) {
+            return res.status(404).json({ message: "Admin not found." });
+        }
+
+        // Prepare update fields
+        const updateFields = {};
+        if (name) updateFields.name = name;
+        if (age) updateFields.age = age;
+        if (experience) updateFields.experience = experience;
+        if (gender) updateFields.gender = gender;
+        if (company) updateFields.company = company;
+        if (bio) updateFields.bio = bio;
+
+        const updatedAdminProfile = await Admin.findByIdAndUpdate(adminId, {
+            $set: updateFields
+        }, { new: true });
+
+        res.status(200).json({
+            message: "Admin Profile updated successfully!",
+            updatedAdminProfile
+        });
+    } catch (error) {
+        console.error("Error editing profile:", error);
+        res.status(500).json({ message: "Internal server error while editing profile." });
+    }
+});
+
+
 
 
 module.exports = router;

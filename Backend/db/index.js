@@ -6,13 +6,13 @@ mongoose.connect('mongodb+srv://iampiyush2004:YnnM6IeExRLcQBo0@cluster0.u7ws2.mo
 // Define schemas
 const AdminSchema = new mongoose.Schema({
     name: String,
-    age: Number,
+    age: String,
     experience: Number,
     gender : String,
     company: String,
+    bio: String,
     username: String,
     password: String,
-    
     createdCourses: [{
        type: mongoose.Schema.Types.ObjectId,
        ref: 'Course'
