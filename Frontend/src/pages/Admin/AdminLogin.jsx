@@ -27,6 +27,7 @@ function AdminLogin() {
     setGender('')
     setCompany('')
   }
+  
   useEffect(()=>{
     clear()
   },[hasAccount])

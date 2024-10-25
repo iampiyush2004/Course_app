@@ -1,34 +1,57 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate} from 'react-router-dom';
 
 function EditInfo() {
   const [name, setName] = useState('');
-  const [dob, setDob] = useState('');
+  const [age, setAge] = useState('');
   const [experience, setExperience] = useState('');
   const [company, setCompany] = useState('');
   const [bio, setBio] = useState('');
+  const [gender, setGender] = useState(''); // Added state for gender
   const location = useLocation();
+  const navigate = useNavigate();
   const val = location.state || {};
+  let token = localStorage.getItem('token');
+
   const handleRevert = () => {
-    val.name && setName(val.name);
-    // val.age && setDob(val.age);   // updation in data base 
-    val.experience && setExperience(val.experience);
-    val.company && setCompany(val.company);
-    val.bio && setBio(val.bio);   // addition of bio oin data base
+    console.log(val);
+    setName(val.name || ''); 
+    setAge(val.age || ''); 
+    setExperience(val.experience || ''); 
+    setCompany(val.company || ''); 
+    setBio(val.bio || '');
+    setGender(val.gender || ''); 
   };
-  useEffect(()=>{
-    handleRevert()
-  },[])
-  const handleSubmit = (e) => {
+
+  useEffect(() => {
+    handleRevert();
+  }, []);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle submission logic here
-    console.log({
-      name,
-      dob,
-      experience,
-      company,
-      bio,
-    });
+    // if(!name || !age || !experience || !company || !bio || !gender) return 
+    const data = {name,age,experience,company,bio,gender}
+    console.log("hi")
+    try {
+        const response = await fetch("http://localhost:3000/admin/editProfile", {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+          navigate("/adminName");
+          console.log("edited");
+        } else {
+          const errorData = await response.json();
+          console.log("Error:", errorData.message || "Some error occurred");
+        }
+    } catch (error) {
+      console.log(error);
+    } 
   };
 
   return (
@@ -44,20 +67,20 @@ function EditInfo() {
           onChange={(e) => setName(e.target.value)}
         />
 
-        <label htmlFor="dob" className="font-semibold text-gray-700">Date of Birth</label>
+        <label htmlFor="age" className="font-semibold text-gray-700">Date of Birth</label>
         <input
-          id="dob"
+          id="age"
           type="date"
-          value={dob}
+          value={age}
           className="border border-gray-300 rounded-md p-2 focus:border-blue-500 focus:ring focus:ring-blue-200"
-          onChange={(e) => setDob(e.target.value)}
+          onChange={(e) => setAge(e.target.value)}
         />
 
         <label htmlFor="experience" className="font-semibold text-gray-700">Experience</label>
         <input
           id="experience"
           type="number"
-          min={0}
+          min={1}
           max={150}
           placeholder="Enter your experience"
           value={experience}
@@ -65,7 +88,7 @@ function EditInfo() {
           onChange={(e) => setExperience(e.target.value)}
         />
 
-        <label htmlFor="company" className="font-semibold text-gray-700">Company</label>
+        <label htmlFor="company" className="font-semibold text-gray-700">Previous/Current Company</label>
         <input
           id="company"
           type="text"
@@ -74,6 +97,40 @@ function EditInfo() {
           className="border border-gray-300 rounded-md p-2 focus:border-blue-500 focus:ring focus:ring-blue-200"
           onChange={(e) => setCompany(e.target.value)}
         />
+
+        <label className="font-semibold text-gray-700">Gender</label>
+        <div className="flex gap-4">
+          <label>
+            <input
+              type="radio"
+              value="male"
+              checked={gender === 'male'}
+              onChange={(e) => setGender(e.target.value)}
+              className="mr-2"
+            />
+            Male
+          </label>
+          <label>
+            <input
+              type="radio"
+              value="female"
+              checked={gender === 'female'}
+              onChange={(e) => setGender(e.target.value)}
+              className="mr-2"
+            />
+            Female
+          </label>
+          <label>
+            <input
+              type="radio"
+              value="other"
+              checked={gender === 'other'}
+              onChange={(e) => setGender(e.target.value)}
+              className="mr-2"
+            />
+            Other
+          </label>
+        </div>
 
         <label htmlFor="bio" className="font-semibold text-gray-700">Bio</label>
         <textarea
