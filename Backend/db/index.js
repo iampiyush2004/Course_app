@@ -11,6 +11,7 @@ const AdminSchema = new mongoose.Schema({
     gender : String,
     company: String,
     bio: String,
+    avatar: String,
     username: String,
     password: String,
     createdCourses: [{

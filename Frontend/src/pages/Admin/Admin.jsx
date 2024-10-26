@@ -4,7 +4,7 @@ import { Context } from '../../Context/Context';
 
 function Admin() {
   const [name, setName] = useState();
-  const [photoUrl, setPhotoUrl] = useState("https://images.unsplash.com/photo-1496345875659-11f7dd282d1d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+  const [photoUrl, setPhotoUrl] = useState("");
   const [totalCourses, setTotalCourses] = useState(0);
   const [totalUsers, setTotalUsers] = useState(12);
   const [bestSelling, setBestSelling] = useState("AI");
@@ -16,9 +16,12 @@ function Admin() {
     if (userData === null) {
       dataFetcher(token); 
     }
-    userData && setData(userData); 
-    userData && setName(userData.name);
-    userData && setTotalCourses(userData.createdCourses.length);
+    else {
+      setData(userData); 
+      setName(userData.name);
+      setPhotoUrl(userData.avatar)
+      setTotalCourses(userData.createdCourses.length);
+    }
   }, [userData, dataFetcher]);
 
   return (
