@@ -1,32 +1,20 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Card from "../../components/card";
 import {  } from "module";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Context } from "../../Context/Context";
 
 function AdminCourses() {
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState([]);
-  const token = localStorage.getItem('token');  
   const navigate = useNavigate()
+  const {dataFetcher,userData} = useContext(Context)
 
   useEffect(() => {
-    fetch("http://localhost:3000/admin/courses", {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    })
-    .then(res => res.json())
-    .then(data => {
-      setData(data.courses);
-      setFilteredData(data.courses);
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-  }, [token]);
+    if(!userData) dataFetcher()
+    else setData((userData).createdCourses||[]);
+  }, [userData,dataFetcher]);
 
   useEffect(() => {
     if (search === "") {
