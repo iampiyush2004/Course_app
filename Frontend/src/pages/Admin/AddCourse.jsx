@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Context } from '../../Context/Context';
 
 function AddCourse() {
@@ -8,7 +8,8 @@ function AddCourse() {
   const [imageLink,setImageLink] = useState("")
   const [price,setPrice] = useState(0)
   const [message,setMessage] = useState()
-  const {dataFetcher} = useContext(Context)
+  const navigate = useNavigate()
+  const {dataFetcher,changeNotificationData} = useContext(Context)
   let data = {title,description,imageLink,price}
 
   const token = localStorage.getItem('token');
@@ -45,7 +46,8 @@ function AddCourse() {
       if (response.ok) {
         clearForm()
         dataFetcher()
-        setMessage("Course Created Successfully!!!")
+        changeNotificationData("Course Created Successfully!!!");
+        navigate("/adminName")
       } else {
         setMessage(result.message)
         console.log("Error!!!")

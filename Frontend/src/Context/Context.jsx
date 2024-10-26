@@ -5,16 +5,23 @@ export const Context = createContext({
   changeLoggedIn: () => {},
   dataFetcher: () => {},
   userData: null,
-  setUserData: () => {}
+  setUserData: () => {},
+  // notificationVisible:true,
+  notificationData:"hi how are you",
+  changeNotificationData: () => {}
 });
 
 export const ContextProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData,setUserData] = useState(null)
+  const [notificationData,setNotificationData] = useState('hi how are you')
   const token = localStorage.getItem('token');
   const changeLoggedIn = (status) => {
     setIsLoggedIn(status);
   };
+  const changeNotificationData = (data) => {
+    setNotificationData(data)
+  } 
 
   const dataFetcher = () => {
     fetch("http://localhost:3000/admin/teacherInfo", {
@@ -39,7 +46,7 @@ export const ContextProvider = ({ children }) => {
   }
 
   return (
-    <Context.Provider value={{ isLoggedIn, changeLoggedIn, dataFetcher, userData ,setUserData }}>
+    <Context.Provider value={{ isLoggedIn, changeLoggedIn, dataFetcher, userData ,setUserData, notificationData, changeNotificationData }}>
       {children}
     </Context.Provider>
   );
