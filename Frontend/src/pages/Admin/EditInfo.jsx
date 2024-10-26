@@ -18,7 +18,7 @@ function EditInfo() {
   let token = localStorage.getItem('token');
 
   const handleRevert = () => {
-    if(!userData) {dataFetcher()}
+    if(!userData) dataFetcher(token)
     else {
       setName(userData.name || ''); 
       setAge(userData.age || ''); 
@@ -67,7 +67,7 @@ function EditInfo() {
         });
 
         if (response.ok) {
-          dataFetcher()
+          dataFetcher(token)
           console.log("edited");
           changeNotificationData("User Profile Updated!!!")
           navigate("/adminName");

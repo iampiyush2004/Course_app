@@ -10,9 +10,10 @@ function AdminCourses() {
   const [filteredData, setFilteredData] = useState([]);
   const navigate = useNavigate()
   const {dataFetcher,userData} = useContext(Context)
-
+  const token = localStorage.getItem('token');
+  
   useEffect(() => {
-    if(!userData) dataFetcher()
+    if(!userData) dataFetcher(token)
     else setData((userData).createdCourses||[]);
   }, [userData,dataFetcher]);
 

@@ -32,7 +32,7 @@ const EditCourse = () => {
 
       const result = await response.json();
       if (response.ok) {
-        dataFetcher()
+        dataFetcher(token)
         changeNotificationData(`${title} Course Deleted Successfully!!!`)
         navigate("/adminName/Courses");
       } else {
@@ -73,7 +73,7 @@ const EditCourse = () => {
       });
 
       if (response.ok) {
-        dataFetcher()
+        dataFetcher(token)
         changeNotificationData(`${title} Course Updated Successfully!!!`)
         navigate("/adminName/Courses");
         console.log("edited");

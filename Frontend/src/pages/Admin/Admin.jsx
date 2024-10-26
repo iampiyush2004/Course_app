@@ -9,41 +9,16 @@ function Admin() {
   const [totalUsers, setTotalUsers] = useState(12);
   const [bestSelling, setBestSelling] = useState("AI");
   const [data, setData] = useState(null); 
-  // const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token');
   const {userData,dataFetcher} = useContext(Context);
-
-  // useEffect(() => {
-  //   fetch("http://localhost:3000/admin/teacherInfo", {
-  //     method: 'GET',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Authorization': `Bearer ${token}`
-  //     }
-  //   })
-  //   .then(res => {
-  //     if (!res.ok) {
-  //       throw new Error("Network response was not ok");
-  //     }
-  //     return res.json();
-  //   })
-  //   .then(data => {
-  //     setData(data); // Store fetched data
-  //     setName(data.name); // Update name from fetched data
-  //     setTotalCourses(data.createdCourses.length); // Update total courses
-  //   })
-  //   .catch(error => {
-  //     console.error('Error:', error);
-  //   });
-  // }, [token]);
 
   useEffect(() => {
     if (userData === null) {
-      dataFetcher(); 
+      dataFetcher(token); 
     }
     userData && setData(userData); 
     userData && setName(userData.name);
     userData && setTotalCourses(userData.createdCourses.length);
-    // console.log(userData)
   }, [userData, dataFetcher]);
 
   return (
