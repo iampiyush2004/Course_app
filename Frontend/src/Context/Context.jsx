@@ -1,29 +1,22 @@
 import React, { createContext, useState } from "react";
 
 export const Context = createContext({
-  isLoggedIn: false,
-  changeLoggedIn: () => {},
   dataFetcher: () => {},
   userData: null,
   setUserData: () => {},
-  // notificationVisible:true,
-  notificationData:"hi how are you",
+  notificationData:"",
   changeNotificationData: () => {}
 });
 
 export const ContextProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData,setUserData] = useState(null)
-  const [notificationData,setNotificationData] = useState('hi how are you')
-  const token = localStorage.getItem('token');
-  const changeLoggedIn = (status) => {
-    setIsLoggedIn(status);
-  };
+  const [notificationData,setNotificationData] = useState("")
   const changeNotificationData = (data) => {
     setNotificationData(data)
   } 
 
-  const dataFetcher = () => {
+  const dataFetcher = (token=0) => {
+    if(token===0) return
     fetch("http://localhost:3000/admin/teacherInfo", {
       method: 'GET',
       headers: {
@@ -46,7 +39,7 @@ export const ContextProvider = ({ children }) => {
   }
 
   return (
-    <Context.Provider value={{ isLoggedIn, changeLoggedIn, dataFetcher, userData ,setUserData, notificationData, changeNotificationData }}>
+    <Context.Provider value={{ dataFetcher, userData ,setUserData, notificationData, changeNotificationData }}>
       {children}
     </Context.Provider>
   );

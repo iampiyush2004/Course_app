@@ -11,7 +11,7 @@ function AdminLogin() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { changeLoggedIn } = useContext(Context);
+  const { dataFetcher,changeNotificationData } = useContext(Context);
   const [name,setName] = useState('')
   const [age,setAge] = useState('')
   const [experience,setExperience] = useState('')
@@ -31,12 +31,13 @@ function AdminLogin() {
   useEffect(()=>{
     clear()
   },[hasAccount])
-    useEffect(() => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        autoLogin(token);
-      }
-    }, []); 
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      autoLogin(token);
+    }
+  }, []); 
 
   const autoLogin = async (token) => {
     try {
@@ -51,7 +52,7 @@ function AdminLogin() {
       const result = await response.json();
       if (response.ok) {
         setMessage('Auto-login successful!');
-        changeLoggedIn(true)
+        dataFetcher(token)
         navigate('/adminName');
         
       } else {
@@ -98,9 +99,9 @@ function AdminLogin() {
           // Store JWT token in local storage 
           localStorage.setItem('token', result.token);
           setMessage('Login successful!');
-          changeLoggedIn(true)
+          changeNotificationData("Login successful!!!")
+          dataFetcher(result.token);
           navigate('/adminName'); 
-          
         } else {
           setMessage('Signup successful! You can now log in.');
           setHasAccount(true); 

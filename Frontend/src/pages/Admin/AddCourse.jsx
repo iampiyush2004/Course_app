@@ -45,7 +45,7 @@ function AddCourse() {
 
       if (response.ok) {
         clearForm()
-        dataFetcher()
+        dataFetcher(token)
         changeNotificationData("Course Created Successfully!!!");
         navigate("/adminName")
       } else {
