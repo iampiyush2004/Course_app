@@ -16,7 +16,7 @@ const EditCourse = () => {
   const [message,setMessage] = useState('');
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
-  const {dataFetcher} = useContext(Context)
+  const {dataFetcher,changeNotificationData} = useContext(Context)
 
   let token = localStorage.getItem('token');
   
@@ -33,6 +33,7 @@ const EditCourse = () => {
       const result = await response.json();
       if (response.ok) {
         dataFetcher()
+        changeNotificationData(`${title} Course Deleted Successfully!!!`)
         navigate("/adminName/Courses");
       } else {
         console.log("Error!!!");
@@ -73,6 +74,7 @@ const EditCourse = () => {
 
       if (response.ok) {
         dataFetcher()
+        changeNotificationData(`${title} Course Updated Successfully!!!`)
         navigate("/adminName/Courses");
         console.log("edited");
       } else {

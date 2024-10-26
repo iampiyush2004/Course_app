@@ -12,7 +12,7 @@ function EditInfo() {
   const [bio, setBio] = useState('');
   const [gender, setGender] = useState(''); 
   const [avatar,setAvatar] = useState('')
-  const {dataFetcher,userData} = useContext(Context)    // used Context Api Data
+  const {dataFetcher,userData,changeNotificationData} = useContext(Context)    // used Context Api Data
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [message,setMessage] = useState()
   let token = localStorage.getItem('token');
@@ -69,6 +69,7 @@ function EditInfo() {
         if (response.ok) {
           dataFetcher()
           console.log("edited");
+          changeNotificationData("User Profile Updated!!!")
           navigate("/adminName");
         } else {
           const errorData = await response.json();
