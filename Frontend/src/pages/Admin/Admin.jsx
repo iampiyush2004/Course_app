@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Context } from '../../Context/Context';
 
 function Admin() {
   const [name, setName] = useState();
@@ -8,35 +9,46 @@ function Admin() {
   const [totalUsers, setTotalUsers] = useState(12);
   const [bestSelling, setBestSelling] = useState("AI");
   const [data, setData] = useState(null); 
-  const token = localStorage.getItem('token');
+  // const token = localStorage.getItem('token');
+  const {userData,dataFetcher} = useContext(Context);
+
+  // useEffect(() => {
+  //   fetch("http://localhost:3000/admin/teacherInfo", {
+  //     method: 'GET',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Authorization': `Bearer ${token}`
+  //     }
+  //   })
+  //   .then(res => {
+  //     if (!res.ok) {
+  //       throw new Error("Network response was not ok");
+  //     }
+  //     return res.json();
+  //   })
+  //   .then(data => {
+  //     setData(data); // Store fetched data
+  //     setName(data.name); // Update name from fetched data
+  //     setTotalCourses(data.createdCourses.length); // Update total courses
+  //   })
+  //   .catch(error => {
+  //     console.error('Error:', error);
+  //   });
+  // }, [token]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/admin/teacherInfo", {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
-    })
-    .then(res => {
-      if (!res.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return res.json();
-    })
-    .then(data => {
-      setData(data); // Store fetched data
-      setName(data.name); // Update name from fetched data
-      setTotalCourses(data.createdCourses.length); // Update total courses
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-  }, [token]);
+    if (userData === null) {
+      dataFetcher(); 
+    }
+    userData && setData(userData); 
+    userData && setName(userData.name);
+    userData && setTotalCourses(userData.createdCourses.length);
+    // console.log(userData)
+  }, [userData, dataFetcher]);
 
   return (
     <div className='mt-16 flex justify-center'>
-      <div className="flex bg-white shadow-2xl rounded-lg overflow-hidden w-[60vw] h-[70vh] transform transition-transform duration-300 hover:scale-105">
+      <div className="flex bg-white shadow-2xl rounded-lg overflow-hidden w-[60vw] h-[75vh] transform transition-transform duration-300 hover:scale-105">
         <div className="w-1/3 p-4">
           <img 
             src={photoUrl} 
@@ -65,14 +77,14 @@ function Admin() {
             </div>
           </div>
           <div className='flex justify-around mt-8 gap-3'>
-            <Link to="/adminName/editProfile" state={data}
+            <Link to="/adminName/editProfile"
             className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300">
               Edit Your Profile
             </Link>
             <Link to="/adminName/AddCourse" className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300">
               Add More Courses
             </Link>
-            <Link to="/adminName/Courses" 
+            <Link to="/adminName/Courses" state={data?data.createdCourses:[]}
               className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300"
             >
               All Your Courses

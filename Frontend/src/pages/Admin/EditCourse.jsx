@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Card from '../../components/card';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
 import { Link } from 'react-router-dom';
+import { Context } from '../../Context/Context';
 
 const EditCourse = () => {
   const navigate = useNavigate();
@@ -12,8 +13,10 @@ const EditCourse = () => {
   const [description, setDescription] = useState(val?.description || '');
   const [imageLink, setImageLink] = useState(val?.imageLink || '');
   const [price, setPrice] = useState(val?.price || '');
+  const [message,setMessage] = useState('');
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
+  const {dataFetcher} = useContext(Context)
 
   let token = localStorage.getItem('token');
   
@@ -29,6 +32,7 @@ const EditCourse = () => {
 
       const result = await response.json();
       if (response.ok) {
+        dataFetcher()
         navigate("/adminName/Courses");
       } else {
         console.log("Error!!!");
@@ -43,8 +47,15 @@ const EditCourse = () => {
     setIsDeleteDialogOpen(false);
   };
 
+  useEffect(()=>{
+    setMessage('')
+  },[title,description,imageLink,price])
+
   const handleEditChange = async () => {
-    // Directly call the save function without a dialog for confirmation
+    if(!title||!description||!imageLink||!price){
+      setMessage('All fields are required.')
+      return
+    }
     setIsSaveDialogOpen(true);
   };
 
@@ -61,6 +72,7 @@ const EditCourse = () => {
       });
 
       if (response.ok) {
+        dataFetcher()
         navigate("/adminName/Courses");
         console.log("edited");
       } else {
@@ -125,6 +137,7 @@ const EditCourse = () => {
           onChange={(e) => setPrice(e.target.value)}
           className="w-full p-3 mb-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
+        {message && <div className="text-center text-blue-600">{message}</div>}
       </div>
 
       <div className="w-full max-w-md flex flex-col gap-y-4">

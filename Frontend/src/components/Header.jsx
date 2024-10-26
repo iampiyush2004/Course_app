@@ -5,13 +5,13 @@ import { useNavigate } from 'react-router-dom';
 
 export function Header() {
     const navigate = useNavigate(); 
-    const {isLoggedIn, changeLoggedIn} = useContext(Context)
+    const {isLoggedIn, changeLoggedIn,setUserData} = useContext(Context)
     const handleLogout = () => {
       changeLoggedIn(false);
-      localStorage.removeItem('token'); 
+      localStorage.removeItem('token');
+      setUserData(null)
       navigate("/")
     };
-    // console.log(isLoggedIn)
   return (
     <header className="">
         <div className="px-4 mx-auto sm:px-6 lg:px-8">
