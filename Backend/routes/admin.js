@@ -41,7 +41,6 @@ router.post('/signup', async (req, res) => {
     }
 });
 
-
 router.post('/signin', async (req, res) => {
     const { username, password } = req.body;
 
@@ -153,8 +152,6 @@ router.get('/courses', async (req, res) => {
     }
 });
 
-
-
 router.delete('/deleteCourse/:courseId', async (req, res) => {
     const token = req.headers.authorization;
     
@@ -235,6 +232,7 @@ router.put('/editCourse/:courseId', async (req, res) => {
         res.status(500).json({ message: "Internal server error while editing course." });
     }
 });
+
 router.get('/teacherInfo', async (req, res) => {
     const token = req.headers.authorization;
 
@@ -279,10 +277,10 @@ router.put('/editProfile', async (req, res) => {
         const decodedValue = jwt.verify(jwtToken, jwt_secret);
         const adminId = decodedValue._id;
 
-        const { name, age, experience, gender, company, bio } = req.body;
+        const { name, age, experience, gender, company, bio, avatar } = req.body;
 
         // Check if at least one field is provided to update
-        if (!name && !age && !experience && !gender && !company && !bio) {
+        if (!name && !age && !experience && !gender && !company && !bio &&!avatar) {
             return res.status(400).json({ message: "At least one field is required to update." });
         }
 
@@ -299,6 +297,7 @@ router.put('/editProfile', async (req, res) => {
         if (gender) updateFields.gender = gender;
         if (company) updateFields.company = company;
         if (bio) updateFields.bio = bio;
+        if (avatar) updateFields.avatar = avatar;
 
         const updatedAdminProfile = await Admin.findByIdAndUpdate(adminId, {
             $set: updateFields

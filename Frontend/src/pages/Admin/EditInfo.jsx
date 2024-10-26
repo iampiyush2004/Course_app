@@ -26,6 +26,7 @@ function EditInfo() {
       setCompany(userData.company || ''); 
       setBio(userData.bio || '');
       setGender(userData.gender || ''); 
+      setAvatar(userData.avatar || '')
     }
   };
 
@@ -52,8 +53,7 @@ function EditInfo() {
 
   const handleConfirm = async (e) => {
     e.preventDefault();
-    // if(!name || !age || !experience || !company || !bio || !gender) return 
-    const data = {name,age,experience,company,bio,gender}
+    const data = {name,age,experience,company,bio,gender,avatar}
     console.log(data)
     console.log("hi")
     try {
