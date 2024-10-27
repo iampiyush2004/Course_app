@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
-const { jwt_secret } = require("../config");
+require('dotenv').config();
+const jwt_secret = process.env.JWT_SECRET;
 
 function tokenMiddleware(req, res, next) {
     // Extract token from Authorization header

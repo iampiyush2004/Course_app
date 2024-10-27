@@ -5,10 +5,11 @@ const tokenMiddleware = require("../middleware/tokenmiddleware");
 const { Admin, User, Course } = require('../db');
 const router = Router();
 const jwt = require('jsonwebtoken');
-//const { jwt_secret } = require("../config");
-require('dotenv').config();
+
+
 const {upload} = require('../middleware/multer');
 const { uploadOnCloudinary } = require('../utils/cloudinary');
+require('dotenv').config();
 const jwt_secret = process.env.JWT_SECRET;
 
 router.post('/signup', async (req, res) => {
