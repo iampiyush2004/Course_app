@@ -7,6 +7,10 @@ const router = Router();
 const jwt = require('jsonwebtoken');
 const { jwt_secret } = require("../config");
 
+const {upload} = require('../middleware/multer');
+const { uploadOnCloudinary } = require('../utils/cloudinary');
+
+
 router.post('/signup', async (req, res) => {
     const { username, password, name, age, experience, gender, company } = req.body;
 
@@ -312,6 +316,43 @@ router.put('/editProfile', async (req, res) => {
         res.status(500).json({ message: "Internal server error while editing profile." });
     }
 });
+
+router.post('/upload-image', upload.single('avatar'), async (req, res) => {
+    const token = req.headers.authorization;
+
+    if (!token) {
+        return res.status(401).json({ message: "No token provided" });
+    }
+
+    const words = token.split(" ");
+    const jwtToken = words[1];
+
+    try {
+        // Verify the JWT token and extract the admin ID
+        const decodedValue = jwt.verify(jwtToken, jwt_secret);
+        const adminId = decodedValue._id; // Extract admin ID from decoded token
+
+        const localFilePath = req.file.path; // Get the local path of the uploaded file
+        const imageUrl = await uploadOnCloudinary(localFilePath); // Upload to Cloudinary
+
+        // Update the admin document with the new avatar URL
+        const updatedAdmin = await Admin.findByIdAndUpdate(
+            adminId, // Use the admin ID extracted from the token
+            { avatar: imageUrl }, // Set the avatar to the new Cloudinary URL
+            { new: true } // Return the updated document
+        );
+
+        if (!updatedAdmin) {
+            return res.status(404).json({ error: "Admin not found" });
+        }
+
+        res.status(200).json({ avatarUrl: updatedAdmin.avatar }); // Return the new avatar URL
+    } catch (error) {
+        console.error("Error uploading avatar:", error);
+        res.status(500).json({ error: "Failed to upload avatar" });
+    }
+});
+
 
 
 
