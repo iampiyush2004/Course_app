@@ -268,7 +268,8 @@ router.get('/teacherInfo', async (req, res) => {
     }
 });
 
-router.put('/editProfile', async (req, res) => {
+
+router.put('/editProfile', upload.single('avatar'), async (req, res) => {
     const token = req.headers.authorization;
 
     if (!token) {
@@ -282,10 +283,10 @@ router.put('/editProfile', async (req, res) => {
         const decodedValue = jwt.verify(jwtToken, jwt_secret);
         const adminId = decodedValue._id;
 
-        const { name, age, experience, gender, company, bio, avatar } = req.body;
+        const { name, age, experience, gender, company, bio } = req.body;
 
         // Check if at least one field is provided to update
-        if (!name && !age && !experience && !gender && !company && !bio &&!avatar) {
+        if (!name && !age && !experience && !gender && !company && !bio && !req.file) {
             return res.status(400).json({ message: "At least one field is required to update." });
         }
 
@@ -302,7 +303,13 @@ router.put('/editProfile', async (req, res) => {
         if (gender) updateFields.gender = gender;
         if (company) updateFields.company = company;
         if (bio) updateFields.bio = bio;
-        if (avatar) updateFields.avatar = avatar;
+
+        // Check if there's an avatar file to upload
+        if (req.file) {
+            const localFilePath = req.file.path;
+            const imageUrl = await uploadOnCloudinary(localFilePath);
+            updateFields.avatar = imageUrl;
+        }
 
         const updatedAdminProfile = await Admin.findByIdAndUpdate(adminId, {
             $set: updateFields
