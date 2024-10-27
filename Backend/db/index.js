@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-
-
-mongoose.connect('mongodb+srv://iampiyush2004:YnnM6IeExRLcQBo0@cluster0.u7ws2.mongodb.net/course_selling_app');
+ require('dotenv').config();
+const MONGO_CONNECTION_STRING = process.env.MONGO_CONNECTION_STRING
+mongoose.connect(MONGO_CONNECTION_STRING);
 
 // Define schemas
 const AdminSchema = new mongoose.Schema({
