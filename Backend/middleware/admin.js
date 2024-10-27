@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
-const { jwt_secret } = require("../config");
+require('dotenv').config();
+const jwt_secret = process.env.JWT_SECRET;
 const { Admin } = require("../db"); // Ensure you import your Admin model
 
 function adminMiddleware(req, res, next) {
