@@ -1,5 +1,6 @@
+// Other imports remain the same
 import React, { useContext, useEffect, useState } from 'react';
-import { useNavigate,Link} from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Context } from '../../Context/Context';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
 
@@ -11,14 +12,14 @@ function EditInfo() {
   const [company, setCompany] = useState('');
   const [bio, setBio] = useState('');
   const [gender, setGender] = useState(''); 
-  const [avatar,setAvatar] = useState('')
-  const {dataFetcher,userData,changeNotificationData} = useContext(Context)    // used Context Api Data
+  const [avatar, setAvatar] = useState(null); // Change initial state to null
+  const { dataFetcher, userData, changeNotificationData } = useContext(Context);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [message,setMessage] = useState()
+  const [message, setMessage] = useState();
   let token = localStorage.getItem('token');
 
   const handleRevert = () => {
-    if(!userData) dataFetcher(token)
+    if (!userData) dataFetcher(token);
     else {
       setName(userData.name || ''); 
       setAge(userData.age || ''); 
@@ -26,7 +27,7 @@ function EditInfo() {
       setCompany(userData.company || ''); 
       setBio(userData.bio || '');
       setGender(userData.gender || ''); 
-      setAvatar(userData.avatar || '')
+      setAvatar(userData.avatar || null); // Change to null if no avatar
     }
   };
 
@@ -34,14 +35,14 @@ function EditInfo() {
     handleRevert();
   }, [userData]);
 
-  useEffect(()=>{
-    setMessage('')
-  },[name,age,company,experience,bio,avatar,gender])
+  useEffect(() => {
+    setMessage('');
+  }, [name, age, company, experience, bio, avatar, gender]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if(!name||!age||!company||!experience||!bio||!avatar||!gender) {
-      setMessage('All fields are required.')
+    if (!name || !age || !company || !experience || !bio || !avatar || !gender) {
+      setMessage('All fields are required.');
       return;
     }
     setIsDialogOpen(true); 
@@ -53,28 +54,34 @@ function EditInfo() {
 
   const handleConfirm = async (e) => {
     e.preventDefault();
-    const data = {name,age,experience,company,bio,gender,avatar}
-    console.log(data)
-    console.log("hi")
-    try {
-        const response = await fetch("http://localhost:3000/admin/editProfile", {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify(data),
-        });
+    const data = new FormData(); // Create a FormData object
+    data.append('name', name);
+    data.append('age', age);
+    data.append('experience', experience);
+    data.append('company', company);
+    data.append('bio', bio);
+    data.append('gender', gender);
+    if (avatar) {
+      data.append('avatar', avatar); // Append the file object
+    }
 
-        if (response.ok) {
-          dataFetcher(token)
-          console.log("edited");
-          changeNotificationData("User Profile Updated!!!")
-          navigate("/adminName");
-        } else {
-          const errorData = await response.json();
-          console.log("Error:", errorData.message || "Some error occurred");
-        }
+    try {
+      const response = await fetch("http://localhost:3000/admin/editProfile", {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        body: data, 
+      });
+
+      if (response.ok) {
+        dataFetcher(token);
+        changeNotificationData("User Profile Updated!!!");
+        navigate("/adminName");
+      } else {
+        const errorData = await response.json();
+        console.log("Error:", errorData.message || "Some error occurred");
+      }
     } catch (error) {
       console.log(error);
     } 
@@ -90,6 +97,7 @@ function EditInfo() {
           </Link>
           <h2 className='text-2xl font-bold text-center'>Edit Your Profile</h2>
         </div>
+
         <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
           
           {/* First Line: Name */}
@@ -168,7 +176,7 @@ function EditInfo() {
                 value={experience}
                 className="border border-gray-300 rounded-md p-2 focus:border-blue-500 focus:ring focus:ring-blue-200"
                 onChange={(e) => setExperience(e.target.value)}
-              />
+                />
             </div>
 
             <div className='flex flex-col w-1/3'>
@@ -180,19 +188,19 @@ function EditInfo() {
                 value={company}
                 className="border border-gray-300 rounded-md p-2 focus:border-blue-500 focus:ring focus:ring-blue-200"
                 onChange={(e) => setCompany(e.target.value)}
-              />
+                />
             </div>
           </div>
 
+          {/* Fourth Line: Avatar */}
           <div className='flex flex-col'>
-            <label htmlFor="name" className="font-semibold text-gray-700">Avatar</label>
+            <label htmlFor="avatar" className="font-semibold text-gray-700">Avatar</label>
             <input
               id="avatar"
-              type="text"
-              value={avatar}
-              placeholder="Enter your Avatar Link"
+              type="file"
+              accept="image/*" // Optional: restrict file type to images
               className="border border-gray-300 rounded-md p-2 focus:border-blue-500 focus:ring focus:ring-blue-200"
-              onChange={(e) => setAvatar(e.target.value)}
+              onChange={(e) => setAvatar(e.target.files[0])} // Get the file object
             />
           </div>        
 
@@ -219,6 +227,7 @@ function EditInfo() {
           </div>
 
         </form>
+        
         <ConfirmationDialog 
           isOpen={isDialogOpen}
           onClose={handleCancel}
@@ -229,7 +238,6 @@ function EditInfo() {
         {message && <div className="text-center text-blue-600">{message}</div>}
       </div>
     </div>
-
   );
 }
 

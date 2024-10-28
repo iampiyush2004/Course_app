@@ -270,6 +270,7 @@ router.get('/teacherInfo', async (req, res) => {
 
 
 router.put('/editProfile', upload.single('avatar'), async (req, res) => {
+    console.log("hi")
     const token = req.headers.authorization;
 
     if (!token) {
