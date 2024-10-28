@@ -1,8 +1,9 @@
-
 const { Router } = require("express");
 const adminMiddleware = require("../middleware/admin");
 const tokenMiddleware = require("../middleware/tokenmiddleware");
-const { Admin, User, Course } = require('../db');
+const  Admin  = require("../models/admin.model");
+const  Course  = require("../models/course.model");
+const User = require("../models/user.model");
 const router = Router();
 const jwt = require('jsonwebtoken');
 

@@ -3,7 +3,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors'); // Import CORS
 const adminRouter = require("./routes/admin");
 const userRouter = require("./routes/user");
-const {Course} = require('./db');
+const Course = require("./models/course.model");
+const connectDB = require("./db/index")
 const app = express();
 
 
@@ -20,13 +21,13 @@ app.get("/allCourses", async (req, res) => {
  
   console.log(Course)
   const response = await Course.find({})
-        res.json({courses : response})
+  res.json({courses : response})
 
 });
 
 
 
-
+connectDB()
 app.use("/admin", adminRouter);
 app.use("/user", userRouter);
 
