@@ -7,7 +7,7 @@ import { ContextProvider } from './Context/Context'
 function Layout() {
   return (
     <ContextProvider>
-      <div className="bg-gradient-to-b from-green-50 to-green-200">
+      <div className="bg-gradient-to-b from-green-50 to-green-200 min-h-screen">
         <Header/>
         <Notification/>
         <Outlet/>

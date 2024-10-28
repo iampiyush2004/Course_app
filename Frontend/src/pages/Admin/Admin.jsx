@@ -34,9 +34,12 @@ function Admin() {
             className="w-full h-full object-cover rounded-lg shadow-md" 
           />
         </div>
-        <div className="w-2/3 p-6">
-          <p className="text-gray-600 mt-2 text-xl">Welcome</p>
-          <h2 className="text-5xl font-bold text-gray-800">{name?name:"John Doe"}</h2>
+        <div className="w-2/3 p-6 flex flex-col justify-center gap-y-[1%]">
+          <div>
+            <p className="text-gray-600 mt-2 text-xl">Welcome</p>
+            <h2 className="text-5xl font-bold text-gray-800">{name?name:"John Doe"}</h2>
+          </div>
+
           <div className='mt-4'>
             <p className='text-2xl text-red-500 font-semibold'>Statistics</p>
             <div className='flex flex-col bg-gray-50 w-[60%] p-6 rounded-2xl shadow-inner mt-2'>
@@ -54,6 +57,7 @@ function Admin() {
               </div>
             </div>
           </div>
+
           <div className='flex justify-around mt-8 gap-3'>
             <Link to="/adminName/editProfile"
             className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300">
@@ -68,6 +72,7 @@ function Admin() {
               All Your Courses
             </Link>
           </div>
+
         </div>
       </div>
     </div>

@@ -155,7 +155,7 @@ function AdminLogin() {
   
       <div className="mt-4 text-center">
         <p className="text-sm">
-          {hasAccount ? "Don't have an account?" : "Already have an account?"}
+          {hasAccount ? "Don't have an account? " : "Already have an account? "}
           <button
             className="text-blue-500 font-semibold hover:underline"
             onClick={toggleForm}
