@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Context } from '../../Context/Context';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
+import axios from 'axios';
 
 function EditInfo() {
   const navigate = useNavigate();
@@ -54,7 +55,7 @@ function EditInfo() {
 
   const handleConfirm = async (e) => {
     e.preventDefault();
-    const data = new FormData(); // Create a FormData object
+    const data = new FormData(); 
     data.append('name', name);
     data.append('age', age);
     data.append('experience', experience);
@@ -62,25 +63,21 @@ function EditInfo() {
     data.append('bio', bio);
     data.append('gender', gender);
     if (avatar) {
-      data.append('avatar', avatar); // Append the file object
+      console.log(avatar)
+      data.append('avatar', avatar); 
     }
 
     try {
-      const response = await fetch("http://localhost:3000/admin/editProfile", {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        body: data, 
-      });
+      const response = await axios.put("http://localhost:3000/admin/editProfile",data,{
+        withCredentials : true
+      })
 
-      if (response.ok) {
-        dataFetcher(token);
+      if (response.status === 200) {
+        dataFetcher();
         changeNotificationData("User Profile Updated!!!");
         navigate("/adminName");
       } else {
-        const errorData = await response.json();
-        console.log("Error:", errorData.message || "Some error occurred");
+        console.log("Error:", response.data.message || "Some error occurred");
       }
     } catch (error) {
       console.log(error);
