@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Context } from '../../Context/Context';
+import axios from 'axios';
 
 function AddCourse() {
   const [title,setTitle] = useState("")
@@ -31,25 +32,20 @@ function AddCourse() {
       return
     }
     try {
-      const response = await fetch("http://localhost:3000/admin/createCourse", {
-        method: 'POST',
+      const response = await axios.post("http://localhost:3000/admin/createCourse",data,{
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          "Content-Type" : "application/json"
         },
-        body: JSON.stringify(data),
-      });
+        withCredentials: true
+      })
 
-      const result = await response.json();
-      console.log(result);
-
-      if (response.ok) {
+      if (response.status===200) {
         clearForm()
-        dataFetcher(token)
+        dataFetcher()
         changeNotificationData("Course Created Successfully!!!");
         navigate("/adminName")
       } else {
-        setMessage(result.message)
+        setMessage(response.data.message)
         console.log("Error!!!")
       }
     } catch (error) {

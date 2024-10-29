@@ -4,6 +4,8 @@ import { Context } from '../../Context/Context';
 import { useContext } from 'react';
 import SignUp from './SignUp';
 import SignIn from './SignIn';
+import axios from 'axios';
+
 function AdminLogin() {
   const navigate = useNavigate(); 
   const [hasAccount, setHasAccount] = useState(true);
@@ -27,47 +29,15 @@ function AdminLogin() {
     setGender('')
     setCompany('')
   }
-  
-  useEffect(()=>{
-    clear()
-  },[hasAccount])
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      autoLogin(token);
-    }
-  }, []); 
-
-  const autoLogin = async (token) => {
-    try {
-      const response = await fetch(`http://localhost:3000/admin/verify-token`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      const result = await response.json();
-      if (response.ok) {
-        setMessage('Auto-login successful!');
-        dataFetcher(token)
-        navigate('/adminName');
-        
-      } else {
-        localStorage.removeItem('token'); 
-        setMessage('Token expired. Please log in again.');
-      }
-    } catch (error) {
-      setMessage('Auto-login failed: ' + error.message);
-    }
-  };
 
   const toggleForm = () => {
     setHasAccount(!hasAccount);
     setMessage(''); 
   };
+  
+  useEffect(()=>{
+    clear()
+  },[hasAccount])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -77,37 +47,37 @@ function AdminLogin() {
       return;
     }
 
-      const url = hasAccount ? `/admin/signin` : `/admin/signup`;
-      const data = hasAccount ? { username, password } : {username, password , name, age , experience,gender,company};
+    const url = hasAccount ? `/admin/signin` : `/admin/signup`;
+    const data = hasAccount 
+      ? { username, password } 
+      : { username, password, name, age, experience, gender, company };
 
     setIsLoading(true); // Start loading
 
     try {
-      const response = await fetch(`http://localhost:3000${url}`, {
-        method: 'POST',
+      const response = await axios.post(`http://localhost:3000${url}`, data, {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        withCredentials: true,
       });
 
-      const result = await response.json();
-      console.log(result);
+      // console.log(response.data);
 
-      if (response.ok) {
+      if (response.status === 200) {
         if (hasAccount) {
-          // Store JWT token in local storage 
-          localStorage.setItem('token', result.token);
+          // Store JWT token in cookies (set from server-side)
+          // Assume the server sets the HttpOnly cookie in the response
           setMessage('Login successful!');
-          changeNotificationData("Login successful!!!")
-          dataFetcher(result.token);
+          changeNotificationData("Login successful!!!");
+          // dataFetcher(response.data.token); // Adjust this if needed
           navigate('/adminName'); 
         } else {
           setMessage('Signup successful! You can now log in.');
           setHasAccount(true); 
         }
       } else {
-        setMessage(result.message || `Error: ${response.status}`);
+        setMessage(response.data.message || `Error: ${response.status}`);
       }
     } catch (error) {
       setMessage('Error: ' + error.message);

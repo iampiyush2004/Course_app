@@ -1,17 +1,41 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { Context } from '../Context/Context';
 import { useNavigate } from 'react-router-dom';
+import axios from "axios"
 
 export function Header() {
     const navigate = useNavigate(); 
     const {setUserData} = useContext(Context)
-    const token = localStorage.getItem('token')
-    const handleLogout = () => {
-      localStorage.removeItem('token');
+    const [isloggedin,setIsLoggedIn] = useState(false)
+    const handleLogout = async () => {
+        console.log("hi")
+      await axios.post('http://localhost:3000/admin/logout',null,{
+        withCredentials : true
+      });
       setUserData(null)
       navigate("/")
     };
+
+    useEffect(() => {
+        const checkLoginStatus = async () => {
+            try {
+                const response = await axios.get("http://localhost:3000/admin/isLoggedin", {
+                    withCredentials: true
+                });
+                if (response.status === 200) {
+                    setIsLoggedIn(true);
+                } else {
+                    setIsLoggedIn(false);
+                }
+            } catch (error) {
+                console.error("Error checking login status:", error);
+                setIsLoggedIn(false); // Set to false if there's an error
+            }
+        };
+
+        checkLoginStatus();
+    }, [handleLogout]); 
   return (
     <header className="">
         <div className="px-4 mx-auto sm:px-6 lg:px-8">
@@ -30,7 +54,7 @@ export function Header() {
 
                     <div className="w-px h-5 bg-black/20"></div>
                     
-                    {!token ? (
+                    {!isloggedin ? (
                     <Link to="/login" title="" className="inline-flex items-center justify-center px-5 py-2.5 text-base font-semibold text-black border-2 border-black hover:bg-green-200 hover:text-white transition-all duration-200  focus:text-white" role="button">
                         Log In
                     </Link>

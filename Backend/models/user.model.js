@@ -39,14 +39,14 @@ const UserSchema = new mongoose.Schema({
   institution : {
     type : String,
   },
-  bio : {
-    type : String,
-    default : ""
-  },
-  courseCreated : [{
-    type : mongoose.Schema.Types.ObjectId,
-    ref : "Course"
-  }],
+  // bio : {
+  //   type : String,
+  //   default : ""
+  // },
+  // courseCreated : [{
+  //   type : mongoose.Schema.Types.ObjectId,
+  //   ref : "Course"
+  // }],
   coursePurchased : [{
     type : mongoose.Schema.Types.ObjectId,
     ref : "Course"
