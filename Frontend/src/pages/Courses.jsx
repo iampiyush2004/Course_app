@@ -9,7 +9,7 @@ function Courses() {
   const [priceAsc,setPriceAsc] = useState(false)
   const [ratingAsc,setRatingAsc] = useState(false)
   useEffect(() => {
-    axios.get("http://localhost:3000/courses")
+    axios.get("http://localhost:3000/courses/")
       .then((res) => setData(res.data.courses))
       .catch((error) => {
         console.error("Error fetching data:", error); 

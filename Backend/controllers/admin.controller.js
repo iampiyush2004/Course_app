@@ -1,10 +1,11 @@
 const Admin  = require("../models/admin.model")
 const jwt = require('jsonwebtoken');
 const Course = require("../models/course.model");
-//const {uploadOnCloudinary} = require("../utils/cloudinary")
 const { json } = require("express");
 const { uploadOnCloudinary , destroy } = require('../utils/cloudinary');
 const Video = require("../models/video.model")
+require('dotenv').config();
+const jwt_secret = process.env.jwt_secret;
 
 const signin = async (req, res) => {
     const { username, password } = req.body;
@@ -222,35 +223,28 @@ const isLoggedin = async(req, res) => {
 }
 
 const adminSpecificCourses = async (req, res) => {
-    const token = req.headers.authorization;
-    
-    if (!token) {
-        return res.status(401).json({ message: "Authorization token missing" });
-    }
-
     try {
-        const words = token.split(" ");
-        const jwtToken = words[1];
-        const decodedValue = jwt.verify(jwtToken, jwt_secret);
+        // Access authenticated admin from `verifyJwt` middleware
+        const admin = req.admin;
 
-        const admin = await Admin.findOne({
-            username: decodedValue.username
-        });
+        // Log the admin object for debugging
+        console.log("Authenticated Admin:", admin);
 
-        if (!admin) {
-            return res.status(404).json({ message: "Admin not found" });
+        // Check if admin has createdCourses
+        if (!admin || !admin.createdCourses) {
+            return res.status(403).json({ message: "Admin not found or no courses created" });
         }
 
+        // Find courses created by this admin
         const courses = await Course.find({
-            _id: {
-                "$in": admin.createdCourses
-            }
+            _id: { "$in": admin.createdCourses }
         });
 
         if (!courses || courses.length === 0) {
             return res.status(404).json({ message: "No courses found" });
         }
 
+        // Return the courses found
         res.json({ courses });
     } catch (error) {
         console.error("Error fetching courses:", error);
@@ -258,24 +252,15 @@ const adminSpecificCourses = async (req, res) => {
     }
 };
 
-const uploadVideo =  async (req, res) => {
+const uploadVideo = async (req, res) => {
     const { courseId } = req.params;
     if (!courseId) {
         return res.status(400).json({ message: "Course ID is required" });
     }
+    
     try {
-        // Check for Authorization header
-        const authHeader = req.headers.authorization;
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
-            return res.status(401).json({ message: "No token provided or invalid format" });
-        }
-
-        // Extract token
-        const token = authHeader.split(" ")[1];
-        const decoded = jwt.verify(token, jwt_secret);
-
-        const { title, description, duration} = req.body;
-        const owner = decoded._id; // Assuming the token contains the user's ID as `_id`
+        // Access the authenticated admin's ID from the `verifyJwt` middleware
+        const owner = req.admin._id; // Use `req.admin` set by `verifyJwt`
 
         // Check if a video file is provided
         if (!req.file) {
@@ -291,11 +276,12 @@ const uploadVideo =  async (req, res) => {
         const newVideo = new Video({
             videoFile: videoUrl,
             thumbnail: '', // Add thumbnail upload if needed
-            owner,
-            title,
-            description,
-            duration,
+            createdBy: owner, // Updated to `createdBy`
+            title: req.body.title,
+            description: req.body.description,
+            duration: req.body.duration,
             isPublished: true,
+            belongsTo: courseId, // Set the course ID here
         });
 
         const savedVideo = await newVideo.save();
@@ -318,12 +304,56 @@ const uploadVideo =  async (req, res) => {
         });
     } catch (error) {
         console.error('Error uploading video:', error);
-        if (error.name === "JsonWebTokenError") {
-            return res.status(401).json({ message: "Invalid token" });
-        }
         res.status(500).json({ message: 'Internal server error while uploading video' });
     }
-}
+};
+
+const deleteVideo = async (req, res) => {
+    try {
+        const { courseId, videoId } = req.params;
+
+        const course = await Course.findById(courseId);
+        if (!course) {
+            return res.status(404).json({ message: 'Course not found' });
+        }
+
+        const videoIndex = course.videos.findIndex(video => video._id.toString() === videoId);
+        if (videoIndex === -1) {
+            return res.status(404).json({ message: 'Video not found in course' });
+        }
+
+        const video = await Video.findById(videoId);
+        if (!video) {
+            return res.status(404).json({ message: 'Video not found in Videos collection' });
+        }
+
+        // Ensure only the creator (admin) can delete their video
+        if (video.createdBy.toString() !== req.admin._id.toString()) {
+            return res.status(403).json({ message: "Access Denied: You can only delete videos you created" });
+        }
+
+        // Check if the video has a URL before attempting to split it
+        if (!video.videoFile) {
+            return res.status(400).json({ message: 'Video file URL is missing' });
+        }
+
+        // Delete video from Cloudinary
+        const publicId = video.videoFile.split('/').pop().split('.')[0]; // Use video.videoFile instead of video.url
+        await destroy(publicId);
+
+        // Remove video from course document
+        course.videos.splice(videoIndex, 1);
+        await course.save();
+
+        // Delete video from the Videos collection
+        await Video.findByIdAndDelete(videoId);
+
+        res.status(200).json({ message: 'Video deleted successfully from course and Videos collection' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to delete video' });
+    }
+};
 
 
 
@@ -338,5 +368,6 @@ module.exports = {
   isLoggedin,
   adminSpecificCourses,
   uploadVideo,
+  deleteVideo
 
 }

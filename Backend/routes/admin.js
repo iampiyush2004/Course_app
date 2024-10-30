@@ -1,14 +1,11 @@
 const { Router } = require("express");
-const adminMiddleware = require("../middleware/admin");
-const tokenMiddleware = require("../middleware/auth.middleware");
-const  Admin  = require("../models/admin.model");
-const  Course  = require("../models/course.model");
-const User = require("../models/user.model");
-const Video = require("../models/video.model")
+// const  Admin  = require("../models/admin.model");
+// const  Course  = require("../models/course.model");
+// const Video = require("../models/video.model")
 const router = Router();
-const jwt = require('jsonwebtoken');
+
 const {upload} = require('../middleware/multer');
-const { uploadOnCloudinary , destroy } = require('../utils/cloudinary');
+
 
 const { signup,
         signin,
@@ -19,7 +16,8 @@ const { signup,
         logout,
         isLoggedin,
         adminSpecificCourses,
-        uploadVideo
+        uploadVideo,
+        deleteVideo
         } = require("../controllers/admin.controller")
 
 const { deleteCourse, editCourse} = require("../controllers/course.controller")
@@ -46,13 +44,14 @@ router.post('/createCourse',verifyJwt, createCourse);
 
 router.get("/isLoggedin",verifyJwt,isLoggedin);
 
-router.get('/courses', adminSpecificCourses);
+router.get('/courses', verifyJwt ,adminSpecificCourses);
 
-router.post('/uploadVideo/:courseId', upload.single('videoFile'), uploadVideo);
+router.post('/uploadVideo/:courseId', verifyJwt, upload.single('videoFile'), uploadVideo);
 
 router.delete('/deleteCourse/:courseId', verifyJwt, deleteCourse);
 
 router.put('/editCourse/:courseId', verifyJwt, editCourse);
 
+router.delete('/courses/:courseId/videos/:videoId', verifyJwt, deleteVideo);
 
 module.exports = router;
