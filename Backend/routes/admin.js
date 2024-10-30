@@ -42,7 +42,7 @@ router.post('/upload-image',verifyJwt, upload.single('avatar'), updateAvatar);
 
 router.post('/createCourse',verifyJwt, createCourse);
 
-router.get("/isLoggedin",verifyJwt,isLoggedin);
+router.get("/isLoggedin",isLoggedin);
 
 router.get('/courses', verifyJwt ,adminSpecificCourses);
 

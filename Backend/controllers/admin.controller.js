@@ -1,11 +1,9 @@
 const Admin  = require("../models/admin.model")
 const jwt = require('jsonwebtoken');
 const Course = require("../models/course.model");
-const { json } = require("express");
 const { uploadOnCloudinary , destroy } = require('../utils/cloudinary');
 const Video = require("../models/video.model")
 require('dotenv').config();
-const jwt_secret = process.env.jwt_secret;
 
 const signin = async (req, res) => {
     const { username, password } = req.body;
@@ -214,12 +212,20 @@ const createCourse = async (req, res) => {
 };
 
 const isLoggedin = async(req, res) => {
-    if(req.admin){
-        return res.status(200).json({
-            "message" : "User is Loggedin"
-        })
+    const token = req.cookies?.token
+    if(!token){
+        return res.status(200).json({"isLoggedin" : false,"message" : "Admin needs to login"})
     }
-    return res.status(400,"Unauthorized Access!!!")
+    try {
+        const decodedValue = jwt.verify(token,process.env.JWT_SECRET)
+        const admin = await Admin.findById(decodedValue).select("-password")
+        if(!admin){
+            return res.status(200).json({"isLoggedin" : false, "message" : "Admin needs to login"})
+        }
+        return res.status(200).json({"isLoggedin" : true, admin,"message" : "Admin is logged in already!!!"})
+    } catch (error) {
+        return res.status(500).json({"message":"Internal Error"})   
+    }
 }
 
 const adminSpecificCourses = async (req, res) => {
