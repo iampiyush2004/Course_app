@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Card from "../components/card";
+import axios from "axios";
 //import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 //import { faArrowUp,faArrowDown } from '@fortawesome/free-solid-svg-icons';
 
@@ -8,9 +9,11 @@ function Courses() {
   const [priceAsc,setPriceAsc] = useState(false)
   const [ratingAsc,setRatingAsc] = useState(false)
   useEffect(() => {
-    fetch("http://localhost:3000/courses")
-      .then((res) => res.json())
-      .then((res) => setData(res.courses));
+    axios.get("http://localhost:3000/courses")
+      .then((res) => setData(res.data.courses))
+      .catch((error) => {
+        console.error("Error fetching data:", error); 
+      });
   }, []);
 
   return (

@@ -10,7 +10,7 @@ router.get("/", async (req, res) => {
   
   });
 
-  router.get('/:courseId', async (req, res) => {
+router.get('/:courseId', async (req, res) => {
     const courseId = req.params.courseId;
 
     try {

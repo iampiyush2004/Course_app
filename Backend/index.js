@@ -7,15 +7,17 @@ const courseRouter = require("./routes/courses")
 const Course = require("./models/course.model");
 const connectDB = require("./db/index")
 const app = express();
-
+const cookieParser = require('cookie-parser');
 
 app.use(
   cors({
     origin: "http://localhost:5173", 
+    credentials: true 
   })
 );
 
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 
 
