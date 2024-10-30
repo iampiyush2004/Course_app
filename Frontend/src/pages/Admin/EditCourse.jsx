@@ -4,6 +4,7 @@ import Card from '../../components/card';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
 import { Link } from 'react-router-dom';
 import { Context } from '../../Context/Context';
+import axios from 'axios';
 
 const EditCourse = () => {
   const navigate = useNavigate();
@@ -17,29 +18,22 @@ const EditCourse = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const {dataFetcher,changeNotificationData} = useContext(Context)
-
-  let token = localStorage.getItem('token');
   
   const deleteCourse = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/admin/deleteCourse/${val._id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+      const response = await axios.delete(`http://localhost:3000/admin/deleteCourse/${val._id}`, {
+        withCredentials: true
       });
-
-      const result = await response.json();
-      if (response.ok) {
-        dataFetcher(token)
-        changeNotificationData(`${title} Course Deleted Successfully!!!`)
+  
+      if (response.status === 200) {
+        dataFetcher();
+        changeNotificationData(`${title} Course Deleted Successfully!!!`);
         navigate("/adminName/Courses");
       } else {
-        console.log("Error!!!");
+        console.log("Unexpected response:", response);
       }
     } catch (error) {
-      console.log("Error", error);
+      console.error("Error deleting course:", error);
     }
   };
 
@@ -63,29 +57,24 @@ const EditCourse = () => {
   const confirmSaveChanges = async () => {
     const data = { title, description, imageLink, price };
     try {
-      const response = await fetch(`http://localhost:3000/admin/editCourse/${val._id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
+      const response = await axios.put(`http://localhost:3000/admin/editCourse/${val._id}`, data, {
+        withCredentials: true
       });
-
-      if (response.ok) {
-        dataFetcher(token)
-        changeNotificationData(`${title} Course Updated Successfully!!!`)
+  
+      if (response.status === 200) {
+        dataFetcher();
+        changeNotificationData(`${title} Course Updated Successfully!!!`);
         navigate("/adminName/Courses");
-        console.log("edited");
       } else {
-        console.log("Some error took place");
+        console.log("Unexpected response:", response);
       }
     } catch (error) {
-      console.log(error);
+      console.error("Error updating course:", error);
     } finally {
       setIsSaveDialogOpen(false);
     }
   };
+  
 
   const revertChanges = () => {
     setTitle(val.title);
