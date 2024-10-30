@@ -1,38 +1,14 @@
 const Course = require("../models/course.model") 
 const Admin = require("../models/admin.model") 
 
-// const courses = async (req, res) => {
-//   const admin = req.admin
 
-//   try {
-//       const words = token.split(" ");
-//       const jwtToken = words[1];
-//       const decodedValue = jwt.verify(jwtToken, jwt_secret);
+const viewAllCourses = async (req, res) => {
+ 
+  console.log(Course)
+  const response = await Course.find({})
+  res.json({courses : response})
 
-//       const admin = await Admin.findOne({
-//           username: decodedValue.username
-//       });
-
-//       if (!admin) {
-//           return res.status(404).json({ message: "Admin not found" });
-//       }
-
-//       const courses = await Course.find({
-//           _id: {
-//               "$in": admin.createdCourses
-//           }
-//       });
-
-//       if (!courses || courses.length === 0) {
-//           return res.status(404).json({ message: "No courses found" });
-//       }
-
-//       res.json({ courses });
-//   } catch (error) {
-//       console.error("Error fetching courses:", error);
-//       return res.status(500).json({ message: "Internal Server Error" });
-//   }
-// };
+}
 
 const deleteCourse = async (req, res) => {
   const adminId = req.admin?._id
@@ -106,8 +82,25 @@ const editCourse = async (req, res) => {
   }
 };
 
+const viewCourse = async (req, res) => {
+  const courseId = req.params.courseId;
+
+  try {
+      const course = await Course.findById(courseId); 
+      if (!course) {
+          return res.status(404).json({ message: "Course not found." });
+      }
+      res.status(200).json(course); 
+  } catch (error) {
+    console.log(error);
+      res.status(500).json({ message: "Error retrieving course details", error });
+  }
+}
+
 module.exports = {
-  // courses,
+  
+  viewCourse,
+  viewAllCourses,
   deleteCourse,
   editCourse
 }
