@@ -1,17 +1,18 @@
 const { Router } = require("express");
 const adminMiddleware = require("../middleware/admin");
-const tokenMiddleware = require("../middleware/tokenmiddleware");
+const tokenMiddleware = require("../middleware/tokenmiddleware"); 
 const  Admin  = require("../models/admin.model");
 const  Course  = require("../models/course.model");
 const User = require("../models/user.model");
+const Video = require("../models/video.model")
 const router = Router();
 const jwt = require('jsonwebtoken');
-
-
 const {upload} = require('../middleware/multer');
-const { uploadOnCloudinary } = require('../utils/cloudinary');
+const { uploadOnCloudinary , destroy } = require('../utils/cloudinary');
 require('dotenv').config();
 const jwt_secret = process.env.JWT_SECRET;
+
+
 
 router.post('/signup', async (req, res) => {
     const { username, password, name, age, experience, gender, company } = req.body;
@@ -269,9 +270,7 @@ router.get('/teacherInfo', async (req, res) => {
     }
 });
 
-
 router.put('/editProfile', upload.single('avatar'), async (req, res) => {
-    console.log("hi")
     const token = req.headers.authorization;
 
     if (!token) {
@@ -287,7 +286,7 @@ router.put('/editProfile', upload.single('avatar'), async (req, res) => {
 
         const { name, age, experience, gender, company, bio } = req.body;
 
-        // Check if at least one field is provided to update
+      
         if (!name && !age && !experience && !gender && !company && !bio && !req.file) {
             return res.status(400).json({ message: "At least one field is required to update." });
         }
@@ -297,7 +296,7 @@ router.put('/editProfile', upload.single('avatar'), async (req, res) => {
             return res.status(404).json({ message: "Admin not found." });
         }
 
-        // Prepare update fields
+        
         const updateFields = {};
         if (name) updateFields.name = name;
         if (age) updateFields.age = age;
@@ -306,10 +305,17 @@ router.put('/editProfile', upload.single('avatar'), async (req, res) => {
         if (company) updateFields.company = company;
         if (bio) updateFields.bio = bio;
 
-        // Check if there's an avatar file to upload
+        
         if (req.file) {
             const localFilePath = req.file.path;
-            const imageUrl = await uploadOnCloudinary(localFilePath);
+
+           
+            if (admin.avatar) {
+                const publicId = admin.avatar.split('/').pop().split('.')[0]; // Extract public ID
+                await destroy(publicId); 
+            }
+
+            const imageUrl = await uploadOnCloudinary(localFilePath); // Upload new avatar
             updateFields.avatar = imageUrl;
         }
 
@@ -327,39 +333,70 @@ router.put('/editProfile', upload.single('avatar'), async (req, res) => {
     }
 });
 
-router.post('/upload-image', upload.single('avatar'), async (req, res) => {
-    const token = req.headers.authorization;
-
-    if (!token) {
-        return res.status(401).json({ message: "No token provided" });
+router.post('/uploadVideo/:courseId', upload.single('videoFile'), async (req, res) => {
+    const { courseId } = req.params;
+    if (!courseId) {
+        return res.status(400).json({ message: "Course ID is required" });
     }
-
-    const words = token.split(" ");
-    const jwtToken = words[1];
-
     try {
-        // Verify the JWT token and extract the admin ID
-        const decodedValue = jwt.verify(jwtToken, jwt_secret);
-        const adminId = decodedValue._id; // Extract admin ID from decoded token
-
-        const localFilePath = req.file.path; // Get the local path of the uploaded file
-        const imageUrl = await uploadOnCloudinary(localFilePath); // Upload to Cloudinary
-
-        // Update the admin document with the new avatar URL
-        const updatedAdmin = await Admin.findByIdAndUpdate(
-            adminId, // Use the admin ID extracted from the token
-            { avatar: imageUrl }, // Set the avatar to the new Cloudinary URL
-            { new: true } // Return the updated document
-        );
-
-        if (!updatedAdmin) {
-            return res.status(404).json({ error: "Admin not found" });
+        // Check for Authorization header
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            return res.status(401).json({ message: "No token provided or invalid format" });
         }
 
-        res.status(200).json({ avatarUrl: updatedAdmin.avatar }); // Return the new avatar URL
+        // Extract token
+        const token = authHeader.split(" ")[1];
+        const decoded = jwt.verify(token, jwt_secret);
+
+        const { title, description, duration} = req.body;
+        const owner = decoded._id; // Assuming the token contains the user's ID as `_id`
+
+        // Check if a video file is provided
+        if (!req.file) {
+            return res.status(400).json({ message: "No video file uploaded" });
+        }
+
+        const localFilePath = req.file.path;
+
+        // Upload video to Cloudinary
+        const videoUrl = await uploadOnCloudinary(localFilePath);
+
+        // Create video document in the database
+        const newVideo = new Video({
+            videoFile: videoUrl,
+            thumbnail: '', // Add thumbnail upload if needed
+            owner,
+            title,
+            description,
+            duration,
+            isPublished: true,
+        });
+
+        const savedVideo = await newVideo.save();
+
+        // Update the Course document to include this video
+        const course = await Course.findByIdAndUpdate(
+            courseId,
+            { $push: { videos: savedVideo._id } },
+            { new: true }
+        );
+
+        if (!course) {
+            return res.status(404).json({ message: 'Course not found' });
+        }
+
+        res.status(201).json({
+            message: 'Video uploaded successfully',
+            video: savedVideo,
+            course,
+        });
     } catch (error) {
-        console.error("Error uploading avatar:", error);
-        res.status(500).json({ error: "Failed to upload avatar" });
+        console.error('Error uploading video:', error);
+        if (error.name === "JsonWebTokenError") {
+            return res.status(401).json({ message: "Invalid token" });
+        }
+        res.status(500).json({ message: 'Internal server error while uploading video' });
     }
 });
 

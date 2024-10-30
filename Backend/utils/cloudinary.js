@@ -20,5 +20,8 @@ const uploadOnCloudinary = async (localFilePath) => {
         throw error;
     }
 };
+const destroy = async (publicId) => {
+    return cloudinary.uploader.destroy(publicId);
+};
 
-module.exports = { uploadOnCloudinary };
+module.exports = { uploadOnCloudinary, destroy };
