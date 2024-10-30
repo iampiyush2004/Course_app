@@ -4,6 +4,7 @@ const Course = require("../models/course.model");
 //const {uploadOnCloudinary} = require("../utils/cloudinary")
 const { json } = require("express");
 const { uploadOnCloudinary , destroy } = require('../utils/cloudinary');
+const Video = require("../models/video.model")
 
 const signin = async (req, res) => {
     const { username, password } = req.body;
