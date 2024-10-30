@@ -3,11 +3,11 @@ const mongoose = require('mongoose');
 const videoSchema = new mongoose.Schema({
   videoFile:{
     type : String,
-    required : true
+    //required : true
   },
   thumbnail:{
     type : String,
-    required : true
+    //required : true
   },
   owner:{
     type : mongoose.Schema.Types.ObjectId,
@@ -15,16 +15,16 @@ const videoSchema = new mongoose.Schema({
   },
   title:{
     type : String,
-    required : true,
+    //required : true,
     index : true
   },
   description : {
     type : String,
-    required : true
+   // required : true
   },
   duration : {
     type : Number,
-    required : true
+    
   },
   views : {
     type : Number,
