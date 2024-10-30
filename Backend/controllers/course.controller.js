@@ -4,7 +4,6 @@ const Admin = require("../models/admin.model")
 
 const viewAllCourses = async (req, res) => {
  
-  console.log(Course)
   const response = await Course.find({})
   res.json({courses : response})
 
@@ -92,7 +91,6 @@ const viewCourse = async (req, res) => {
       }
       res.status(200).json(course); 
   } catch (error) {
-    console.log(error);
       res.status(500).json({ message: "Error retrieving course details", error });
   }
 }

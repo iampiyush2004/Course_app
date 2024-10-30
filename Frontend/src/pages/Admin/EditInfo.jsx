@@ -63,7 +63,6 @@ function EditInfo() {
     data.append('bio', bio);
     data.append('gender', gender);
     if (avatar) {
-      console.log(avatar)
       data.append('avatar', avatar); 
     }
 

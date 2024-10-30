@@ -5,6 +5,7 @@ import { useContext } from 'react';
 import SignUp from './SignUp';
 import SignIn from './SignIn';
 import axios from 'axios';
+import useLoggedin from '../../CutsomHook/useLoggedin';
 
 function AdminLogin() {
   const navigate = useNavigate(); 
@@ -19,6 +20,14 @@ function AdminLogin() {
   const [experience,setExperience] = useState('')
   const [gender,setGender] = useState('')
   const [company,setCompany] = useState('')
+  
+  const {isLoggedin} = useLoggedin()
+  // Auto Login Implemented Here
+  useEffect( () => {
+    if(isLoggedin) {
+      navigate('/adminName'); 
+    }
+  },[isLoggedin])
 
   const clear = () => {
     setUsername('')
