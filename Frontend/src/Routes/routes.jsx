@@ -9,6 +9,7 @@ import AdminCourses from '../pages/Admin/AdminCourses'
 import EditCourse from '../pages/Admin/EditCourse'
 import EditInfo from '../pages/Admin/editInfo'
 import Unauthorized from '../pages/Unauthorized'
+import AddVideo from '../pages/Admin/AddVideo'
 export const router = createBrowserRouter([
   {
     path:"/",
@@ -49,6 +50,10 @@ export const router = createBrowserRouter([
       {
         path:"/unauthorized",
         element:<Unauthorized/>
+      },
+      {
+        path:"/adminName/:courseId/add-video",
+        element:<AddVideo/>
       }
     ]
   }
