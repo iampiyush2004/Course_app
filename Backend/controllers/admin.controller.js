@@ -69,7 +69,7 @@ const teacherInfo = async (req, res) => {
       return res.status(404).json({ message: "Admin not found." });
     }
 
-    const admin = await Admin.findById(req.admin._id).populate("createdCourses");
+    const admin = await Admin.findById(req.admin._id).select("-password").populate("createdCourses");
 
     if (!admin) {
       return res.status(404).json({ message: "Admin not found." });

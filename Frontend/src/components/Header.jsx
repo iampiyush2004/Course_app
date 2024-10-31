@@ -9,10 +9,10 @@ export function Header() {
     const {setUserData} = useContext(Context)
     const [isLoggedin,setIsLoggedIn] = useState(false)
     const handleLogout = async () => {
-      console.log("hi")
       await axios.post('http://localhost:3000/admin/logout',null,{
         withCredentials : true
       });
+      localStorage.clear();
       setUserData(null)
       navigate("/")
     };
