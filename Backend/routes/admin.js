@@ -20,7 +20,7 @@ const { signup,
         deleteVideo
         } = require("../controllers/admin.controller")
 
-const { deleteCourse, editCourse} = require("../controllers/course.controller")
+const { deleteCourse, editCourse } = require("../controllers/course.controller")
 //const {upload} = require('../middleware/multer');
 const verifyJwt = require("../middleware/auth.middleware")
 
@@ -53,5 +53,6 @@ router.delete('/deleteCourse/:courseId', verifyJwt, deleteCourse);
 router.put('/editCourse/:courseId', verifyJwt, editCourse);
 
 router.delete('/courses/:courseId/videos/:videoId', verifyJwt, deleteVideo);
+
 
 module.exports = router;
