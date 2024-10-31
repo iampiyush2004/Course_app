@@ -81,6 +81,7 @@ const EditCourse = () => {
     setDescription(val.description);
     setPrice(val.price);
     setImageLink(val.imageLink);
+    navigate(`/adminName/${val._id}/add-video`)
   };
 
   return (
@@ -140,7 +141,7 @@ const EditCourse = () => {
           price={price} 
         />
         <button className="w-full py-3 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition duration-200" onClick={revertChanges}>
-          Revert Changes
+          Add Videos
         </button>
         
         <button className="w-full py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200" onClick={handleEditChange}>
