@@ -27,12 +27,14 @@ function AddVideo() {
   };
 
   const handleSubmit = async(input) => {
-    if(!input.title||!input.thumbnail||!input.video||!input.description) {
+    console.log(input)
+    if(input.title.trim()===""||input.description.trim()===""||!input.videoFile||!input.thumbnailFile) {
       setMessage("All Field Are Required")
+      return
     }
     const formData = new FormData();
-    formData.append('videoFile', input.video); // Assuming videoFile is the file object
-    formData.append('thumbnail', input.thumbnail); // Assuming thumbnailFile is the file object
+    formData.append('videoFile', input.videoFile); // Assuming videoFile is the file object
+    formData.append('thumbnail', input.thumbnailFile); 
     formData.append('title', input.title);
     formData.append('description', input.description);
     // formData.append('duration', duration); 
@@ -40,7 +42,7 @@ function AddVideo() {
       const response = await axios.post(`http://localhost:3000/admin/uploadVideo/${courseId}`,formData,{
         withCredentials: true,
         headers: {
-          'Content-Type': 'multipart/form-data', // Set Content-Type for FormData
+          'Content-Type': 'multipart/form-data', 
         },
       })
       if(response.status === 200){

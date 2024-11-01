@@ -46,7 +46,17 @@ router.get("/isLoggedin",isLoggedin);
 
 router.get('/courses', verifyJwt ,adminSpecificCourses);
 
-router.post('/uploadVideo/:courseId', verifyJwt, upload.single('videoFile'), uploadVideo);
+router.post('/uploadVideo/:courseId', verifyJwt, 
+  upload.fields([
+    { 
+      name: "videoFile",
+      maxCount: 1
+    },
+    {
+      name: "thumbnail",
+      maxCount: 1
+    }
+  ]), uploadVideo);
 
 router.delete('/deleteCourse/:courseId', verifyJwt, deleteCourse);
 
