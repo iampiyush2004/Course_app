@@ -8,7 +8,6 @@ function CourseInfo() {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isReadMore, setIsReadMore] = useState(false);
-
   useEffect(() => {
     const retrieveData = async () => {
       try {
