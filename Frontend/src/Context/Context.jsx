@@ -33,9 +33,10 @@ export const ContextProvider = ({ children }) => {
       });
       localStorage.setItem('data', JSON.stringify(response.data));
       setUserData(response.data);
-      setLoaderdata("")
     } catch (error) {
       console.error('Error:', error);
+    } finally{
+      setLoaderdata("")
     }
   };
 

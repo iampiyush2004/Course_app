@@ -37,11 +37,11 @@ router.post('/logout', verifyJwt, logout);
 
 router.get('/teacherInfo',verifyJwt, teacherInfo);
 
-router.put('/editProfile', verifyJwt, upload.single('avatar'), editProfile);
+router.put('/editProfile', verifyJwt, editProfile);
 
 router.post('/upload-image',verifyJwt, upload.single('avatar'), updateAvatar);
 
-router.post('/createCourse',verifyJwt, createCourse);
+router.post('/createCourse',verifyJwt, upload.single('imageLink'),createCourse);
 
 router.get("/isLoggedin",isLoggedin);
 

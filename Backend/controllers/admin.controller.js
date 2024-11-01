@@ -92,8 +92,7 @@ const editProfile = async (req, res) => {
         const adminId = req.admin._id; // Get admin ID from verified token in middleware
         const { name, age, experience, gender, company, bio } = req.body;
 
-        // Check if at least one field is provided for the update
-        if (!name && !age && !experience && !gender && !company && !bio && !req.file) {
+        if (!name && !age && !experience && !gender && !company && !bio) {
             return res.status(400).json({ message: "At least one field is required to update." });
         }
 
@@ -111,21 +110,6 @@ const editProfile = async (req, res) => {
         if (company) updateFields.company = company;
         if (bio) updateFields.bio = bio;
 
-        // If a new avatar file is provided, handle Cloudinary upload and update
-        if (req.file) {
-            const localFilePath = req.file.path;
-
-            // Delete the existing avatar from Cloudinary if present
-            if (admin.avatar) {
-                const publicId = admin.avatar.split('/').pop().split('.')[0];
-                await destroy(publicId);
-            }
-
-            // Upload new avatar and add to update fields
-            const imageUrl = await uploadOnCloudinary(localFilePath);
-            updateFields.avatar = imageUrl;
-        }
-
         // Update admin profile
         const updatedAdminProfile = await Admin.findByIdAndUpdate(adminId, {
             $set: updateFields
@@ -142,74 +126,89 @@ const editProfile = async (req, res) => {
 };
 
 const updateAvatar = async (req, res) => {
-  const token = req.headers.authorization;
+    const adminId = req.admin?._id
+    if(!adminId) {
+        return res.status(401).json({
+            message : "Unauthorized Access!!!"
+        })
+    }
+    try {
+        const localFilePath = req.file.path; // Get the local path of the uploaded file
+        const imageUrl = await uploadOnCloudinary(localFilePath); // Upload to Cloudinary
+        if(!imageUrl) {
+            return res.status(500).json({
+                message : "Internal Server Error in Uploading Video to Cloudinary"
+            })
+        }
+      
+        const updatedAdmin = await Admin.findByIdAndUpdate(
+            adminId, // Use the admin ID extracted from the token
+            { avatar: imageUrl }, // Set the avatar to the new Cloudinary URL
+            { new: true } // Return the updated document
+        );
 
-  if (!token) {
-      return res.status(401).json({ message: "No token provided" });
-  }
+        if (!updatedAdmin) {
+            return res.status(404).json({ error: "Admin not found" });
+        }
 
-  const words = token.split(" ");
-  const jwtToken = words[1];
-
-  try {
-      // Verify the JWT token and extract the admin ID
-      const decodedValue = jwt.verify(jwtToken, process.env.JWT_SECRET);
-      const adminId = decodedValue._id; // Extract admin ID from decoded token
-
-      const localFilePath = req.file.path; // Get the local path of the uploaded file
-      const imageUrl = await uploadOnCloudinary(localFilePath); // Upload to Cloudinary
-
-      // Update the admin document with the new avatar URL
-      const updatedAdmin = await Admin.findByIdAndUpdate(
-          adminId, // Use the admin ID extracted from the token
-          { avatar: imageUrl }, // Set the avatar to the new Cloudinary URL
-          { new: true } // Return the updated document
-      );
-
-      if (!updatedAdmin) {
-          return res.status(404).json({ error: "Admin not found" });
-      }
-
-      res.status(200).json({ avatarUrl: updatedAdmin.avatar }); // Return the new avatar URL
-  } catch (error) {
-      console.error("Error uploading avatar:", error);
-      res.status(500).json({ error: "Failed to upload avatar" });
-  }
+        res.status(200).json({ avatarUrl: updatedAdmin.avatar }); // Return the new avatar URL
+    } catch (error) {
+        console.error("Error uploading avatar:", error);
+        res.status(500).json({ error: "Failed to upload avatar" });
+    }
 };
 
 const createCourse = async (req, res) => {
-  const adminId = req.admin?._id
-  if(!adminId) {
-    return res.status(401,"Unauthorised Access!!!")
-  }
-  try {
-      const { title, description, imageLink, price } = req.body;
-      if (!title || !description || !imageLink || !price) {
-          return res.status(400).json({ message: "All fields are required." });
-      }
+    const adminId = req.admin?._id;
 
-      const newCourse = await Course.create({
-          title,
-          description,
-          imageLink,
-          price,
-          teacher : adminId
-      });
+    if (!adminId) {
+        return res.status(401).json({
+        message: "Unauthorized Access!!!"
+        });
+    }
 
-      await Admin.findByIdAndUpdate(adminId, {
-          $push: { createdCourses: newCourse._id }
-      });
+    try {
+        const { title, shortDescription, detailedDescription, price } = req.body;
 
-      res.status(200).json({
-          adminId,
-          message: "Course created successfully!",
-          courseId: newCourse._id
-      });
-  } catch (error) {
-      console.error("Error creating course:", error);
-      res.status(500).json({ message: "Internal server error while creating course." });
-  }
+        if (!title || !shortDescription || !detailedDescription || !price || !req.file || !req.file.path) {
+            return res.status(400).json({ message: "All fields are required." });
+        }
+
+        const imageLink = await uploadOnCloudinary(req.file.path);
+        if (!imageLink) {
+            return res.status(500).json({
+                message: "Internal Server Error while uploading to Cloudinary!!!"
+            });
+        }
+
+        // Create new course
+        const newCourse = await Course.create({
+            title,
+            description : shortDescription,
+            bio : detailedDescription,
+            imageLink,
+            price,
+            teacher: adminId
+        });
+
+        // Update admin with the new course
+        await Admin.findByIdAndUpdate(adminId, {
+            $push: { createdCourses: newCourse._id }
+        });
+
+        // Send success response
+        res.status(200).json({
+            adminId,
+            message: "Course created successfully!",
+            courseId: newCourse._id
+        });
+
+    } catch (error) {
+        console.error("Error creating course:", error);
+        res.status(500).json({ message: "Internal server error while creating course." });
+    }
 };
+  
 
 const isLoggedin = async(req, res) => {
     const token = req.cookies?.token
