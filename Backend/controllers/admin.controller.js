@@ -260,39 +260,42 @@ const adminSpecificCourses = async (req, res) => {
 
 const uploadVideo = async (req, res) => {
     const { courseId } = req.params;
+    const { title, description, duration } = req.body;
+
     if (!courseId) {
         return res.status(400).json({ message: "Course ID is required" });
     }
-    
-    try {
-        // Access the authenticated admin's ID from the `verifyJwt` middleware
-        const owner = req.admin._id; // Use `req.admin` set by `verifyJwt`
 
-        // Check if a video file is provided
-        if (!req.file) {
-            return res.status(400).json({ message: "No video file uploaded" });
+    try {
+        const owner = req.admin._id; 
+
+        if (!req.files || !req.files.videoFile || !req.files.thumbnail) {
+            return res.status(400).json({ message: "Both video and thumbnail files are required" });
         }
 
-        const localFilePath = req.file.path;
+        const videoFileUrl = await uploadOnCloudinary(req.files.videoFile[0].path);
+        if (!videoFileUrl) {
+            return res.status(500).json({ message: "Failed to upload video to Cloudinary" });
+        }
 
-        // Upload video to Cloudinary
-        const videoUrl = await uploadOnCloudinary(localFilePath);
+        const thumbnailUrl = await uploadOnCloudinary(req.files.thumbnail[0].path);
+        if (!thumbnailUrl) {
+            return res.status(500).json({ message: "Failed to upload thumbnail to Cloudinary" });
+        }
 
-        // Create video document in the database
         const newVideo = new Video({
-            videoFile: videoUrl,
-            thumbnail: '', // Add thumbnail upload if needed
-            createdBy: owner, // Updated to `createdBy`
-            title: req.body.title,
-            description: req.body.description,
-            duration: req.body.duration,
+            videoFile: videoFileUrl,
+            thumbnail: thumbnailUrl,
+            createdBy: owner,
+            title,
+            description,
+            duration,
             isPublished: true,
-            belongsTo: courseId, // Set the course ID here
+            belongsTo: courseId,
         });
 
         const savedVideo = await newVideo.save();
 
-        // Update the Course document to include this video
         const course = await Course.findByIdAndUpdate(
             courseId,
             { $push: { videos: savedVideo._id } },
@@ -303,7 +306,7 @@ const uploadVideo = async (req, res) => {
             return res.status(404).json({ message: 'Course not found' });
         }
 
-        res.status(201).json({
+        res.status(200).json({
             message: 'Video uploaded successfully',
             video: savedVideo,
             course,
