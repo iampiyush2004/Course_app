@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Loading from '../../components/Loading';
 
 function CourseInfo() {
@@ -9,6 +9,7 @@ function CourseInfo() {
   const [isLoading, setIsLoading] = useState(true);
   const [isReadMore, setIsReadMore] = useState(false);
   const [teacherdata,setTeacherData] = useState(null)
+  const navigate = useNavigate()
   // const retrieveTeacherData = (teacher_id) => {
   //   try {
   //     const response = axios.get(`http://localhost:3000/${teacher_id}`,{
@@ -49,6 +50,10 @@ function CourseInfo() {
   const handleReadMore = () => {
     setIsReadMore(!isReadMore);
   };
+  
+  const handleBuyNow = () => {
+    
+  }
 
   const words = data ? data.bio.split(' ') : [];
   const displayBio = isReadMore ? data.bio : words.slice(0, 50).join(' ') + (words.length > 50 ? '...' : '');
@@ -80,48 +85,54 @@ function CourseInfo() {
             {/* Videos Section */}
             <div className='bg-gray-50 p-5 rounded-lg flex flex-col w-full'>
               <h3 className='text-2xl font-bold text-gray-700 mb-4'>Course RoadMap</h3>
-              {
-                data.videos.length?(
-                  <div className='flex flex-col w-full max-h-80 overflow-y-auto'> {/* Fixed height and scrollable */}
-                    {data.videos.map((val, index) => (
-                      <div key={index} className='flex justify-start items-center gap-x-10 w-full mb-3 border border-zinc-900 rounded-md p-2 bg-gray-100'>
-                        <img src={val.thumbnail} alt={val.description} className='w-1/3 h-28 rounded-md shadow-md' />
-                        <div>
-                          <div className='text-left text-black font-semibold text-xl'>{val.title}</div>
-                          <div className='text-gray-500'>{val.description}</div>
-                        </div>
+              {data.videos.length ? (
+                <div className='flex flex-col w-full max-h-80 overflow-y-auto'> {/* Fixed height and scrollable */}
+                  {data.videos.map((val, index) => (
+                    <div key={index} className='flex justify-start items-center gap-x-10 w-full mb-3 border border-zinc-900 rounded-md p-2 bg-gray-100'>
+                      <img src={val.thumbnail} alt={val.description} className='w-1/3 h-28 rounded-md shadow-md' />
+                      <div>
+                        <div className='text-left text-black font-semibold text-xl'>{val.title}</div>
+                        <div className='text-gray-500'>{val.description}</div>
                       </div>
-                    ))}
-                  </div>
-                ):(
-                  <div>No Videos Available!!</div>
-                )
-              }
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div>No Videos Available!!</div>
+              )}
             </div>
 
             {/* Review Section */}
-            <div className='mt-6'>
+            <div className='mt-6 bg-gray-50 p-5 rounded-lg w-full'>
               <h2 className='text-2xl font-bold text-gray-800 mb-4'>Reviews</h2>
               {data.reviews.length ? (
-                data.reviews.map((review, index) => (
-                  <div key={index} className='border border-gray-200 rounded-lg p-4 mb-4 flex items-start'>
-                    <img 
-                      src={review.avatar} 
-                      alt={review.user} 
-                      className='w-10 h-10 rounded-full mr-4' 
-                    />
-                    <div className='flex-1'>
-                      <div className='font-semibold text-gray-800'>{review.user}</div>
-                      <div className='text-gray-600'>{review.data}</div>
+                <>
+                  {data.reviews.slice(0, 5).map((review, index) => (
+                    <div key={index} className='border border-gray-200 rounded-lg p-4 mb-4 flex items-start'>
+                      <img 
+                        src={review.avatar} 
+                        alt={review.user} 
+                        className='w-10 h-10 rounded-full mr-4' 
+                      />
+                      <div className='flex-1'>
+                        <div className='font-semibold text-gray-800'>{review.user}</div>
+                        <div className='text-gray-600'>{review.data}</div>
+                      </div>
                     </div>
-                  </div>
-                ))
+                  ))}
+                  {data.reviews.length > 5 && (
+                    <button 
+                      onClick={handleLoadMore} 
+                      className='mt-4 text-blue-500 hover:underline'
+                    >
+                      Load More Reviews
+                    </button>
+                  )}
+                </>
               ) : (
                 <div className='text-gray-600'>No Reviews Yet</div>
               )}
             </div>
-
-            
           </div>
 
           {/* right part  */}
@@ -159,7 +170,7 @@ function CourseInfo() {
             </div>
 
             
-            <button className='w-full bg-blue-500 text-white font-semibold py-3 rounded-md hover:bg-blue-600 transition duration-200 shadow-md'>
+            <button className='w-full bg-blue-500 text-white font-semibold py-3 rounded-md hover:bg-blue-600 transition duration-200 shadow-md' onClick={()=>navigate(`/courses/${course_id}/videos/123`)}>
               Buy Now
             </button>
           </div>
