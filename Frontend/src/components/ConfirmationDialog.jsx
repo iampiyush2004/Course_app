@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ConfirmationDialog = ({ isOpen, onClose, onConfirm, title, message }) => {
+const ConfirmationDialog = ({ isOpen, onClose, onConfirm, title, message,option1 = "No",option2 = "yes" }) => {
     if (!isOpen) return null;
 
     return (
@@ -13,13 +13,13 @@ const ConfirmationDialog = ({ isOpen, onClose, onConfirm, title, message }) => {
                         className="mr-2 px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
                         onClick={onClose}
                     >
-                        No
+                        {option1}
                     </button>
                     <button
                         className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
                         onClick={onConfirm}
                     >
-                        Yes
+                        {option2}
                     </button>
                 </div>
             </div>
