@@ -86,7 +86,7 @@ const viewCourse = async (req, res) => {
   const courseId = req.params.courseId;
 
   try {
-      const course = await Course.findById(courseId); 
+      const course = await Course.findById(courseId).populate("videos"); 
       if (!course) {
           return res.status(404).json({ message: "Course not found." });
       }

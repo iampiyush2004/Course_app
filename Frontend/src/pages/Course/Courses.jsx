@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import Card from "../components/card";
+import Card from "../../components/card";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Courses() {
   const [data, setData] = useState([]);
@@ -8,7 +9,7 @@ function Courses() {
   const [priceAsc, setPriceAsc] = useState(false);
   const [ratingAsc, setRatingAsc] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-
+  const navigate = useNavigate()
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -49,6 +50,10 @@ function Courses() {
     setPriceAsc(false); // Reset price sort
   };
 
+  const handleClick = (id) => {
+    navigate(`/courses/${id}`)
+  }
+
   return (
     <div className="py-10 px-4 max-w-7xl mx-auto">
       <h1 className="text-4xl font-bold text-center mb-8">Available Courses</h1>
@@ -83,6 +88,7 @@ function Courses() {
               imageLink={val.imageLink} 
               price={val.price} 
               buttonText={"Enroll Now"}
+              handleClick = {() => handleClick(val._id)}
             />
           ))}
         </div>
