@@ -96,30 +96,38 @@ const viewCourse = async (req, res) => {
   }
 }
 
-const getVideosByCourse =  async (req, res) => {
-  const { courseId } = req.params;
+const getVideosByCourse = async (req, res) => {
+    const { courseId } = req.params;
 
-  // Validate courseId format
-  if (!mongoose.Types.ObjectId.isValid(courseId)) {
-      return res.status(400).json({ message: "Invalid Course ID format" });
-  }
+    // Validate courseId format
+    if (!mongoose.Types.ObjectId.isValid(courseId)) {
+        return res.status(400).json({ message: "Invalid Course ID format" });
+    }
 
-  try {
-      // Find the course and populate its videos
-      const course = await Course.findById(courseId).populate('videos');
+    try {
+        // Find the course and populate its videos and the teacher (admin) information
+        const course = await Course.findById(courseId)
+            .populate({
+                path: 'videos',
+                populate: {
+                    path: 'createdBy', // Assuming 'createdBy' is the field that references the Admin schema
+                    select: 'name' // Only select the name field from Admin
+                }
+            });
 
-      // Check if the course exists
-      if (!course) {
-          return res.status(404).json({ message: 'Course not found' });
-      }
+        // Check if the course exists
+        if (!course) {
+            return res.status(404).json({ message: 'Course not found' });
+        }
 
-      // Return the videos array from the course
-      res.status(200).json(course.videos);
-  } catch (error) {
-      console.error('Error fetching videos:', error);
-      res.status(500).json({ message: 'Internal server error while fetching videos' });
-  }
+        // Return the videos array from the course, now including teacher info
+        res.status(200).json(course.videos);
+    } catch (error) {
+        console.error('Error fetching videos:', error);
+        res.status(500).json({ message: 'Internal server error while fetching videos' });
+    }
 }
+
 
 const getSpecificVideo = async (req, res) => {
   const { courseId, videoId } = req.params;

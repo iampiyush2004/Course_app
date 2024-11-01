@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const CourseSchema = new mongoose.Schema({
   title: String,
   description : String,
+  bio : String,
   imageLink : String, 
   price : Number,
   isCompleted : Boolean,
@@ -23,3 +24,5 @@ const CourseSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model("Course",CourseSchema)
+
+
