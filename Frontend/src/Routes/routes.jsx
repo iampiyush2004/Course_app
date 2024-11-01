@@ -2,7 +2,7 @@ import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } 
 import Home from '../pages/Home'
 import Layout from '../Layout'
 import AdminLogin from '../pages/Admin/AdminLogin'
-import Courses from '../pages/Courses'
+import Courses from '../pages/Course/Courses'
 import Admin from '../pages/Admin/Admin'
 import AddCourse from '../pages/Admin/AddCourse'
 import AdminCourses from '../pages/Admin/AdminCourses'
@@ -10,6 +10,7 @@ import EditCourse from '../pages/Admin/EditCourse'
 import EditInfo from '../pages/Admin/editInfo'
 import Unauthorized from '../pages/Unauthorized'
 import AddVideo from '../pages/Admin/AddVideo'
+import CourseInfo from '../pages/Course/CourseInfo'
 export const router = createBrowserRouter([
   {
     path:"/",
@@ -54,6 +55,10 @@ export const router = createBrowserRouter([
       {
         path:"/adminName/:courseId/add-video",
         element:<AddVideo/>
+      },
+      {
+        path:"courses/:course_id",
+        element:<CourseInfo/>
       }
     ]
   }
