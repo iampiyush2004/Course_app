@@ -17,7 +17,8 @@ const { signup,
         isLoggedin,
         adminSpecificCourses,
         uploadVideo,
-        deleteVideo
+        deleteVideo,
+        teacherPage
         } = require("../controllers/admin.controller")
 
 const { deleteCourse, editCourse } = require("../controllers/course.controller")
@@ -64,5 +65,6 @@ router.put('/editCourse/:courseId', verifyJwt, editCourse);
 
 router.delete('/courses/:courseId/videos/:videoId', verifyJwt, deleteVideo);
 
+router.get('/:id', teacherPage);
 
 module.exports = router;
