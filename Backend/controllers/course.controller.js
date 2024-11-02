@@ -107,7 +107,7 @@ const getVideosByCourse = async (req, res) => {
     try {
         // Find the course and populate its videos and the teacher (admin) information
         const course = await Course.findById(courseId)
-            .populate("videos");
+            .populate("videos").populate("teacher");
 
         // Check if the course exists
         if (!course) {
