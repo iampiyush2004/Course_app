@@ -17,7 +17,8 @@ const signin = async (req, res) => {
             res.setHeader('Authorization', `Bearer ${token}`);
             const options = {
               httpOnly : true,
-              secure : false
+              secure : false,
+              maxAge: 30 * 24 * 60 * 60 * 1000 
             }
             return res
             .status(200)
