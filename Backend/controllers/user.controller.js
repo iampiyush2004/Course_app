@@ -67,4 +67,36 @@ const logout = async (req,res) => {
     })
 }
 
-module.exports = {signin , signup , logout}
+
+const myCourses = async (req, res) => {
+    try {
+        // Access authenticated user from `verifyJwt` middleware
+        const user = req.user;
+
+        // Log the user object for debugging
+        console.log("Authenticated User:", user);
+
+        // Check if user has purchased courses
+        if (!user || !user.coursePurchased || user.coursePurchased.length === 0) {
+            return res.status(404).json({ message: "No purchased courses found" });
+        }
+
+        // Find courses purchased by this user
+        const courses = await Course.find({
+            _id: { "$in": user.coursePurchased }
+        });
+
+        if (!courses || courses.length === 0) {
+            return res.status(404).json({ message: "No courses found" });
+        }
+
+        // Return the purchased courses
+        res.json({ courses });
+    } catch (error) {
+        console.error("Error fetching purchased courses:", error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+
+module.exports = {signin , signup , logout , myCourses}
