@@ -1,76 +1,69 @@
 const mongoose = require('mongoose');
-const jwt = require("jsonwebtoken")
-const bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const UserSchema = new mongoose.Schema({
-  userName : {
-    type : String,
-    required : true,
-    unique : true,
-    lowercase : true,
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
     index: true
   },
-  email : {
-    type : String,
-    required : true,
-    unique : true,
-    lowercase : true
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true
   },
-  fullName : {
-    type : String,
-    required : true
+  fullName: {
+    type: String,
+    required: true
   },
-  password : {
-    type : String,
-    required : true,
-  },
-  dob : {
-    type : String,
-    required : true
-  },
-  gender : {
-    type : String,
-    enum : ['male','femal','others']
-  },
-  avatar: {
-    type: String, 
+  password: {
+    type: String,
     required: true,
   },
-  institution : {
-    type : String,
+  dob: {
+    type: String,
+    required: true
   },
-  // bio : {
-  //   type : String,
-  //   default : ""
-  // },
-  // courseCreated : [{
-  //   type : mongoose.Schema.Types.ObjectId,
-  //   ref : "Course"
-  // }],
-  coursePurchased : [{
-    type : mongoose.Schema.Types.ObjectId,
-    ref : "Course"
+  gender: {
+    type: String,
+    enum: ['male', 'female', 'others']
+  },
+  avatar: {
+    type: String,
+    required: true,
+  },
+  institution: {
+    type: String,
+  },
+  coursePurchased: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Course"
   }]
-})
+});
 
-UserSchema.pre("save",async(next) => {
-  if(!modified(this.password)) return next()
-  this.password = await bcrypt.hash(this.password, 10)
-  return next()
-})
+// Hash password before saving
+UserSchema.pre("save", async function(next) {
+  if (!this.isModified("password")) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
 
 UserSchema.methods.isPasswordCorrect = async function(password) {
-  return await bcrypt.compare(this.password,password)
-}
+  return await bcrypt.compare(password, this.password);
+};
 
-UserSchema.methods.generateToken = async function() {
+UserSchema.methods.generateToken = function() {
   return jwt.sign(
     {
       _id: this._id,
-      email: this.email,   
+      email: this.email,
     },
-    process.env.JWT_SECRET,
-  )
-}
+    process.env.JWT_SECRET
+  );
+};
 
-module.exports = mongoose.model("User",UserSchema)
+module.exports = mongoose.model("User", UserSchema);

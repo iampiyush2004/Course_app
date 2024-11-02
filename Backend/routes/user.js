@@ -1,52 +1,12 @@
 const { Router } = require("express");
 const router = Router();
-const userMiddleware = require("../middleware/user");
+const verifyJwt = require("../middleware/authUser.middleware")
+const {signin , signup , logout} = require("../controllers/user.controller")
 
-// User Routes
-router.post('/signup', async(req, res) => {
-    //  user signup 
-    const username = req.body.username;
-    const password = req.body.password;
+router.post('/signup', signup);
 
-    await Admin.create({
-        username : username,
-        password : password
-    })
-    res.json({
-        message : 'Admin created successfully!'
-    })
-});
+router.post('/signin', signin);
 
-router.post('/signin', (req, res) => {
-    //  admin signup 
-});
-
-router.get('/courses', (req, res) => {
-    //  listing all courses 
-});
-
-router.post('/courses/:courseId',  (req, res) => {
-    //  course purchase 
-    const courseId = req.params.courseId;
-    const username = req.headers.username;
-
-    User.updateOne({
-        username : username
-    },{
-        "$push": {
-            purchasedCourses : courseId
-        }
-    }).catch((e) => {
-        console.log(e);
-    });
-    res.json({
-        message : "Purchase Complete!"
-    })
-
-});
-
-router.get('/purchasedCourses', userMiddleware, (req, res) => {
-    //  fetching purchased courses 
-});
+router.post('/logout', verifyJwt, logout);
 
 module.exports = router
