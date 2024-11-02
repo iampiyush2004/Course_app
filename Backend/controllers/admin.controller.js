@@ -127,23 +127,40 @@ const editProfile = async (req, res) => {
 };
 
 const updateAvatar = async (req, res) => {
-    const adminId = req.admin?._id
-    if(!adminId) {
+    const adminId = req.admin?._id;
+    if (!adminId) {
         return res.status(401).json({
-            message : "Unauthorized Access!!!"
-        })
+            message: "Unauthorized Access!!!"
+        });
     }
+
     try {
-        const localFilePath = req.file.path; // Get the local path of the uploaded file
-        const imageUrl = await uploadOnCloudinary(localFilePath); // Upload to Cloudinary
-        if(!imageUrl) {
-            return res.status(500).json({
-                message : "Internal Server Error in Uploading Video to Cloudinary"
-            })
+        // Find the admin to get the current avatar details
+        const currentAdmin = await Admin.findById(adminId);
+        if (!currentAdmin) {
+            return res.status(404).json({ error: "Admin not found" });
         }
-      
+
+        // Get the local path of the uploaded file
+        const localFilePath = req.file.path;
+        const imageUrl = await uploadOnCloudinary(localFilePath); // Upload to Cloudinary
+
+        if (!imageUrl) {
+            return res.status(500).json({
+                message: "Internal Server Error in Uploading Video to Cloudinary"
+            });
+        }
+
+        // If there is an existing avatar, delete it from Cloudinary
+        if (currentAdmin.avatar) {
+            // Assuming the avatar URL is in the format: https://res.cloudinary.com/demo/image/upload/v1623672119/sample.jpg
+            const publicId = currentAdmin.avatar.split('/').pop().split('.')[0]; // Get the public ID from the URL
+            await destroy(publicId); // Delete the old avatar
+        }
+
+        // Update the admin with the new avatar URL
         const updatedAdmin = await Admin.findByIdAndUpdate(
-            adminId, // Use the admin ID extracted from the token
+            adminId,
             { avatar: imageUrl }, // Set the avatar to the new Cloudinary URL
             { new: true } // Return the updated document
         );
@@ -154,10 +171,11 @@ const updateAvatar = async (req, res) => {
 
         res.status(200).json({ avatarUrl: updatedAdmin.avatar }); // Return the new avatar URL
     } catch (error) {
-        console.error("Error uploading avatar:", error);
+        console.error("Error updating avatar:", error);
         res.status(500).json({ error: "Failed to upload avatar" });
     }
 };
+
 
 const createCourse = async (req, res) => {
     const adminId = req.admin?._id;
