@@ -61,7 +61,7 @@ function CourseInfo() {
         <div className='flex px-20 py-2 gap-x-10'>
           <div className='w-3/5 bg-white rounded-lg shadow-lg p-6 flex flex-col items-center gap-y-8'>
             <div className='bg-gray-50 p-5 rounded-lg flex flex-col items-center w-full'>
-              <img src={data.imageLink} alt={data.title} className='w-10/12 rounded-md mb-4 shadow-md' />
+              <img src={data?.imageLink} alt={data?.title} className='w-10/12 rounded-md mb-4 shadow-md' />
               <div className='text-left w-full'>
                 <h2 className='text-lg text-gray-600'>{displayBio}</h2>
               </div>
@@ -77,9 +77,9 @@ function CourseInfo() {
 
             <div className='bg-gray-50 p-5 rounded-lg flex flex-col w-full'>
               <h3 className='text-2xl font-bold text-gray-700 mb-4'>Course RoadMap</h3>
-              {data.videos.length ? (
+              {data?.videos.length ? (
                 <div className='flex flex-col w-full max-h-80 overflow-y-auto'>
-                  {data.videos.map((val, index) => (
+                  {data?.videos.map((val, index) => (
                     <div key={index} className='flex justify-start items-center gap-x-10 w-full mb-3 border border-zinc-900 rounded-md p-2 bg-gray-100'>
                       <img src={val.thumbnail} alt={val.description} className='w-1/3 h-28 rounded-md shadow-md' />
                       <div>
@@ -96,9 +96,9 @@ function CourseInfo() {
 
             <div className='mt-6 bg-gray-50 p-5 rounded-lg w-full'>
               <h2 className='text-2xl font-bold text-gray-800 mb-4'>Reviews</h2>
-              {data.reviews.length ? (
+              {data?.reviews.length ? (
                 <>
-                  {data.reviews.slice(0, 5).map((review, index) => (
+                  {data?.reviews.slice(0, 5).map((review, index) => (
                     <div key={index} className='border border-gray-200 rounded-lg p-4 mb-4 flex items-start'>
                       <img 
                         src={review.avatar} 
@@ -127,35 +127,35 @@ function CourseInfo() {
           </div>
 
           <div className='w-1/3 bg-white rounded-lg shadow-lg p-8 fixed top-28 right-10'>
-            <h1 className='text-4xl font-bold text-gray-800 mb-2'>{data.title}</h1>
-            <h2 className='text-xl text-gray-600 mb-6'>{data.description}</h2>
+            <h1 className='text-4xl font-bold text-gray-800 mb-2'>{data?.title}</h1>
+            <h2 className='text-xl text-gray-600 mb-6'>{data?.description}</h2>
             
             <div className='mb-6 border-t border-gray-200 pt-4 flex items-center'>
               <img 
-                src={data.teacher.avatar} 
-                alt={data.teacher.name} 
+                src={data?.teacher.avatar} 
+                alt={data?.teacher.name} 
                 className='w-12 h-12 rounded-full mr-3' 
               />
               <p className='text-md text-gray-600 mb-2'>
-                <Link to={`/teacher/${data.teacher._id}`} className='font-bold text-gray-800 text-xl'>
-                  {data.teacher.name ? data.teacher.name : ""}
+                <Link to={`/teacher/${data?.teacher._id}`} className='font-bold text-gray-800 text-xl'>
+                  {data?.teacher.name ? data?.teacher.name : ""}
                 </Link>
               </p>
             </div>
             
             <div className='mb-6 border-t border-gray-200 pt-4'>
               <p className='text-md text-gray-600 mb-2'>
-                Rating: <span className='font-bold text-gray-800'>{data.rating ? data.rating : 3} ⭐</span>
+                Rating: <span className='font-bold text-gray-800'>{data?.rating ? data?.rating : 3} ⭐</span>
               </p>
               <p className='text-md text-gray-600 mb-2'>
-                Total Users Enrolled: <span className='font-bold text-gray-800'>{data.users ? data.users : 45}</span>
+                Total Users Enrolled: <span className='font-bold text-gray-800'>{data?.users ? data?.users : 45}</span>
               </p>
               
             </div>
             
             <div className='mb-6 border-t border-gray-200 pt-4'>
               <div className='text-2xl font-bold text-gray-800 mb-2'>
-                ₹ {data.price.toLocaleString()}
+                ₹ {data?.price.toLocaleString()}
               </div>
             </div>
             
