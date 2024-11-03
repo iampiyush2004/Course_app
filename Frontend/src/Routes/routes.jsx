@@ -15,6 +15,7 @@ import CourseInfo from '../pages/Course/CourseInfo'
 import Login from '../pages/Login'
 import TeacherInfo from '../pages/TeacherInfo'
 import UserLogin from '../pages/User/UserLogin'
+import Profile from '../pages/User/Profile'
 export const router = createBrowserRouter([
   {
     path:"/",
@@ -79,6 +80,11 @@ export const router = createBrowserRouter([
       {
         path:"student-login",
         element:<UserLogin/>
+      },
+      // user
+      {
+        path:"user/profile",
+        element:<Profile/>
       }
     ]
   }

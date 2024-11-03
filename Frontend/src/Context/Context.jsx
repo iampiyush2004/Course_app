@@ -4,7 +4,8 @@ import useLoggedin from "../CutsomHook/useLoggedin";
 
 
 export const Context = createContext({
-  dataFetcher: () => {},
+  // admin
+  dataFetcher: () => {},  
   userData: null,
   setUserData: () => {},
   notificationData:"",
@@ -12,7 +13,12 @@ export const Context = createContext({
   loaderData:"",
   changeLoaderData: () => {},
   isLoggedIn:null,
-  checkAdmin:() => {}
+  checkAdmin:() => {},
+  // user
+  isStudentLoggedIn:null,
+  checkStudent: () => {},
+  studentData : null,
+  studentDataFetcher : () => {}
 });
 
 export const ContextProvider = ({ children }) => {
@@ -20,6 +26,10 @@ export const ContextProvider = ({ children }) => {
   const [notificationData,setNotificationData] = useState("")
   const [loaderData,setLoaderdata] = useState("")
   const [isLoggedIn,setIsLoggedIn] = useState(null)
+
+  // user
+  const [isStudentLoggedIn,setStudentLoggedIn] = useState(null)
+  const [studentData,setStudentData] = useState(null)
 
   const changeNotificationData = (data) => {
     setNotificationData(data)
@@ -50,7 +60,7 @@ export const ContextProvider = ({ children }) => {
           withCredentials: true
       });
       if (response.status === 200) {
-          if(response.data.isLoggedin === true) setIsLoggedIn(true);
+          if(response.data.isLoggedin === true) setIsLoggedIn(true),setStudentLoggedIn(false);
           else setIsLoggedIn(false)
       } else {
           setIsLoggedIn(false);
@@ -62,19 +72,50 @@ export const ContextProvider = ({ children }) => {
   }
 
   useEffect(() => {
-      checkAdmin();
-  }, []); 
-
-  useEffect(() => {
-    console.log("fetchin data from local storage")
-    const savedUserData = localStorage.getItem('userData');
+    const savedUserData = localStorage.getItem('data'); 
     if (savedUserData) {
       setUserData(JSON.parse(savedUserData));
     }
   }, [localStorage]); 
 
+  useEffect(() => {
+    checkAdmin();
+  }, []); 
+
+  
+  // student start
+  
+  const checkStudent = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/user/loggedin",{
+        withCredentials:true
+      })
+      if(response.status===200){
+        setStudentLoggedIn(response.data.isLoggedin)
+        if(response.data.isLoggedin===true) {
+          localStorage.setItem("user",JSON.stringify(response.data.user))
+          setIsLoggedIn(false)
+        }
+      } else setStudentLoggedIn(false)
+    } catch (error) {
+      console.error(error)
+      setStudentLoggedIn(false)
+    }
+  }
+
+  useEffect( () => {
+    const data = localStorage.getItem("user") 
+    if(data){
+      setStudentData(data)
+    }
+  },[localStorage])
+
+  useEffect(() => {
+    checkStudent();
+  }, []); 
+
   return (
-    <Context.Provider value={{ dataFetcher, userData ,setUserData, notificationData, changeNotificationData, loaderData, changeLoaderData, isLoggedIn, checkAdmin }}>
+    <Context.Provider value={{ dataFetcher, userData ,setUserData, notificationData, changeNotificationData, loaderData, changeLoaderData, isLoggedIn, checkAdmin, isStudentLoggedIn, checkStudent}}>
       {children}
     </Context.Provider>
   );

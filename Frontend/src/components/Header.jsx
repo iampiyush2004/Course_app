@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Context } from '../Context/Context';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios"
@@ -7,31 +7,45 @@ import UserDropdown from './UserDropdown';
 
 export function Header() {
     const navigate = useNavigate(); 
-    const {setUserData, isLoggedIn, checkAdmin, dataFetcher} = useContext(Context)
+    const {setUserData, isLoggedIn, checkAdmin, dataFetcher, isStudentLoggedIn, checkStudent} = useContext(Context)
     const [data,setData] = useState(null)
-    const handleLogout = async () => {
-      await axios.post('http://localhost:3000/admin/logout',null,{
-        withCredentials : true
-      });
-      localStorage.clear();
-      checkAdmin()
-      setUserData(null)
-      navigate("/")
-    };
 
     useEffect(()=>{
         if(!isLoggedIn) return
         const localdata = localStorage.getItem("data")
-        console.log(JSON.parse(localdata))
         setData(JSON.parse(localdata))
     },[dataFetcher])
+
+    useEffect( () => {
+        if(!isStudentLoggedIn) return;
+        const localdata = localStorage.getItem("user")
+        setData(JSON.parse(localdata))
+    }, [checkStudent])
 
     const redirectCourses = () => {
         navigate("/adminName/courses")
     }
     const redirectProfile = () => {
-        navigate("/adminName")
+        if(isLoggedIn) navigate("/adminName")
+        if(isStudentLoggedIn) navigate("/user/profile")
     }
+    const handleLogout = async () => {
+        if(isLoggedIn){
+            await axios.post('http://localhost:3000/admin/logout',null,{
+                withCredentials : true
+            });
+            checkAdmin()
+            setUserData(null)
+        }
+        if(isStudentLoggedIn){
+            await axios.post("http://localhost:3000/user/logout",{},{
+                withCredentials : true
+            })
+            checkStudent()
+        }
+        localStorage.clear();
+        navigate("/")
+    };
 
     return (
         <header className="">
@@ -53,9 +67,13 @@ export function Header() {
 
                         {
                             isLoggedIn && <UserDropdown data={{ avatar: data?.avatar, name: data?.name }} handleLogout={handleLogout} redirectCourses={redirectCourses} redirectProfile={redirectProfile} />
+                        } 
+
+                        {
+                            isStudentLoggedIn && <UserDropdown data={{ avatar: data?.avatar, name: data?.fullName }} handleLogout={handleLogout} redirectCourses={redirectCourses} redirectProfile={redirectProfile} />
                         }    
 
-                        {!isLoggedIn &&
+                        {!isLoggedIn && !isStudentLoggedIn &&
                         <Link to="/login" title="" className="inline-flex items-center justify-center px-5 py-2.5 text-base font-semibold text-black border-2 border-black hover:bg-green-200 hover:text-white transition-all duration-200  focus:text-white" role="button">
                             Log In
                         </Link>}
