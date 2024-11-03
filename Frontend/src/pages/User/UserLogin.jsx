@@ -1,54 +1,43 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Context } from '../../Context/Context';
-import { useContext } from 'react';
 import SignUp from './SignUp';
 import SignIn from './SignIn';
 import axios from 'axios';
-import useLoggedin from '../../CutsomHook/useLoggedin';
 
-function AdminLogin() {
+function UserLogin() {
   const navigate = useNavigate(); 
   const [hasAccount, setHasAccount] = useState(true);
   const [message, setMessage] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { changeNotificationData, checkAdmin } = useContext(Context);
-  const [name,setName] = useState('')
-  const [age,setAge] = useState('')
-  const [experience,setExperience] = useState('')
-  const [gender,setGender] = useState('')
-  const [company,setCompany] = useState('')
-  
-  const {isLoggedin} = useLoggedin()
-  // Auto Login Implemented Here
-  useEffect( () => {
-    if(isLoggedin) {
-      // dataFetcher()
-      navigate('/adminName'); 
-      checkAdmin()
-    }
-  },[isLoggedin])
+  const { changeNotificationData } = useContext(Context);
+  const [name, setName] = useState('');
+  const [age, setAge] = useState('');
+  const [experience, setExperience] = useState('');
+  const [gender, setGender] = useState('');
+  const [company, setCompany] = useState('');
+  const [avatar, setAvatar] = useState(null);
 
   const clear = () => {
-    setUsername('')
-    setPassword('')
-    setName('')
-    setAge('')
-    setExperience('')
-    setGender('')
-    setCompany('')
-  }
+    setUsername('');
+    setPassword('');
+    setName('');
+    setAge('');
+    setExperience('');
+    setGender('');
+    setCompany('');
+  };
 
   const toggleForm = () => {
     setHasAccount(!hasAccount);
     setMessage(''); 
   };
-  
-  useEffect(()=>{
-    clear()
-  },[hasAccount])
+
+  useEffect(() => {
+    clear();
+  }, [hasAccount]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -58,25 +47,35 @@ function AdminLogin() {
       return;
     }
 
-    const url = hasAccount ? `/admin/signin` : `/admin/signup`;
-    const data = hasAccount 
-      ? { username, password } 
-      : { username, password, name, age, experience, gender, company };
+    const url = hasAccount ? `/user/signin` : `/user/signup`;
+    console.log(username)
+    let data = new FormData();
+    data.append("username", username);
+    data.append("password", password);
+    if (!hasAccount) {
+      data.append("fullName", name);
+      data.append("dob", age);
+      data.append("institution", company);
+      data.append("gender", gender);
+      data.append("email",experience)
+      if (avatar) {
+        data.append("avatar", avatar);
+      }
+    }
 
     setIsLoading(true); // Start loading
-
+    data.forEach((value, key) => {
+      console.log(`${key}:`, value);
+    });
     try {
       const response = await axios.post(`http://localhost:3000${url}`, data, {
         withCredentials: true,
       });
 
-
       if (response.status === 200) {
         if (hasAccount) {
           setMessage('Login successful!');
           changeNotificationData("Login successful!!!");
-          // dataFetcher()
-          checkAdmin()
           navigate('/adminName'); 
         } else {
           setMessage('Signup successful! You can now log in.');
@@ -86,16 +85,16 @@ function AdminLogin() {
         setMessage(response.data.message || `Error: ${response.status}`);
       }
     } catch (error) {
-      setMessage('Error: ' + error.message);
+      setMessage('Error: ' + (error.response ? error.response.data.message : error.message));
     } finally {
       setIsLoading(false); // End loading
     }
   };
 
   return (
-    <div className={`container mx-auto ${hasAccount?"mt-24 mb-32":"mt-10"} max-w-md p-6 bg-transparent rounded-lg shadow-lg flex flex-col`}>
+    <div className={`container mx-auto ${hasAccount ? "mt-24 mb-32" : ""} ${hasAccount ? "w-1/3" : "w-2/5"} p-6 bg-transparent rounded-lg shadow-lg flex flex-col`}>
       <h2 className="text-2xl font-bold text-center mb-6">
-        {hasAccount ? 'Login' : 'Sign Up'}
+        Student {hasAccount ? 'Login' : 'Sign Up'}
       </h2>
       {hasAccount ? (
         <SignIn 
@@ -124,11 +123,12 @@ function AdminLogin() {
           setPassword={setPassword} 
           handleSubmit={handleSubmit} 
           isLoading={isLoading} 
+          setAvatar={setAvatar}
         />
       )}
-  
+
       {message && <div className="mt-4 text-center text-blue-600">{message}</div>}
-  
+
       <div className="mt-4 text-center">
         <p className="text-sm">
           {hasAccount ? "Don't have an account? " : "Already have an account? "}
@@ -142,7 +142,6 @@ function AdminLogin() {
       </div>
     </div>
   );
-  
 }
 
-export default AdminLogin;
+export default UserLogin;

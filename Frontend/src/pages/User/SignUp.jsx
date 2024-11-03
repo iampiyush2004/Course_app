@@ -16,6 +16,7 @@ const SignUp = ({
   password,
   setPassword,
   handleSubmit,
+  setAvatar,
   isLoading,
 }) => {
   return (
@@ -88,13 +89,13 @@ const SignUp = ({
       <div className="flex space-x-4">
         <div className="flex-1">
           <label htmlFor="company" className="block text-sm font-medium text-gray-700">
-            Company
+            Institution
           </label>
           <input
             type="text"
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             id="company"
-            placeholder="Enter your company name"
+            placeholder="Enter your Institution name"
             value={company}
             onChange={(e) => setCompany(e.target.value)}
             required
@@ -102,13 +103,13 @@ const SignUp = ({
         </div>
         <div className="flex-1">
           <label htmlFor="experience" className="block text-sm font-medium text-gray-700">
-            Experience (in years)
+          email 
           </label>
           <input
-            type="number"
+            type="text"
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             id="experience"
-            placeholder="Enter your experience"
+            placeholder="Enter your email"
             value={experience}
             onChange={(e) => setExperience(e.target.value)}
             required
@@ -116,7 +117,20 @@ const SignUp = ({
         </div>
       </div>
 
-      <div className="mb-4">
+      <div className="mb-2">
+        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+          Avatar
+        </label>
+        <input
+          type="file"
+          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          id="avatar"
+          onChange={(e) => setAvatar(e.target.files[0])}
+          required
+        />
+      </div>
+
+      <div className="mb-2">
         <label htmlFor="password" className="block text-sm font-medium text-gray-700">
           Password
         </label>
