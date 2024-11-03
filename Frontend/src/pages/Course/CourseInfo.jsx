@@ -137,7 +137,7 @@ function CourseInfo() {
                 className='w-12 h-12 rounded-full mr-3' 
               />
               <p className='text-md text-gray-600 mb-2'>
-                <Link to="/teacherProfile" className='font-bold text-gray-800 text-xl'>
+                <Link to={`/teacher/${data.teacher._id}`} className='font-bold text-gray-800 text-xl'>
                   {data.teacher.name ? data.teacher.name : ""}
                 </Link>
               </p>

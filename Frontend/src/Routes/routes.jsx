@@ -13,6 +13,8 @@ import AddVideo from '../pages/Admin/AddVideo'
 import CoursePage from '../pages/Admin/CoursePage'
 import CourseInfo from '../pages/Course/CourseInfo'
 import Login from '../pages/Login'
+import TeacherInfo from '../pages/TeacherInfo'
+import UserLogin from '../pages/User/UserLogin'
 export const router = createBrowserRouter([
   {
     path:"/",
@@ -69,6 +71,14 @@ export const router = createBrowserRouter([
       {
         path : "/courses/:course_id",
         element:<CourseInfo/>
+      },
+      {
+        path: "/teacher/:teacher_id",
+        element:<TeacherInfo/>
+      },
+      {
+        path:"student-login",
+        element:<UserLogin/>
       }
     ]
   }

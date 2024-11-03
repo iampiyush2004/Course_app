@@ -7,10 +7,10 @@ const { signin ,
         myCourses} = require("../controllers/user.controller");
 
 const { viewCourse } = require("../controllers/course.controller");
-
+const {upload} = require('../middleware/multer');
 const { order, capture, hasPurchased } = require("../controllers/payment.controller");
 
-router.post('/signup', signup);
+router.post('/signup', upload.single("avatar"), signup);
 
 router.post('/signin', signin);
 
