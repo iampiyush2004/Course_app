@@ -53,7 +53,7 @@ function UserLogin() {
     data.append("username", username);
     data.append("password", password);
     if (!hasAccount) {
-      data.append("fullName", name);
+      data.append("name", name);
       data.append("dob", age);
       data.append("institution", company);
       data.append("gender", gender);
@@ -70,6 +70,9 @@ function UserLogin() {
     try {
       const response = await axios.post(`http://localhost:3000${url}`, data, {
         withCredentials: true,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        }
       });
 
       if (response.status === 200) {
