@@ -36,8 +36,10 @@ const signin = async (req, res) => {
 
 
 const signup = async (req, res) => {
-    const { username, email, fullName, password, dob, gender, institution } = req.body;
-
+    const { username, email, name, password, dob, gender, institution } = req.body;
+    if (!username) {
+        throw new Error('Username is required');
+      }
     try {
         if(!req.file){
             return res.status(400).json({
@@ -54,17 +56,17 @@ const signup = async (req, res) => {
                 message:"Internal Server Error in uploading Avatar on cloudinary!!!"
             })
         }
-        console.log(username,email,fullName,password,dob,gender,avatar,institution)
+        console.log(username,email,name,password,dob,gender,avatar,institution)
         // Save user without hashing the password
         const newUser = await User.create({
-            username,
-            email,
-            fullName,
-            password,
-            dob,
-            gender,
-            avatar,
-            institution
+            username : username,
+            email : email,
+            name : name,
+            password : password,
+            dob : dob,
+            gender : gender,
+            avatar : avatar,
+            institution : institution
         });
 
         res.json({ message: 'User created successfully!', user: { id: newUser._id, username: newUser.username } });
