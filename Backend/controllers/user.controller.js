@@ -1,11 +1,13 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const Course = require("../models/course.model")
+const { uploadOnCloudinary , destroy } = require('../utils/cloudinary');
 
 const signin = async (req, res) => {
     const { username, password } = req.body;
 
     try {
+        console.log(username,password)
         const user = await User.findOne({ username, password }).select("-password"); // Directly match both username and password
 
         if (!user) {
@@ -34,14 +36,25 @@ const signin = async (req, res) => {
 
 
 const signup = async (req, res) => {
-    const { username, email, fullName, password, dob, gender, avatar, institution } = req.body;
+    const { username, email, fullName, password, dob, gender, institution } = req.body;
 
     try {
+        if(!req.file){
+            return res.status(400).json({
+                message:"Avatar Required!!!"
+            })
+        }
         const existingUser = await User.findOne({ username });
         if (existingUser) {
             return res.status(400).json({ message: 'Username already taken. Please choose a different one.' });
         }
-
+        const avatar = await uploadOnCloudinary(req.file?.path)
+        if(!avatar){
+            return res.status(500).json({
+                message:"Internal Server Error in uploading Avatar on cloudinary!!!"
+            })
+        }
+        console.log(username,email,fullName,password,dob,gender,avatar,institution)
         // Save user without hashing the password
         const newUser = await User.create({
             username,
