@@ -27,15 +27,14 @@ const UserDropdown = ({ data, redirectProfile, redirectCourses, handleLogout }) 
     }, []);
 
     return (
-        <div className="relative flex items-center" ref={dropdownRef}>
+        <div className="relative flex items-center" ref={dropdownRef} onClick={toggleDropdown}>
             <img 
-                className="w-10 h-10 rounded-full mr-2 object-cover" 
+                className="w-10 h-10 rounded-full mr-2 object-cover cursor-pointer" 
                 src={data?.avatar} 
                 alt="User Avatar" 
             />
-            <div className="text-lg font-bold">{data?.name}</div>
+            <div className="text-lg font-bold cursor-pointer" >{data?.name}</div>
             <button 
-                onClick={toggleDropdown} 
                 className="ml-2 focus:outline-none"
             >
                 <svg 
