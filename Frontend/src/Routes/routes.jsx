@@ -12,6 +12,7 @@ import Unauthorized from '../pages/Unauthorized'
 import AddVideo from '../pages/Admin/AddVideo'
 import CoursePage from '../pages/Admin/CoursePage'
 import CourseInfo from '../pages/Course/CourseInfo'
+import Login from '../pages/Login'
 export const router = createBrowserRouter([
   {
     path:"/",
@@ -20,6 +21,10 @@ export const router = createBrowserRouter([
       {
         path:"",
         element:<Home/>,
+      },
+      {
+        path:"/login",
+        element:<Login/>
       },
       {
         path:"/courses",

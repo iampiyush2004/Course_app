@@ -14,7 +14,7 @@ function AddCourse() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const [isLoading,setIsLoading] = useState(false)
-  const { dataFetcher, changeNotificationData } = useContext(Context);
+  const { dataFetcher, changeNotificationData, isLoggedIn } = useContext(Context);
   const [isOpen,setIsOpen] = useState(false)
   const [courseId,setCourseId] = useState(null)
 
@@ -96,6 +96,10 @@ function AddCourse() {
     setIsOpen(false)
   }
 
+  useEffect(()=>{
+    if(isLoggedIn===false) navigate("/admin")
+  },[isLoggedIn])
+  
   return (
     <div>
       {
