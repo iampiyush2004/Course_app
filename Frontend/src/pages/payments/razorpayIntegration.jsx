@@ -10,69 +10,81 @@ const loadRazorpayScript = () => {
   });
 };
 
-const handleRazorpayPayment = async (amount, courseId) => {
-  // Load Razorpay's external script
-  const isLoaded = await loadRazorpayScript();
-  if (!isLoaded) {
-    console.error("Razorpay SDK failed to load.");
-    return;
-  }
-
-  // Create an order with the backend
+const handleRazorpayPayment = async (courseId, onSuccess) => {
   try {
-    const orderResponse = await axios.post(
-      'http://localhost:3000/user/buyCourse/order', // Using /user prefix
-      { amount },
-      { withCredentials: true } // Ensure cookies are sent with the request
-    );
-
-    const { id: order_id, currency } = orderResponse.data.order;
-
-    // Additional checks to ensure the order was created successfully
-    if (!orderResponse.data.success) {
-      throw new Error("Order creation failed: " + orderResponse.data.error);
+    // Load Razorpay SDK
+    const isLoaded = await loadRazorpayScript();
+    if (!isLoaded) {
+      throw new Error("Razorpay SDK failed to load.");
     }
 
+    // First, get course details including price
+    const courseResponse = await axios.get(
+      `http://localhost:3000/courses/${courseId}`,
+      { withCredentials: true }
+    );
+    
+    const amount = courseResponse.data.price;
+
+    // Create order
+    const orderResponse = await axios.post(
+      'http://localhost:3000/user/buyCourse/order',
+      { amount, courseId },
+      { withCredentials: true }
+    );
+
+    if (!orderResponse.data.success) {
+      throw new Error(orderResponse.data.error || "Failed to create order");
+    }
+
+    const { order } = orderResponse.data;
+
     const options = {
-      key: rzp_test_3cor56FNTh7QMY, // Replace with your Razorpay key ID
-      amount: amount * 100, // Amount in smallest currency unit
-      currency,
-      name: 'Your Course Platform',
-      description: 'Course Purchase',
-      order_id,
+      key: process.env.REACT_APP_RAZORPAY_KEY_ID, 
+      amount: order.amount,
+      currency: order.currency,
+      name: 'Course Platform',
+      description: `Purchase for ${courseResponse.data.title}`,
+      order_id: order.id,
       handler: async function (response) {
-        // Capture the payment
         try {
           const captureResponse = await axios.post(
-            'http://localhost:3000/user/buyCourse/capture', // Using /user prefix
+            'http://localhost:3000/user/buyCourse/capture',
             {
               paymentId: response.razorpay_payment_id,
-              amount,
+              orderId: response.razorpay_order_id,
+              signature: response.razorpay_signature,
               courseId,
+              amount
             },
-            { withCredentials: true } // Ensure cookies are sent with the request
+            { withCredentials: true }
           );
 
           if (captureResponse.data.success) {
-            alert("Payment Successful!");
+            onSuccess();
           } else {
-            throw new Error("Payment capture failed: " + captureResponse.data.error);
+            throw new Error(captureResponse.data.error || "Payment capture failed");
           }
         } catch (error) {
-          console.error("Error in capturing payment", error);
-          alert("Payment capture failed.");
+          console.error("Payment capture error:", error);
+          throw new Error("Payment verification failed. Please contact support.");
         }
       },
-      theme: {
-        color: '#3399cc',
+      prefill: {
+        name: courseResponse.data.teacher.name,
+        email: courseResponse.data.teacher.email
       },
+      theme: {
+        color: '#3399cc'
+      }
     };
 
     const paymentObject = new window.Razorpay(options);
     paymentObject.open();
+
   } catch (error) {
-    console.error("Error in creating Razorpay order", error);
-    alert("Failed to create order. Please try again.");
+    console.error("Payment process error:", error);
+    throw error;
   }
 };
 
