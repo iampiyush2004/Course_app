@@ -5,18 +5,18 @@ const bcrypt = require("bcrypt");
 const UserSchema = new mongoose.Schema({
   username: {
     type: String,
-    // required: true,
-    // unique: true,
-    // lowercase: true,
-    // index: true
+    required: true,
+    unique: true,
+    lowercase: true,
+    index: true
   },
   email: {
     type: String,
     required: true,
-    // unique: true,
-    // lowercase: true
+    unique: true,
+    lowercase: true
   },
-  fullName: {
+ name: {
     type: String,
     required: true
   },
@@ -45,7 +45,7 @@ const UserSchema = new mongoose.Schema({
   }]
 });
 
-// // Hash password before saving
+// Hash password before saving
 // UserSchema.pre("save", async function(next) {
 //   if (!this.isModified("password")) return next();
 //   this.password = await bcrypt.hash(this.password, 10);
