@@ -1,13 +1,13 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const Course = require("../models/course.model")
+const jwt = require("jsonwebtoken")
 const { uploadOnCloudinary , destroy } = require('../utils/cloudinary');
 
 const signin = async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        console.log(username,password)
         const user = await User.findOne({ username, password }).select("-password"); // Directly match both username and password
 
         if (!user) {
@@ -21,7 +21,7 @@ const signin = async (req, res) => {
         const options = {
             httpOnly: true,
             secure: false,
-            maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+            maxAge: 30 * 24 * 60 * 60 * 1000
         };
         res.setHeader('Authorization', `Bearer ${token}`);
         return res
@@ -114,5 +114,36 @@ const myCourses = async (req, res) => {
     }
 };
 
+const isLoggedin = async (req,res) => {
+    const token =  req.cookies?.token
+    if (!token) {
+        return res.status(200).json({
+            message : "Student is not Logged In",
+            isLoggedin : false,
+        })
+    }
+    try {
+        const decodedValue = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decodedValue._id).select("-password")
+        if (user) {
+            return res.status(200).json({
+                message : "Student is Logged In",
+                isLoggedin : true,
+                user : user
+            })
+        } else {
+            return res.status(200).json({
+                message : "Student is not Logged In",
+                isLoggedin : false,
+            })
+        }
+    } catch (error) {
+        return res.status(200).json({
+            message : "Student is not Logged In",
+            isLoggedin : false,
+        })
+    }
+}
 
-module.exports = {signin , signup , logout , myCourses}
+
+module.exports = {signin , signup , logout , myCourses, isLoggedin}

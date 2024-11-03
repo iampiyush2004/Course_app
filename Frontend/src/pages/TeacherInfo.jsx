@@ -61,7 +61,10 @@ function TeacherInfo() {
             </div>
 
             {/* second part */}
-
+            <div>
+              
+              {data?.bio}
+            </div>
           </div>
         )
       }

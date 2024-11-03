@@ -12,7 +12,7 @@ function UserLogin() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { changeNotificationData } = useContext(Context);
+  const { changeNotificationData, checkStudent } = useContext(Context);
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
   const [experience, setExperience] = useState('');
@@ -48,11 +48,14 @@ function UserLogin() {
     }
 
     const url = hasAccount ? `/user/signin` : `/user/signup`;
-    console.log(username)
-    let data = new FormData();
-    data.append("username", username);
-    data.append("password", password);
-    if (!hasAccount) {
+    let data = null; 
+    if(hasAccount) {
+      data = {username,password}
+    }
+    else  {
+      data = new FormData();
+      data.append("username", username);
+      data.append("password", password);
       data.append("name", name);
       data.append("dob", age);
       data.append("institution", company);
@@ -63,23 +66,29 @@ function UserLogin() {
       }
     }
 
-    setIsLoading(true); // Start loading
-    data.forEach((value, key) => {
-      console.log(`${key}:`, value);
-    });
+    setIsLoading(true); 
     try {
-      const response = await axios.post(`http://localhost:3000${url}`, data, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        }
-      });
+      let response = null
+      if(hasAccount){
+        response = await axios.post(`http://localhost:3000${url}`, data, {
+          withCredentials: true,
+        });
+      }
+      else {
+        response = await axios.post(`http://localhost:3000${url}`, data, {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          }
+        });
+      }
 
       if (response.status === 200) {
         if (hasAccount) {
           setMessage('Login successful!');
           changeNotificationData("Login successful!!!");
-          navigate('/adminName'); 
+          checkStudent()
+          navigate('/user/profile'); 
         } else {
           setMessage('Signup successful! You can now log in.');
           setHasAccount(true); 

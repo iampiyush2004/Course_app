@@ -4,7 +4,8 @@ const verifyJwt = require("../middleware/authUser.middleware")
 const { signin ,
         signup ,
         logout,
-        myCourses} = require("../controllers/user.controller");
+        myCourses,
+        isLoggedin} = require("../controllers/user.controller");
 
 const { viewCourse } = require("../controllers/course.controller");
 const {upload} = require('../middleware/multer');
@@ -26,6 +27,7 @@ router.post("/buyCourse/capture", verifyJwt, capture); // Route to capture payme
 
 router.get("/hasPurchased/:courseId", verifyJwt, hasPurchased);
 
+router.get("/loggedin",isLoggedin)
 
 module.exports = router;
 
