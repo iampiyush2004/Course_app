@@ -17,15 +17,41 @@ const order = async (req, res) => {
     } catch (error) {
       res.status(500).json({ success: false, error: error.message });
     }
-  }
-const capture = async (req, res) => {
-    const { paymentId } = req.body;
-    try {
-      const payment = await razorpayInstance.payments.capture(paymentId, amount);
-      res.json({ success: true, payment });
-    } catch (error) {
-      res.status(500).json({ success: false, error: error.message });
-    }
-  }
+};
 
-module.exports = {order , capture}
+const capture = async (req, res) => {
+    const { paymentId, amount, courseId } = req.body;
+    const userId = req.user.id; 
+
+    try {
+        // Capture the payment on Razorpay
+        const payment = await razorpayInstance.payments.capture(paymentId, amount * 100);
+
+      
+        const user = await User.findById(userId);
+
+        if (!user.coursePurchased.includes(courseId)) {
+            user.coursePurchased.push(courseId);
+            await user.save();
+        }
+
+        res.json({ success: true, payment });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+const hasPurchased = async (req, res) => {
+  const { courseId } = req.params;
+  const userId = req.user.id;
+
+  try {
+      const user = await User.findById(userId);
+      const hasPurchased = user.coursePurchased.includes(courseId);
+      res.json({ success: true, hasPurchased });
+  } catch (error) {
+      res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+module.exports = {order , capture , hasPurchased}
