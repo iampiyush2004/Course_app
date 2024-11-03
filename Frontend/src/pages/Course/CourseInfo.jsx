@@ -2,29 +2,17 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Loading from '../../components/Loading';
+import handleRazorpayPayment from '../payments/razorpayIntegration';
 
 function CourseInfo() {
   const { course_id } = useParams();
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isReadMore, setIsReadMore] = useState(false);
-  const [teacherdata,setTeacherData] = useState(null)
-  const navigate = useNavigate()
-  // const retrieveTeacherData = (teacher_id) => {
-  //   try {
-  //     const response = axios.get(`http://localhost:3000/${teacher_id}`,{
-  //       withCredentials : true
-  //     })
-  //     if(response.status===200){
-        
-  //     }
-  //     else{
-        
-  //     }
-  //   } catch (error) {
-      
-  //   }
-  // }
+  const [teacherData, setTeacherData] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
+
   useEffect(() => {
     const retrieveData = async () => {
       try {
@@ -33,7 +21,6 @@ function CourseInfo() {
         });
         if (response.status === 200) {
           setData(response.data);
-          // retrieveTeacherData(response.data.teacher)
           console.log(response.data);
         } else {
           console.log("Error occurred!");
@@ -51,22 +38,28 @@ function CourseInfo() {
     setIsReadMore(!isReadMore);
   };
   
-  const handleBuyNow = () => {
-    
-  }
+  const handleBuyNow = async () => {
+    try {
+      await handleRazorpayPayment(course_id, () => {
+        alert("Payment successful! Redirecting to 'My Courses' page...");
+        navigate('../Admin/CoursePage');
+      });
+    } catch (error) {
+      setErrorMessage("Failed to initiate payment. Please try again.");
+      console.error("Payment initiation error:", error);
+    }
+  };
 
   const words = data ? data.bio.split(' ') : [];
   const displayBio = isReadMore ? data.bio : words.slice(0, 50).join(' ') + (words.length > 50 ? '...' : '');
 
   return (
-    <div className=' min-h-screen'>
+    <div className='min-h-screen'>
       {isLoading ? (
         <Loading />
       ) : (
         <div className='flex px-20 py-2 gap-x-10'>
-          {/* left part */}
           <div className='w-3/5 bg-white rounded-lg shadow-lg p-6 flex flex-col items-center gap-y-8'>
-            {/* Bio Section */}
             <div className='bg-gray-50 p-5 rounded-lg flex flex-col items-center w-full'>
               <img src={data.imageLink} alt={data.title} className='w-10/12 rounded-md mb-4 shadow-md' />
               <div className='text-left w-full'>
@@ -82,11 +75,10 @@ function CourseInfo() {
               )}
             </div>
 
-            {/* Videos Section */}
             <div className='bg-gray-50 p-5 rounded-lg flex flex-col w-full'>
               <h3 className='text-2xl font-bold text-gray-700 mb-4'>Course RoadMap</h3>
               {data.videos.length ? (
-                <div className='flex flex-col w-full max-h-80 overflow-y-auto'> {/* Fixed height and scrollable */}
+                <div className='flex flex-col w-full max-h-80 overflow-y-auto'>
                   {data.videos.map((val, index) => (
                     <div key={index} className='flex justify-start items-center gap-x-10 w-full mb-3 border border-zinc-900 rounded-md p-2 bg-gray-100'>
                       <img src={val.thumbnail} alt={val.description} className='w-1/3 h-28 rounded-md shadow-md' />
@@ -102,7 +94,6 @@ function CourseInfo() {
               )}
             </div>
 
-            {/* Review Section */}
             <div className='mt-6 bg-gray-50 p-5 rounded-lg w-full'>
               <h2 className='text-2xl font-bold text-gray-800 mb-4'>Reviews</h2>
               {data.reviews.length ? (
@@ -135,7 +126,6 @@ function CourseInfo() {
             </div>
           </div>
 
-          {/* right part  */}
           <div className='w-1/3 bg-white rounded-lg shadow-lg p-8 fixed top-28 right-10'>
             <h1 className='text-4xl font-bold text-gray-800 mb-2'>{data.title}</h1>
             <h2 className='text-xl text-gray-600 mb-6'>{data.description}</h2>
@@ -168,13 +158,17 @@ function CourseInfo() {
                 ₹ {data.price.toLocaleString()}
               </div>
             </div>
-
             
-            <button className='w-full bg-blue-500 text-white font-semibold py-3 rounded-md hover:bg-blue-600 transition duration-200 shadow-md' onClick={()=>navigate(`/courses/${course_id}/videos/123`)}>
+            {errorMessage && (
+              <div className='text-red-500 mb-4'>
+                {errorMessage}
+              </div>
+            )}
+            
+            <button className='w-full bg-blue-500 text-white font-semibold py-3 rounded-md hover:bg-blue-600 transition duration-200 shadow-md' onClick={handleBuyNow}>
               Buy Now
             </button>
           </div>
-
         </div>
       )}
     </div>

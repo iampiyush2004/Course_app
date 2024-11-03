@@ -20,8 +20,8 @@ router.get('/myCourses',verifyJwt , myCourses);
 
 router.get('/myCourses/:courseId' , viewCourse);
 
-router.post("/buyCourse/order", verifyJwt, order);     // Route to create order
-
+router.post("/buyCourse/order", verifyJwt, order); // Route to create order
+   
 router.post("/buyCourse/capture", verifyJwt, capture); // Route to capture payment
 
 router.get("/hasPurchased/:courseId", verifyJwt, hasPurchased);
