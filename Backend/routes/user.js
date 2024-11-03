@@ -16,6 +16,6 @@ router.post('/logout', verifyJwt, logout);
 
 router.get('/myCourses',verifyJwt , myCourses);
 
-router.get('/myCourses/:courseId' , viewCourse)
+router.get('/myCourses/:courseId' , viewCourse);
 
 module.exports = router

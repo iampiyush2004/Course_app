@@ -1,6 +1,6 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
-
+const Course = require("../models/course.model")
 
 const signin = async (req, res) => {
     const { username, password } = req.body;
@@ -31,6 +31,7 @@ const signin = async (req, res) => {
         return res.status(500).json({ message: "Internal Server Error" });
     }
 };
+
 
 const signup = async (req, res) => {
     const { username, email, fullName, password, dob, gender, avatar, institution } = req.body;
