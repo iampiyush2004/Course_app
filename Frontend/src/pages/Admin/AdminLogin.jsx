@@ -14,7 +14,7 @@ function AdminLogin() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { dataFetcher,changeNotificationData } = useContext(Context);
+  const { dataFetcher,changeNotificationData, checkAdmin } = useContext(Context);
   const [name,setName] = useState('')
   const [age,setAge] = useState('')
   const [experience,setExperience] = useState('')
@@ -25,7 +25,9 @@ function AdminLogin() {
   // Auto Login Implemented Here
   useEffect( () => {
     if(isLoggedin) {
+      // dataFetcher()
       navigate('/adminName'); 
+      checkAdmin()
     }
   },[isLoggedin])
 
@@ -65,21 +67,16 @@ function AdminLogin() {
 
     try {
       const response = await axios.post(`http://localhost:3000${url}`, data, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
         withCredentials: true,
       });
 
-      // console.log(response.data);
 
       if (response.status === 200) {
         if (hasAccount) {
-          // Store JWT token in cookies (set from server-side)
-          // Assume the server sets the HttpOnly cookie in the response
           setMessage('Login successful!');
           changeNotificationData("Login successful!!!");
-          // dataFetcher(response.data.token); // Adjust this if needed
+          // dataFetcher()
+          checkAdmin()
           navigate('/adminName'); 
         } else {
           setMessage('Signup successful! You can now log in.');
@@ -96,7 +93,7 @@ function AdminLogin() {
   };
 
   return (
-    <div className="container mx-auto mt-20 max-w-md p-6 bg-white rounded-lg shadow-lg flex flex-col">
+    <div className={`container mx-auto ${hasAccount?"mt-24 mb-32":"mt-10"} max-w-md p-6 bg-transparent rounded-lg shadow-lg flex flex-col`}>
       <h2 className="text-2xl font-bold text-center mb-6">
         {hasAccount ? 'Login' : 'Sign Up'}
       </h2>
