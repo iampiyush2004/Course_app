@@ -4,6 +4,21 @@ const Course = require("../models/course.model")
 const jwt = require("jsonwebtoken")
 const { uploadOnCloudinary , destroy } = require('../utils/cloudinary');
 
+const returnMe = async (req, res) => {
+    try {
+        // Since the user is verified and available in req.user
+        res.json({
+            _id: req.user._id,
+            username: req.user.username,
+            email: req.user.email,
+            coursePurchased: req.user.coursePurchased, // Add other fields as necessary
+        });
+    } catch (error) {
+        console.error("Error fetching user data:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+}
+
 const signin = async (req, res) => {
     const { username, password } = req.body;
 
@@ -146,4 +161,4 @@ const isLoggedin = async (req,res) => {
 }
 
 
-module.exports = {signin , signup , logout , myCourses, isLoggedin}
+module.exports = {signin , signup , logout , myCourses, isLoggedin , returnMe}

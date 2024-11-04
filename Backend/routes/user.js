@@ -5,11 +5,14 @@ const { signin ,
         signup ,
         logout,
         myCourses,
-        isLoggedin} = require("../controllers/user.controller");
+        isLoggedin,
+        returnMe} = require("../controllers/user.controller");
 
 const { viewCourse } = require("../controllers/course.controller");
 const {upload} = require('../middleware/multer');
 const { order, capture, hasPurchased } = require("../controllers/payment.controller");
+
+router.get('/me', verifyJwt, returnMe);
 
 router.post('/signup', upload.single("avatar"), signup);
 
