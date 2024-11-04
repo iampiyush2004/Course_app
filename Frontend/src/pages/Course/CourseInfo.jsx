@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Loading from '../../components/Loading';
 import handleRazorpayPayment from '../payments/razorpayIntegration';
+import Reviews from './Reviews';
 
 function CourseInfo() {
   const { course_id } = useParams();
@@ -21,7 +22,7 @@ function CourseInfo() {
         });
         if (response.status === 200) {
           setData(response.data);
-          console.log(response.data);
+          // console.log(response.data);
         } else {
           console.log("Error occurred!");
         }
@@ -59,7 +60,9 @@ function CourseInfo() {
         <Loading />
       ) : (
         <div className='flex px-20 py-2 gap-x-10'>
+          {/* Left Part */}
           <div className='w-3/5 bg-white rounded-lg shadow-lg p-6 flex flex-col items-center gap-y-8'>
+            {/* Main Photo */}
             <div className='bg-gray-50 p-5 rounded-lg flex flex-col items-center w-full'>
               <img src={data?.imageLink} alt={data?.title} className='w-10/12 rounded-md mb-4 shadow-md' />
               <div className='text-left w-full'>
@@ -75,6 +78,7 @@ function CourseInfo() {
               )}
             </div>
 
+            {/* Course Roadmap */}
             <div className='bg-gray-50 p-5 rounded-lg flex flex-col w-full'>
               <h3 className='text-2xl font-bold text-gray-700 mb-4'>Course RoadMap</h3>
               {data?.videos.length ? (
@@ -93,8 +97,8 @@ function CourseInfo() {
                 <div>No Videos Available!!</div>
               )}
             </div>
-
-            <div className='mt-6 bg-gray-50 p-5 rounded-lg w-full'>
+            {/* Review Section */}
+            {/* <div className='mt-6 bg-gray-50 p-5 rounded-lg w-full'>
               <h2 className='text-2xl font-bold text-gray-800 mb-4'>Reviews</h2>
               {data?.reviews.length ? (
                 <>
@@ -123,9 +127,11 @@ function CourseInfo() {
               ) : (
                 <div className='text-gray-600'>No Reviews Yet</div>
               )}
-            </div>
+            </div> */}
+            <Reviews course_id={course_id}/>
           </div>
-
+            
+          {/* Right Part  */}
           <div className='w-1/3 bg-white rounded-lg shadow-lg p-8 fixed top-28 right-10'>
             <h1 className='text-4xl font-bold text-gray-800 mb-2'>{data?.title}</h1>
             <h2 className='text-xl text-gray-600 mb-6'>{data?.description}</h2>
