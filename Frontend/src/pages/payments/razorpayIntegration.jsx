@@ -26,7 +26,8 @@ const handleRazorpayPayment = async (courseId, onSuccess) => {
     
     const amount = courseResponse.data.price;
 
-    // Create order
+    console.log("hello");
+    // Create order //dikkat
     const orderResponse = await axios.post(
       'http://localhost:3000/user/buyCourse/order',
       { amount, courseId },
@@ -38,9 +39,9 @@ const handleRazorpayPayment = async (courseId, onSuccess) => {
     }
 
     const { order } = orderResponse.data;
-
+    
     const options = {
-      key: process.env.REACT_APP_RAZORPAY_KEY_ID, 
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID, 
       amount: order.amount,
       currency: order.currency,
       name: 'Course Platform',
