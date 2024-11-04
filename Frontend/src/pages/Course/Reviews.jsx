@@ -18,6 +18,7 @@ function Reviews({ course_id }) {
       try {
         const response = await axios.get(`http://localhost:3000/review/${course_id}`);
         if (response.status === 200) {
+          console.log(response.data.reviews)
           setReviews(response.data.reviews); 
         } else {
           console.log("Error occurred in fetching reviews");
@@ -80,7 +81,6 @@ function Reviews({ course_id }) {
           withCredentials:true
         }) 
         if(response.status===200){
-          console.log(response.data)
           setStudentReview(response.data.review)
           const localData = localStorage.getItem("user")
           setStudentData(JSON.parse(localData))
@@ -153,7 +153,7 @@ function Reviews({ course_id }) {
           <div key={45} className='border border-gray-200 rounded-lg p-4 flex items-start flex-col gap-y-5'>
             <div className='flex gap-x-2 items-center'>
               <img
-                src={studentData?.avatar} // Ensure this field exists
+                src={studentData?.avatar} 
                 alt={"hi"}
                 className='w-10 h-10 rounded-full mr-4'
               />
@@ -167,7 +167,7 @@ function Reviews({ course_id }) {
               <div className='text-yellow-500'>
                 {'★'.repeat(studentReview?.stars)}
                 {'☆'.repeat(5 - studentReview?.stars)}
-              </div> {/* Display star rating */}
+              </div> 
             </div>
           </div>
           <div className='flex'>
@@ -177,28 +177,41 @@ function Reviews({ course_id }) {
           </div>
         </div>
       }
+      {/* Review Section */}
       <div>
-        {reviews.length > 0 ? (
-          [...reviews].reverse() // Reverse the reviews array
-            .slice(0, Math.min(totalReviewsDisplayed, reviews.length))
-            .map((review, index) => (
-              <div key={index} className='border border-gray-200 rounded-lg p-4 mb-4 flex items-start'>
-                <img
-                  src={review.avatar} // Ensure this field exists
-                  alt={review.user}
-                  className='w-10 h-10 rounded-full mr-4'
-                />
-                <div className='flex-1'>
-                  <div className='font-semibold text-gray-800'>{review.user}</div>
-                  <div className='text-gray-600'>{review.comment}</div>
-                  <div className='text-yellow-500'>{'★'.repeat(review.stars)}{'☆'.repeat(5-review.stars)}</div> {/* Display star rating */}
-                </div>
-              </div>
-            ))
-        ) : (
+          {reviews.length > 0 ? (
+            [...reviews]
+              .reverse() 
+              .slice(0, Math.min(totalReviewsDisplayed, reviews.length))
+              .map((review) => {
+                if (studentData._id === review.userId?._id) {
+                  return null; 
+                }
+
+                return (
+                  <div key={review._id} className="border border-gray-200 rounded-lg p-4 mb-4 flex flex-col">
+                    <div className="flex items-center mb-2">
+                      <img
+                        src={review.userId?.avatar} 
+                        alt={review.userId?.name || "User Avatar"}
+                        className="w-10 h-10 rounded-full mr-4"
+                      />
+                      <div className="font-semibold text-gray-800">{review.userId?.name}</div>
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-gray-600 my-1">{review.comment}</div>
+                      <div className="text-yellow-500">
+                        {'★'.repeat(review.stars)}{'☆'.repeat(5 - review.stars)} 
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+          ) : (
           <div className='text-gray-600 text-xl text-center'>Be the first one to leave a review.</div>
         )}
       </div>
+
       {reviews.length > totalReviewsDisplayed && (
         <button 
           onClick={handleLoadMore} 

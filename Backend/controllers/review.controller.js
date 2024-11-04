@@ -11,7 +11,7 @@ const getCourseReview = async (req, res) => {
   }
 
   try {
-    const reviews = await Review.find({ courseId }).populate("userId", "name avatar"); 
+    const reviews = await Review.find({ courseId }).populate("userId","name avatar"); 
     if (!reviews || reviews.length === 0) {
       return res.status(404).json({ message: "No reviews found for this course." });
     }
@@ -23,8 +23,6 @@ const getCourseReview = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error while Fetching Reviews!!", error });
   }
 };
-
-
 
 const addReview = async (req,res) => {
   const userId = req.user
@@ -92,6 +90,7 @@ const editReview = async (req,res) => {
     }
 
     const review = await Review.findOne({courseId,userId})
+    const course = await Review.findById({courseId})  // update of review stars logic pending!!!
     review.comment = comment
     review.stars = stars
     await review.save() 
