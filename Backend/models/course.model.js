@@ -20,7 +20,9 @@ const CourseSchema = new mongoose.Schema({
   videos : [{
       type : mongoose.Schema.Types.ObjectId,
       ref : 'Video'
-  }]
+  }],
+  totalStars: Number,
+  totalReviews : Number
 });
 
 module.exports = mongoose.model("Course",CourseSchema)
