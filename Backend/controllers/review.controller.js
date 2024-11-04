@@ -73,4 +73,33 @@ const addReview = async (req,res) => {
   }
 }
 
+const getCoureStudentReview = async (req,res) => {
+  const userId = req.user
+  if(!userId) {
+    return res.status(401).json({message:"Unauthorized Access!!!"})
+  }  
+  const courseId = req.params.courseId
+  if(!courseId) {
+    return res.status(400).json({message:"Course Id not provided!!!"}) 
+  }
+  try {
+    const review = await Review.findOne({
+      courseId,
+      userId
+    })
+    if (!review) {
+      return res.status(500).json({
+        message: "Internal Server while fetching Review!!!"
+      });
+    }
+    return res.status(200).json({
+      message:"Review fetched SuccessFully!!!",
+      review
+    })
+  } catch (error) {
+    return res.status(500).json({message:"Internal Server Error!!!"})
+  }
+}
+
+
 module.exports = {  getCourseReview, addReview }
