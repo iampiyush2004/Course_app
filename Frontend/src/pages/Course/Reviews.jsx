@@ -111,7 +111,7 @@ function Reviews({ course_id }) {
               </div>
             ))
         ) : (
-          <div className='text-gray-600'>No Reviews Yet</div>
+          <div className='text-gray-600 text-xl text-center'>Be the first one to leave a review.</div>
         )}
       </div>
       {reviews.length > totalReviewsDisplayed && (
