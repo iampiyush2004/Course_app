@@ -1,4 +1,5 @@
 const Review = require("../models/review.model")
+const Course = require("../models/course.model")
 
 const getCourseReview = async (req, res) => {
   const courseId = req.params.courseId; 
@@ -43,6 +44,21 @@ const addReview = async (req,res) => {
       courseId,
       userId
     })
+    if (!review) {
+      return res.status(500).json({
+        message: "Internal Server while creating Review!!!"
+      });
+    }
+    await Course.updateOne(
+      { _id: courseId },
+      { 
+        $inc: { 
+          totalReviews: 1,         
+          totalStars: stars    
+        }
+      }
+    );
+    
 
     const responseReview = review.toObject({ versionKey: false });
     delete responseReview.userId; 
