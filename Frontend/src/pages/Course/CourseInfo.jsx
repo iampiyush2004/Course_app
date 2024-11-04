@@ -42,7 +42,7 @@ function CourseInfo() {
     try {
       await handleRazorpayPayment(course_id, () => {
         alert("Payment successful! Redirecting to 'My Courses' page...");
-        navigate('../Admin/CoursePage');
+        navigate(`/courses/${course_id}/videos/123`);
       });
     } catch (error) {
       setErrorMessage("Failed to initiate payment. Please try again.");

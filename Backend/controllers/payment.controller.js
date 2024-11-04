@@ -3,7 +3,7 @@ const razorpayInstance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
-
+const User = require("../models/user.model")
 
 const order = async (req, res) => {
     const { amount } = req.body; // Amount in the smallest currency unit (e.g., paise for INR)
@@ -20,26 +20,46 @@ const order = async (req, res) => {
 };
 
 const capture = async (req, res) => {
-    const { paymentId, amount, courseId } = req.body;
-    const userId = req.user.id; 
+  const { paymentId, amount, courseId } = req.body;
+  const userId = req.user.id;
 
-    try {
-        // Capture the payment on Razorpay
-        const payment = await razorpayInstance.payments.capture(paymentId, amount * 100);
+  if (!paymentId || !amount || !courseId) {
+      return res.status(400).json({ success: false, error: "Missing required fields" });
+  }
 
-      
-        const user = await User.findById(userId);
+  try {
+      // Check payment status before capturing
+      const paymentDetails = await razorpayInstance.payments.fetch(paymentId);
 
-        if (!user.coursePurchased.includes(courseId)) {
-            user.coursePurchased.push(courseId);
-            await user.save();
-        }
+      if (paymentDetails.status !== "captured") {
+          await razorpayInstance.payments.capture(paymentId, amount * 100);
+      }
 
-        res.json({ success: true, payment });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
+      // Fetch the user and ensure `coursePurchased` is correctly updated
+      const user = await User.findById(userId);
+      if (!user) {
+          return res.status(404).json({ success: false, error: "User not found" });
+      }
+
+      if (!user.coursePurchased) {
+          user.coursePurchased = [];
+      }
+
+      if (!user.coursePurchased.includes(courseId)) {
+          user.coursePurchased.push(courseId);
+          await user.save();
+      }
+
+      res.json({ success: true, payment: paymentDetails });
+  } catch (error) {
+      console.error("Error in capture function:", error);
+      res.status(500).json({ success: false, error: error.message });
+  }
 };
+
+
+
+
 
 const hasPurchased = async (req, res) => {
   const { courseId } = req.params;
