@@ -9,6 +9,9 @@ function Reviews({ course_id }) {
   const [message, setMessage] = useState("");
   const [totalReviewsDisplayed, setTotalReviewsDisplayed] = useState(5);
   const { isStudentLoggedIn, changeNotificationData } = useContext(Context);
+  const [studentReview,setStudentReview] = useState(false)
+  const [studentData,setStudentData] = useState(null)
+  const [edit,setEdit] = useState(true)
 
   useEffect(() => {
     const fetchReview = async () => {
@@ -35,6 +38,10 @@ function Reviews({ course_id }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if(edit) {
+      handleEditSubmit()
+      return
+    }
     if (!isStudentLoggedIn) {
       changeNotificationData("Student Login Required!!!");
       return;
@@ -65,11 +72,58 @@ function Reviews({ course_id }) {
     setTotalReviewsDisplayed((prev) => prev + 5); // Increase the count of displayed reviews
   };
 
+  useEffect(()=>{
+    const getUserReview = async() => {
+      if(!isStudentLoggedIn) return
+      try {
+        const response = await axios.get(`http://localhost:3000/review/student/${course_id}`,{
+          withCredentials:true
+        }) 
+        if(response.status===200){
+          console.log(response.data)
+          setStudentReview(response.data.review)
+          const localData = localStorage.getItem("user")
+          setStudentData(JSON.parse(localData))
+        }
+        else if(response.status===204){
+          setStudentReview(false)
+        }
+        else console.log("Error in student review!!")
+      } catch (error) {
+        console.error(error)
+      } 
+    }
+    getUserReview()
+  },[isStudentLoggedIn])
+
+  const handleEdit = () => {
+    setEdit(true)
+    setComment(studentReview.comment)
+    setStars(studentReview.stars)
+    setStudentReview(false)
+  }
+
+  const handleEditSubmit = async() => {
+    try {
+      const response = await axios.put(`http://localhost:3000/review/edit/${course_id}`,{comment,stars},{
+        withCredentials:true
+      })
+      if(response.status===200){
+        setEdit(false)
+        setStudentReview({comment,stars})
+        changeNotificationData("Comment Updated SuccessFully!!!")
+      }
+      else console.log("error occurred")
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <div className='mt-6 bg-gray-50 p-5 rounded-lg w-full'>
       <h2 className='text-2xl font-bold text-gray-800 mb-4'>Reviews</h2>
-      <form onSubmit={handleSubmit} className='bg-blue-50 p-4 rounded-md mb-5'>
-        <h1 className='mb-2 text-1xl font-serif font-semibold'>Add Review</h1>
+      {!studentReview  && <form onSubmit={handleSubmit} className='bg-blue-50 p-4 rounded-md mb-5'>
+        <h1 className='mb-2 text-1xl font-serif font-semibold'>{edit?"Edit Review":"Add Review"}</h1>
         <textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
@@ -91,7 +145,38 @@ function Reviews({ course_id }) {
           Submit Review
         </button>
         {message && <div className='text-center text-red-500'>{message}</div>}
-      </form>
+      </form>}
+      {
+        studentReview && 
+        <div className='bg-gray-100 p-3 rounded-md mb-3 flex flex-col gap-y-4'>
+          <h1 className='text-xl'>Your Review</h1>
+          <div key={45} className='border border-gray-200 rounded-lg p-4 flex items-start flex-col gap-y-5'>
+            <div className='flex gap-x-2 items-center'>
+              <img
+                src={studentData?.avatar} // Ensure this field exists
+                alt={"hi"}
+                className='w-10 h-10 rounded-full mr-4'
+              />
+              <div className='flex flex-col items-center'>
+                <div>{studentData.name}</div>
+              </div>
+            </div>
+            <div className='flex-1'> 
+              <div className='font-semibold text-gray-800'>{studentReview?.user}</div>
+              <div className='text-gray-600'>{studentReview?.comment}</div>
+              <div className='text-yellow-500'>
+                {'★'.repeat(studentReview?.stars)}
+                {'☆'.repeat(5 - studentReview?.stars)}
+              </div> {/* Display star rating */}
+            </div>
+          </div>
+          <div className='flex'>
+            <button className='bg-blue-400 px-4 py-2 rounded-md text-white' onClick={() => handleEdit()}>
+              Edit
+            </button>
+          </div>
+        </div>
+      }
       <div>
         {reviews.length > 0 ? (
           [...reviews].reverse() // Reverse the reviews array
@@ -106,7 +191,7 @@ function Reviews({ course_id }) {
                 <div className='flex-1'>
                   <div className='font-semibold text-gray-800'>{review.user}</div>
                   <div className='text-gray-600'>{review.comment}</div>
-                  <div className='text-yellow-500'>{'★'.repeat(review.stars)}</div> {/* Display star rating */}
+                  <div className='text-yellow-500'>{'★'.repeat(review.stars)}{'☆'.repeat(5-review.stars)}</div> {/* Display star rating */}
                 </div>
               </div>
             ))
