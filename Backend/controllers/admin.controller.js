@@ -5,33 +5,41 @@ const { uploadOnCloudinary , destroy } = require('../utils/cloudinary');
 const Video = require("../models/video.model")
 require('dotenv').config();
 
+
 const signin = async (req, res) => {
     const { username, password } = req.body;
-  
+
     try {
-        const user = await Admin.findOne({ username, password }).select("-password");
-  
-        if (user) {
-            const token = await user.generateToken()
-  
-            res.setHeader('Authorization', `Bearer ${token}`);
-            const options = {
-              httpOnly : true,
-              secure : false,
-              maxAge: 30 * 24 * 60 * 60 * 1000 
-            }
-            return res
-            .status(200)
-            .cookie("token",token,options)
-            .json({ token,user });
-        } else {
+        // Find user by username only
+        const user = await Admin.findOne({ username });
+        
+        // If user not found or password is incorrect
+        if (!user || !(await user.isPasswordCorrect(password))) {
             return res.status(401).json({ message: "Invalid Username/Password" });
         }
+
+        // Generate JWT token
+        const token = await user.generateToken();
+
+        // Set token in the headers and as a cookie
+        res.setHeader('Authorization', `Bearer ${token}`);
+        const options = {
+            httpOnly: true,
+            secure: false, // Set to true in production with HTTPS
+            maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+        };
+        
+        return res
+            .status(200)
+            .cookie("token", token, options)
+            .json({ token, user: user.toObject({ versionKey: false }) });
+            
     } catch (error) {
         console.error("Error during sign-in:", error);
         return res.status(500).json({ message: "Internal Server Error" });
     }
 };
+
 
 const signup = async (req, res) => {
   const { username, password, name, age, experience, gender, company } = req.body;

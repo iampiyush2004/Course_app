@@ -13,7 +13,7 @@ router.get('/:courseId', viewCourse);
 
 router.get('/videos/:courseId', viewVids);
 
-router.get("/:courseId/videos", getVideosByCourse);
+// router.get("/:courseId/videos", getVideosByCourse);
 
 router.get('/:courseId/videos/:videoId', getSpecificVideo)
 
