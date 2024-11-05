@@ -11,14 +11,13 @@ function Reviews({ course_id }) {
   const { isStudentLoggedIn, changeNotificationData } = useContext(Context);
   const [studentReview,setStudentReview] = useState(false)
   const [studentData,setStudentData] = useState(null)
-  const [edit,setEdit] = useState(true)
+  const [edit,setEdit] = useState(false)
 
   useEffect(() => {
     const fetchReview = async () => {
       try {
         const response = await axios.get(`http://localhost:3000/review/${course_id}`);
         if (response.status === 200) {
-          console.log(response.data.reviews)
           setReviews(response.data.reviews); 
         } else {
           console.log("Error occurred in fetching reviews");
@@ -60,8 +59,10 @@ function Reviews({ course_id }) {
       });
       if (response.status === 200) {
         changeNotificationData("Comment Posted Successfully!!!");
-        setReviews((prev) => [ ...prev, response.data.review]); // Add the new review to the list
+        setReviews((prev) => [ ...prev, response.data.review]); 
+        setStudentReview(response.data.review)
         setComment(""); 
+        setEdit(false)
         setStars(1); 
       }
     } catch (error) {
@@ -119,6 +120,22 @@ function Reviews({ course_id }) {
     }
   }
 
+  const handleDelete = async() => {
+    try {
+      const response = await axios.delete(`http://localhost:3000/review/student/${course_id}`,{
+        withCredentials:true
+      })
+      if(response.status===200){
+        setStudentReview(false)
+        setComment("")
+        setStars(1)
+        changeNotificationData("Review Deleted Successfully!!!")
+      } else console.log("Error Occurred in Deleting Review")
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <div className='mt-6 bg-gray-50 p-5 rounded-lg w-full'>
       <h2 className='text-2xl font-bold text-gray-800 mb-4'>Reviews</h2>
@@ -144,6 +161,9 @@ function Reviews({ course_id }) {
         <button type="submit" className="bg-blue-500 text-white p-2 rounded">
           Submit Review
         </button>
+        {edit && <button onClick={()=>handleDelete()} className="bg-red-500 text-white p-2 rounded ml-4">
+          Delete Review
+        </button>}
         {message && <div className='text-center text-red-500'>{message}</div>}
       </form>}
       {
@@ -158,7 +178,7 @@ function Reviews({ course_id }) {
                 className='w-10 h-10 rounded-full mr-4'
               />
               <div className='flex flex-col items-center'>
-                <div>{studentData.name}</div>
+                <div>{studentData?.name}</div>
               </div>
             </div>
             <div className='flex-1'> 
@@ -184,7 +204,7 @@ function Reviews({ course_id }) {
               .reverse() 
               .slice(0, Math.min(totalReviewsDisplayed, reviews.length))
               .map((review) => {
-                if (studentData._id === review.userId?._id) {
+                if (studentData?._id === review.userId?._id) {
                   return null; 
                 }
 

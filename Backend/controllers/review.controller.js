@@ -12,9 +12,6 @@ const getCourseReview = async (req, res) => {
 
   try {
     const reviews = await Review.find({ courseId }).populate("userId","name avatar"); 
-    if (!reviews || reviews.length === 0) {
-      return res.status(404).json({ message: "No reviews found for this course." });
-    }
     return res.status(200).json({
       message: "Reviews fetched successfully!!!", 
       reviews 
@@ -74,39 +71,101 @@ const addReview = async (req,res) => {
   }
 }
 
-const editReview = async (req,res) => {
-  const userId = req.user
-  if(!userId) {
-    return res.status(401).json({message:"Unauthorized Access!!!"})
-  }  
-  const courseId = req.params.courseId
-  if(!courseId) {
-    return res.status(400).json({message:"Course Id not provided!!!"}) 
+const editReview = async (req, res) => {
+  const userId = req.user;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized Access!!!" });
   }
+
+  const courseId = req.params.courseId;
+  if (!courseId) {
+    return res.status(400).json({ message: "Course Id not provided!!!" });
+  }
+
   try {
-    const {comment,stars} = req.body;
-    if(!comment || !stars) {
-      return res.status(400).json({message:"Comment and Stars data Required!!"})
+    const { comment, stars } = req.body;
+
+    if (!comment || !stars) {
+      return res.status(400).json({ message: "Comment and Stars data Required!!" });
     }
 
-    const review = await Review.findOne({courseId,userId})
-    const course = await Review.findById({courseId})  // update of review stars logic pending!!!
-    review.comment = comment
-    review.stars = stars
-    await review.save() 
+    const review = await Review.findOne({ courseId, userId });
 
-    const responseReview = review.toObject({ versionKey: false });
-    delete responseReview.userId; 
-    delete responseReview.courseId; 
+    if (!review) {
+      return res.status(404).json({ message: "Review not found for this user on the given course!!!" });
+    }
+
+    const starsDifference = stars - review.stars;
+
+    await Course.updateOne(
+      { _id: courseId },
+      { $inc: { totalStars : starsDifference } }
+    );
+
+    await Review.updateOne(
+      { courseId, userId },
+      { $set: { comment: comment, stars: stars } } 
+    );
+
+    const responseReview = {
+      comment,
+      stars
+    };
 
     return res.status(200).json({
-      message:"Review Updated SuccessFully!!!",
-      review
-    })
+      message: "Review Updated Successfully!!!",
+      review: responseReview
+    });
+
   } catch (error) {
-    return res.status(500).json({message:"Internal Server Error!!!"})
+    console.error(error); 
+    return res.status(500).json({ message: "Internal Server Error!!!" });
   }
-}
+};
+
+const deleteReview = async (req, res) => {
+  const userId = req.user;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized Access!!!" });
+  }
+
+  const courseId = req.params.courseId;
+  if (!courseId) {
+    return res.status(400).json({ message: "Course Id not provided!!!" });
+  }
+
+  try {
+    const review = await Review.findOne({ courseId, userId });
+
+    if (!review) {
+      return res.status(404).json({ message: "Review not found for this user on the given course!!!" });
+    }
+
+    const stars = review.stars;
+
+    await Course.updateOne(
+      { _id: courseId },
+      { 
+        $inc: { 
+          totalStars: -stars,  
+          totalReviews: -1     
+        }
+      }
+    );
+
+    await Review.deleteOne({ courseId, userId });
+
+    return res.status(200).json({
+      message: "Review Deleted Successfully!!!"
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error!!!" });
+  }
+};
 
 const getCoureStudentReview = async (req,res) => {
   const userId = req.user
@@ -138,4 +197,4 @@ const getCoureStudentReview = async (req,res) => {
 }
 
 
-module.exports = {  getCourseReview, addReview, getCoureStudentReview, editReview }
+module.exports = {  getCourseReview, addReview, getCoureStudentReview, editReview, deleteReview }
