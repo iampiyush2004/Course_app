@@ -95,7 +95,7 @@ function AdminLogin() {
   return (
     <div className={`container mx-auto ${hasAccount?"mt-24 mb-32":"mt-10"} max-w-md p-6 bg-transparent rounded-lg shadow-lg flex flex-col`}>
       <h2 className="text-2xl font-bold text-center mb-6">
-        {hasAccount ? 'Login' : 'Sign Up'}
+        Teacher {hasAccount ? 'Login' : 'Sign Up'}
       </h2>
       {hasAccount ? (
         <SignIn 
