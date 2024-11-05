@@ -6,11 +6,14 @@ const { signin ,
         logout,
         myCourses,
         isLoggedin,
-        returnMe} = require("../controllers/user.controller");
+        returnMe,
+        editUserProfile} = require("../controllers/user.controller");
 
 const { viewCourse } = require("../controllers/course.controller");
 const {upload} = require('../middleware/multer');
 const { order, capture, hasPurchased } = require("../controllers/payment.controller");
+
+router.put('/editProfile', verifyJwt, editUserProfile);
 
 router.get('/me', verifyJwt, returnMe);
 

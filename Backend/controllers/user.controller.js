@@ -4,6 +4,8 @@ const Course = require("../models/course.model")
 const jwt = require("jsonwebtoken")
 const { uploadOnCloudinary , destroy } = require('../utils/cloudinary');
 
+
+
 const returnMe = async (req, res) => {
     try {
         // Since the user is verified and available in req.user
@@ -170,5 +172,46 @@ const isLoggedin = async (req,res) => {
     }
 }
 
+const editUserProfile = async (req, res) => {
+    try {
+        const userId = req.user._id; // Get user ID from verified token in middleware
+        const { username, email, name, dob, gender, avatar, institution } = req.body;
 
-module.exports = {signin , signup , logout , myCourses, isLoggedin , returnMe}
+        if (!username && !email && !name && !dob && !gender && !avatar && !institution) {
+            return res.status(400).json({ message: "At least one field is required to update." });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        // Prepare fields for update
+        const updateFields = {};
+        if (username) updateFields.username = username;
+        if (email) updateFields.email = email;
+        if (name) updateFields.name = name;
+        if (dob) updateFields.dob = dob;
+        if (gender) updateFields.gender = gender;
+        if (avatar) updateFields.avatar = avatar;
+        if (institution) updateFields.institution = institution;
+
+        // Update user profile
+        const updatedUserProfile = await User.findByIdAndUpdate(userId, {
+            $set: updateFields
+        }, { new: true });
+
+        res.status(200).json({
+            message: "User profile updated successfully!",
+            updatedUserProfile
+        });
+    } catch (error) {
+        console.error("Error editing user profile:", error);
+        res.status(500).json({ message: "Internal server error while editing profile." });
+    }
+};
+
+
+
+
+module.exports = {signin , signup , logout , myCourses, isLoggedin , returnMe , editUserProfile}
