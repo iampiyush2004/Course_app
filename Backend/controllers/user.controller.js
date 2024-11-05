@@ -23,26 +23,36 @@ const signin = async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        const user = await User.findOne({ username, password }).select("-password"); // Directly match both username and password
-
-        if (!user) {
+        // Find user by username only
+        const user = await User.findOne({ username });
+        
+        // If user not found or password is incorrect
+        if (!user || !(await user.isPasswordCorrect(password))) {
             console.log("User not found or invalid password");
             return res.status(401).json({ message: "Invalid Username/Password" });
         }
 
-        // Generate token without hashing comparison
+        // Generate JWT token
         const token = user.generateToken();
 
+        // Set token as an HTTP-only cookie and in the Authorization header
         const options = {
             httpOnly: true,
-            secure: false,
-            maxAge: 30 * 24 * 60 * 60 * 1000
+            secure: false, // Set to true in production with HTTPS
+            maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
         };
         res.setHeader('Authorization', `Bearer ${token}`);
         return res
             .status(200)
             .cookie("token", token, options)
-            .json({ token, user: { id: user._id, username: user.username, email: user.email } });
+            .json({ 
+                token, 
+                user: { 
+                    id: user._id, 
+                    username: user.username, 
+                    email: user.email 
+                } 
+            });
     } catch (error) {
         console.error("Error during sign-in:", error);
         return res.status(500).json({ message: "Internal Server Error" });
