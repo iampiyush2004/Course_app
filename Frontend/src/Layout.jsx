@@ -12,6 +12,7 @@ function Layout() {
         <Header/>
         <Notification/>
         <LoadingSpinner/>
+        <div className='h-20'></div>
         <Outlet/>
         <Footer/>
       </div>

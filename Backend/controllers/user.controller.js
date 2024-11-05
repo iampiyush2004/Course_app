@@ -114,9 +114,6 @@ const myCourses = async (req, res) => {
         // Access authenticated user from `verifyJwt` middleware
         const user = req.user;
 
-        // Log the user object for debugging
-        console.log("Authenticated User:", user);
-
         // Check if user has purchased courses
         if (!user || !user.coursePurchased || user.coursePurchased.length === 0) {
             return res.status(404).json({ message: "No purchased courses found" });

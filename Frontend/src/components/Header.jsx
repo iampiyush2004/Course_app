@@ -23,7 +23,9 @@ export function Header() {
     }, [checkStudent])
 
     const redirectCourses = () => {
-        navigate("/adminName/courses")
+        if(isLoggedIn) navigate("/adminName/courses")
+        if(isStudentLoggedIn) navigate("/user/courses")
+        
     }
     const redirectProfile = () => {
         if(isLoggedIn) navigate("/adminName")
@@ -48,7 +50,7 @@ export function Header() {
     };
 
     return (
-        <header>
+        <header className=' fixed z-50 bg-green-50 w-full rounded-b-md'>
             <div className="px-4 mx-auto sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16 lg:h-20">
                     <div className="flex-shrink-0">
@@ -59,9 +61,13 @@ export function Header() {
 
                     <div className="hidden ml-auto lg:flex lg:items-center lg:justify-center lg:space-x-10">
 
+                        <Link to="/" title="" className="text-base font-semibold text-black transition-all duration-200 hover:text-opacity-80"> Home </Link>
+
                         <Link to="/About" title="" className="text-base font-semibold text-black transition-all duration-200 hover:text-opacity-80"> About Us </Link>
 
-                        <Link to="/adminName/AddCourse" title="" className="text-base font-semibold text-black transition-all duration-200 hover:text-opacity-80"> Sell Course</Link>
+                        <Link to="/Courses" title="" className="text-base font-semibold text-black transition-all duration-200 hover:text-opacity-80"> Explore Courses </Link>
+
+                        <Link to="/adminName/AddCourse" title="" className="text-base font-semibold text-black transition-all duration-200 hover:text-opacity-80"> Sell Your Course</Link>
 
                         <div className="w-px h-5 bg-black/20"></div>
 
