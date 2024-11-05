@@ -211,7 +211,55 @@ const editUserProfile = async (req, res) => {
     }
 };
 
+const updateUserAvatar = async (req, res) => {
+    const userId = req.user?._id; // Assuming `verifyJwt` middleware attaches `user` to `req`
+    if (!userId) {
+        return res.status(401).json({
+            message: "Unauthorized Access!!!"
+        });
+    }
+
+    try {
+        // Find the user to get the current avatar details
+        const currentUser = await User.findById(userId);
+        if (!currentUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        // Get the local path of the uploaded file
+        const localFilePath = req.file.path;
+        const imageUrl = await uploadOnCloudinary(localFilePath); // Upload to Cloudinary
+
+        if (!imageUrl) {
+            return res.status(500).json({
+                message: "Internal Server Error in Uploading Avatar to Cloudinary"
+            });
+        }
+
+        // If there is an existing avatar, delete it from Cloudinary
+        if (currentUser.avatar) {
+            const publicId = currentUser.avatar.split('/').pop().split('.')[0]; // Extract public ID
+            await destroy(publicId); // Delete the old avatar
+        }
+
+        // Update the user with the new avatar URL
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { avatar: imageUrl }, // Set the avatar to the new Cloudinary URL
+            { new: true } // Return the updated document
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        res.status(200).json({ avatarUrl: updatedUser.avatar }); // Return the new avatar URL
+    } catch (error) {
+        console.error("Error updating avatar:", error);
+        res.status(500).json({ error: "Failed to upload avatar" });
+    }
+};
 
 
 
-module.exports = {signin , signup , logout , myCourses, isLoggedin , returnMe , editUserProfile}
+module.exports = {signin , signup , logout , myCourses, isLoggedin , returnMe , editUserProfile , updateUserAvatar}
