@@ -6,11 +6,17 @@ const { signin ,
         logout,
         myCourses,
         isLoggedin,
-        returnMe} = require("../controllers/user.controller");
+        returnMe,
+        editUserProfile,
+        updateUserAvatar} = require("../controllers/user.controller");
 
 const { viewCourse } = require("../controllers/course.controller");
 const {upload} = require('../middleware/multer');
 const { order, capture, hasPurchased } = require("../controllers/payment.controller");
+
+router.put('/editProfile', verifyJwt, editUserProfile);
+
+router.post('/upload-image',verifyJwt, upload.single('avatar'), updateUserAvatar);
 
 router.get('/me', verifyJwt, returnMe);
 
