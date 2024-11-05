@@ -65,9 +65,9 @@ export function Header() {
 
                         <Link to="/About" title="" className="text-base font-semibold text-black transition-all duration-200 hover:text-opacity-80"> About Us </Link>
 
-                        <Link to="/Courses" title="" className="text-base font-semibold text-black transition-all duration-200 hover:text-opacity-80"> Explore Courses </Link>
+                        {!isLoggedIn && <Link to="/Courses" title="" className="text-base font-semibold text-black transition-all duration-200 hover:text-opacity-80"> Explore Courses </Link>}
 
-                        <Link to="/adminName/AddCourse" title="" className="text-base font-semibold text-black transition-all duration-200 hover:text-opacity-80"> Sell Your Course</Link>
+                        {!isStudentLoggedIn && <Link to="/adminName/AddCourse" title="" className="text-base font-semibold text-black transition-all duration-200 hover:text-opacity-80"> Sell Your Course</Link>}
 
                         <div className="w-px h-5 bg-black/20"></div>
 
