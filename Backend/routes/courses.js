@@ -2,13 +2,16 @@ const { Router } = require("express");
 const { viewAllCourses,
         viewCourse,
         getVideosByCourse,
-        getSpecificVideo } = require("../controllers/course.controller");
+        getSpecificVideo,
+        viewVids } = require("../controllers/course.controller");
 
 const router = Router();
 
 router.get("/", viewAllCourses);
 
 router.get('/:courseId', viewCourse);
+
+router.get('/videos/:courseId', viewVids);
 
 router.get("/:courseId/videos", getVideosByCourse);
 
