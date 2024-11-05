@@ -48,7 +48,7 @@ export function Header() {
     };
 
     return (
-        <header className="">
+        <header>
             <div className="px-4 mx-auto sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16 lg:h-20">
                     <div className="flex-shrink-0">
@@ -70,7 +70,7 @@ export function Header() {
                         } 
 
                         {
-                            isStudentLoggedIn && <UserDropdown data={{ avatar: data?.avatar, name: data?.fullName }} handleLogout={handleLogout} redirectCourses={redirectCourses} redirectProfile={redirectProfile} />
+                            isStudentLoggedIn && <UserDropdown data={{ avatar: data?.avatar, name: data?.name }} handleLogout={handleLogout} redirectCourses={redirectCourses} redirectProfile={redirectProfile} />
                         }    
 
                         {!isLoggedIn && !isStudentLoggedIn &&

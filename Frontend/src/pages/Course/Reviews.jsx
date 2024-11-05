@@ -16,7 +16,7 @@ function Reviews({ course_id }) {
   useEffect(() => {
     const fetchReview = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/review/${course_id}`);
+        const response = await axios.get(`http://localhost:3000/review/course/${course_id}`);
         if (response.status === 200) {
           setReviews(response.data.reviews); 
         } else {
@@ -170,7 +170,7 @@ function Reviews({ course_id }) {
         studentReview && 
         <div className='bg-gray-100 p-3 rounded-md mb-3 flex flex-col gap-y-4'>
           <h1 className='text-xl'>Your Review</h1>
-          <div key={45} className='border border-gray-200 rounded-lg p-4 flex items-start flex-col gap-y-5'>
+          <div className='border border-gray-200 rounded-lg p-4 flex items-start flex-col gap-y-5'>
             <div className='flex gap-x-2 items-center'>
               <img
                 src={studentData?.avatar} 
