@@ -149,7 +149,7 @@ const isLoggedin = async (req,res) => {
     }
     try {
         const decodedValue = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decodedValue._id).select("-password")
+        const user = await User.findById(decodedValue._id).select("-password").populate("coursePurchased","imageLink title description ")
         if (user) {
             return res.status(200).json({
                 message : "Student is Logged In",

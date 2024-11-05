@@ -196,5 +196,27 @@ const getCoureStudentReview = async (req,res) => {
   }
 }
 
+const getStudentReview = async (req, res) => {
+  const userId = req.user;
 
-module.exports = {  getCourseReview, addReview, getCoureStudentReview, editReview, deleteReview }
+  if (!userId) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
+
+  try {
+    const reviews = await Review.find({ userId }).populate("courseId", "title");
+
+    if (!reviews) {
+      return res.status(404).json({ message: "No reviews found for this user" });
+    }
+
+    return res.status(200).json({ reviews });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "An error occurred while fetching reviews", error: error.message });
+  }
+};
+
+
+
+module.exports = {  getCourseReview, addReview, getCoureStudentReview, editReview, deleteReview, getStudentReview }
