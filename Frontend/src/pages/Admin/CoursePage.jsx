@@ -21,7 +21,7 @@ const CoursePage = () => {
     const fetchVideos = async () => {
         setLoading(true)
         try {
-            const response = await axios.get(`http://localhost:3000/courses/${courseId}`);
+            const response = await axios.get(`http://localhost:3000/courses/videos/${courseId}`);
             console.log('API Response:', response.data); // Log the response data
             setVideos(response.data.videos);
             setTeacherInfo(response.data.teacher)

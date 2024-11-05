@@ -83,18 +83,40 @@ const editCourse = async (req, res) => {
 };
 
 const viewCourse = async (req, res) => {
-  const courseId = req.params.courseId;
-
-  try {
-      const course = await Course.findById(courseId).populate("videos").populate("teacher"); 
-      if (!course) {
-          return res.status(404).json({ message: "Course not found." });
-      }
-      res.status(200).json(course); 
-  } catch (error) {
-      res.status(500).json({ message: "Error retrieving course details", error });
+    const courseId = req.params.courseId;
+  
+    try {
+        const course = await Course.findById(courseId)
+            .populate({
+                path: "videos",
+                select: "-videoFile" 
+            })
+            .populate("teacher");
+  
+        if (!course) {
+            return res.status(404).json({ message: "Course not found." });
+        }
+        
+        res.status(200).json(course);
+    } catch (error) {
+        res.status(500).json({ message: "Error retrieving course details", error });
+    }
   }
-}
+  
+
+const viewVids = async (req, res) => {
+    const courseId = req.params.courseId;
+  
+    try {
+        const course = await Course.findById(courseId).populate("videos").populate("teacher"); 
+        if (!course) {
+            return res.status(404).json({ message: "Course not found." });
+        }
+        res.status(200).json(course); 
+    } catch (error) {
+        res.status(500).json({ message: "Error retrieving course details", error });
+    }
+  }
 
 const getVideosByCourse = async (req, res) => {
     const { courseId } = req.params;
@@ -163,5 +185,6 @@ module.exports = {
   deleteCourse,
   editCourse,
   getVideosByCourse,
-  getSpecificVideo
+  getSpecificVideo,
+  viewVids
 }
