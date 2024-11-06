@@ -108,7 +108,7 @@ function AddCourse() {
         ):(
           <div className='h-screen mb-28'>
             <div className='flex items-center justify-center mt-8'>
-              <div className='bg-white p-8 rounded-lg shadow-md w-1/2 min-h-[60vh] flex flex-col gap-x-60'>
+              <div className='bg-green-50 p-8 rounded-lg shadow-md w-1/2 min-h-[60vh] flex flex-col gap-x-60'>
                 <div className="mb-8 flex items-center gap-8">
                   <Link to="/adminName" className="bg-gray-800 text-white py-2 px-4 text-xl rounded-md transition-transform transform hover:bg-gray-700 hover:scale-105">
                     &larr; Back

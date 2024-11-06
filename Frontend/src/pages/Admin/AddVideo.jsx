@@ -82,7 +82,7 @@ function AddVideo() {
   }
 
   return (
-    <div className='bg-white w-2/3 m-auto rounded-md shadow-lg p-10'>
+    <div className='bg-green-50 w-2/3 m-auto rounded-md shadow-lg p-10'>
       {loading?
       (
         <Loading title='Uploading...'/>
@@ -96,7 +96,7 @@ function AddVideo() {
             <h2 className='text-2xl font-bold text-center'>Upload Video</h2>
           </div>
           <form className='flex flex-col space-y-6' onSubmit={handleSubmit}>
-            <div className='flex flex-col bg-gray-100 p-6 rounded-md shadow-md gap-y-5'>
+            <div className='flex flex-col bg-gray-50 p-6 rounded-md shadow-md gap-y-5'>
               <label className='font-semibold'>Title</label>
               <input
                 type='text'
