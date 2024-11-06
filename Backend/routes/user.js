@@ -16,7 +16,7 @@ const { order, capture, hasPurchased } = require("../controllers/payment.control
 
 router.put('/editProfile', verifyJwt, editUserProfile);
 
-router.post('/upload-image',verifyJwt, upload.single('avatar'), updateUserAvatar);
+router.put('/updateAvatar',verifyJwt, upload.single('avatar'), updateUserAvatar);
 
 router.get('/me', verifyJwt, returnMe);
 
