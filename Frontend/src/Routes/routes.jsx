@@ -17,6 +17,7 @@ import TeacherInfo from '../pages/TeacherInfo'
 import UserLogin from '../pages/User/UserLogin'
 import Profile from '../pages/User/Profile'
 import UserCourses from "../pages/User/UserCourses"
+import EditProfile from '../pages/User/EditProfile'
 export const router = createBrowserRouter([
   {
     path:"/",
@@ -90,6 +91,10 @@ export const router = createBrowserRouter([
       {
         path:"user/courses",
         element:<UserCourses/>
+      },
+      {
+        path:"user/editProfile",
+        element:<EditProfile/>
       }
     ]
   }
