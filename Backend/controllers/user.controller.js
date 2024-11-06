@@ -172,9 +172,9 @@ const isLoggedin = async (req,res) => {
 const editUserProfile = async (req, res) => {
     try {
         const userId = req.user._id; // Get user ID from verified token in middleware
-        const { username, email, name, dob, gender, avatar, institution } = req.body;
+        const { username, email, name, dob, gender, institution } = req.body;
 
-        if (!username && !email && !name && !dob && !gender && !avatar && !institution) {
+        if (!username && !email && !name && !dob && !gender && !institution) {
             return res.status(400).json({ message: "At least one field is required to update." });
         }
 
@@ -190,13 +190,12 @@ const editUserProfile = async (req, res) => {
         if (name) updateFields.name = name;
         if (dob) updateFields.dob = dob;
         if (gender) updateFields.gender = gender;
-        if (avatar) updateFields.avatar = avatar;
         if (institution) updateFields.institution = institution;
 
         // Update user profile
         const updatedUserProfile = await User.findByIdAndUpdate(userId, {
             $set: updateFields
-        }, { new: true });
+        }, { new: true }).select("-password");
 
         res.status(200).json({
             message: "User profile updated successfully!",
