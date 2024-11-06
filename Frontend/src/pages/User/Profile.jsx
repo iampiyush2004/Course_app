@@ -38,13 +38,13 @@ function Profile() {
             {/* main/top part */}
             <div className='flex space-x-16'>
               {/* image of user */}
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center w-1/2">
                 <img 
                   src={data?.avatar} 
                   alt={data?.name} 
-                  className=" h-[40vh] rounded-full object-cover border-4 border-black my-auto" 
+                  className=" h-[40vh] w-full rounded-full object-cover border-4 border-black my-auto" 
                 />
-                <button className="bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 transition-all">
+                <button className="bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 transition-all" onClick={()=>navigate("/user/editProfile")}>
                   Edit Profile
                 </button>
               </div>
