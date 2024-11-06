@@ -99,7 +99,7 @@ function Admin() {
         <Loading/>
       ) : (
         <div className='mt-16 flex justify-center'>
-          <div className="flex bg-white shadow-2xl rounded-lg overflow-hidden w-[60vw] h-[75vh] transform transition-transform duration-300 hover:scale-105">
+          <div className="flex bg-green-50 shadow-2xl rounded-lg overflow-hidden w-[60vw] h-[75vh] transform transition-transform duration-300 hover:scale-105">
             <div className="relative w-1/3 p-4">
               <img 
                 src={photoUrl} 
@@ -130,7 +130,7 @@ function Admin() {
 
               <div className='mt-4'>
                 <p className='text-2xl text-red-500 font-semibold'>Statistics</p>
-                <div className='flex flex-col bg-gray-50 w-[60%] p-6 rounded-2xl shadow-inner mt-2'>
+                <div className='flex flex-col bg-green-100 w-[60%] p-6 rounded-2xl shadow-inner mt-2'>
                   <div className='flex justify-between text-gray-700 py-2'>
                     <div>Total Courses Uploaded:</div>
                     <div>{totalCourses}</div>
