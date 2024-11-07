@@ -5,6 +5,7 @@ const adminRouter = require("./routes/admin");
 const userRouter = require("./routes/user");
 const courseRouter = require("./routes/courses")
 const reviewRouter = require("./routes/review")
+const progressRouter = require("./routes/progress")
 const connectDB = require("./db/index")
 const app = express();
 const cookieParser = require('cookie-parser');
@@ -21,13 +22,12 @@ app.use(cookieParser());
 
 
 
-
-
 connectDB()
 app.use("/admin", adminRouter);
 app.use("/user", userRouter);
 app.use("/courses" , courseRouter);
 app.use("/review", reviewRouter);
+app.use("/progress", progressRouter);
 
 const PORT = 3000; 
 app.listen(PORT, () => {
