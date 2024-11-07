@@ -16,7 +16,6 @@ async function verifyJwt(req, res, next) {
             req.user = user;
             next();
         } else {
-            console.log("User not found with this ID.");
             return res.status(403).json({ message: "You are not authenticated!" });
         }
     } catch (error) {

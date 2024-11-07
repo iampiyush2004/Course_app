@@ -14,7 +14,6 @@ function Courses() {
     const fetchData = async () => {
       try {
         const res = await axios.get("http://localhost:3000/courses/");
-        console.log("Fetched data:", res.data); // Log the response to check the structure
         setData(res.data.courses);
         setSortedData(res.data.courses); // Initialize sortedData
       } catch (error) {
