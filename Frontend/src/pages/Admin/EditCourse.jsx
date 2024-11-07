@@ -96,7 +96,7 @@ const EditCourse = () => {
           <Loading/>
         ):(
           <div className="flex items-center justify-center space-x-6 p-6 gap-x-20">
-            <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
+            <div className="w-full max-w-md p-6 bg-green-50 rounded-lg shadow-md">
               <div className="mb-8 flex items-center gap-4">
                 <Link to="/adminName/Courses" className="bg-gray-800 text-white py-2 px-4 text-xl rounded-md transition-transform transform hover:bg-gray-700 hover:scale-105">
                   &larr; Back

@@ -1,9 +1,10 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Loading from '../../components/Loading';
 import handleRazorpayPayment from '../payments/razorpayIntegration';
 import Reviews from './Reviews';
+import { Context } from '../../Context/Context';
 
 function CourseInfo() {
   const { course_id } = useParams();
@@ -12,6 +13,7 @@ function CourseInfo() {
   const [isReadMore, setIsReadMore] = useState(false);
   const [isPurchased, setIsPurchased] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const {isStudentLoggedIn,changeNotificationData,isLoggedIn} = useContext(Context)
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,13 +28,16 @@ function CourseInfo() {
         }
 
         // Fetch user details to check purchase status
-        const userResponse = await axios.get(`http://localhost:3000/user/me`, {
-          withCredentials: true,
-        });
-        if (userResponse.status === 200) {
-          const userData = userResponse.data;
-          // Check if the course_id exists in the coursePurchased array
-          setIsPurchased(userData.coursePurchased.includes(course_id));
+        if(isStudentLoggedIn){
+          const userResponse = await axios.get(`http://localhost:3000/user/me`, {
+            withCredentials: true,
+          });
+  
+          if (userResponse.status === 200) {
+            const userData = userResponse.data;
+            // Check if the course_id exists in the coursePurchased array
+            setIsPurchased(userData.coursePurchased.includes(course_id));
+          }
         }
       } catch (error) {
         console.error("Error occurred while fetching course or user data:", error);
@@ -48,6 +53,14 @@ function CourseInfo() {
   };
 
   const handleBuyNow = async () => {
+    if(!isStudentLoggedIn && isLoggedIn) {
+      changeNotificationData("Login as a Student!!!")
+      return
+    }
+    if(!isStudentLoggedIn) {
+      changeNotificationData("Login First!!!")
+      return
+    }
     if (isPurchased) {
       // Directly navigate to the videos if purchased
       navigate(`/courses/${course_id}/videos/123`);
@@ -55,10 +68,12 @@ function CourseInfo() {
       // Proceed with the payment process
       try {
         await handleRazorpayPayment(course_id, () => {
-          alert("Payment successful! Redirecting to 'My Courses' page...");
+          changeNotificationData("Payment successful! Redirecting to 'My Courses' page...")
+          // alert("Payment successful! Redirecting to 'My Courses' page...");
           navigate(`/courses/${course_id}/videos/123`);
         });
       } catch (error) {
+        changeNotificationData("Failed to initiate payment. Please try again.")
         setErrorMessage("Failed to initiate payment. Please try again.");
         console.error("Payment initiation error:", error);
       }

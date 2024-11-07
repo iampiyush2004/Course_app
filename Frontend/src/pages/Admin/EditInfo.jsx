@@ -82,7 +82,7 @@ function EditInfo() {
           <Loading/>
         ):(
           <div>
-            <div className="w-1/2 mx-auto p-6 border border-gray-300 rounded-lg shadow-md bg-white flex flex-col space-y-4">
+            <div className="w-1/2 mx-auto p-6 border border-gray-300 rounded-lg shadow-md bg-green-50 flex flex-col space-y-4">
               <div className="mb-2 flex items-center gap-4">
                 <Link to="/adminName" className="bg-gray-800 text-white py-2 px-4 text-xl rounded-md transition-transform transform hover:bg-gray-700 hover:scale-105">
                   &larr; Back
@@ -191,7 +191,7 @@ function EditInfo() {
                     id="bio"
                     placeholder="Tell us about yourself"
                     value={bio}
-                    className="border border-gray-300 rounded-md p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 resize-y min-h-[80px]"
+                    className="border border-gray-300 rounded-md p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 resize-y min-h-32"
                     onChange={(e) => setBio(e.target.value)}
                   ></textarea>
                 </div>
