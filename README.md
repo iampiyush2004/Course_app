@@ -1,4 +1,3 @@
-### Welcome to Course App
 📚 Course App
 A full-featured course management application where admins can create and manage courses, students can explore and purchase courses, and video lectures can be streamed with video progress saved. This app is built on the MERN stack and integrates with various third-party services for media storage, payments, and AI-driven recommendations.
 
