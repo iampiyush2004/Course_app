@@ -1,7 +1,4 @@
 const { Router } = require("express");
-// const  Admin  = require("../models/admin.model");
-// const  Course  = require("../models/course.model");
-// const Video = require("../models/video.model")
 const router = Router();
 
 const {upload} = require('../middleware/multer');

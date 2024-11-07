@@ -49,8 +49,8 @@ function TeacherInfo() {
       {loading ? (
         <Loading />
       ) : (
-        <div className='p-10'>
-          <div className='bg-green-100 rounded-lg shadow-md p-4 flex flex-col gap-y-10'>
+        <div className='p-10 w-full'>
+          <div className='bg-green-100 rounded-lg shadow-md p-4 flex flex-col gap-y-10 w-full'>
             {/* Top Part */}
             <div className="flex items-center space-x-4 justify-start gap-x-20">
               <img src={data?.avatar} alt={data?.username} className="w-1/5 h-[40vh] rounded-full object-cover border-2 border-gray-300" />
@@ -78,7 +78,7 @@ function TeacherInfo() {
 
             {/* About Section */}
             <div className='flex w-full gap-x-10'>
-              <div className='bg-white p-6 rounded-xl mx-10'>
+              <div className='bg-white p-6 rounded-xl mx-10 w-full'>
                 <h1 className='text-2xl font-semibold mb-2'>About</h1>
                 <div className='bg-gray-50 p-6 rounded-xl'>
                   {data?.bio}
