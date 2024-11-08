@@ -1,3 +1,4 @@
+
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Context } from '../../Context/Context';
@@ -11,12 +12,13 @@ function AddCourse() {
   const [detailedDescription, setDetailedDescription] = useState("");
   const [imageLink, setImageLink] = useState(null);
   const [price, setPrice] = useState(0);
+  const [tags, setTags] = useState([]); // State to store tags
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
-  const [isLoading,setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const { dataFetcher, changeNotificationData, isLoggedIn } = useContext(Context);
-  const [isOpen,setIsOpen] = useState(false)
-  const [courseId,setCourseId] = useState(null)
+  const [isOpen, setIsOpen] = useState(false)
+  const [courseId, setCourseId] = useState(null)
 
   const clearForm = () => {
     setTitle("");
@@ -24,15 +26,16 @@ function AddCourse() {
     setDetailedDescription("");
     setImageLink(null);
     setPrice(0);
+    setTags([]); // Clear tags
   };
 
   useEffect(() => {
     setMessage('');
-  }, [title, shortDescription, detailedDescription, imageLink, price]);
+  }, [title, shortDescription, detailedDescription, imageLink, price, tags]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!title || !shortDescription || !detailedDescription || !imageLink || !price) {
+    if (!title || !shortDescription || !detailedDescription || !imageLink || !price || tags.length === 0) {
       setMessage("All fields are required.");
       return;
     }
@@ -42,6 +45,7 @@ function AddCourse() {
       setMessage("Short description cannot exceed 150 characters.");
       return;
     }
+
     setIsLoading(true)
     const formData = new FormData();
     formData.append("title", title);
@@ -49,6 +53,7 @@ function AddCourse() {
     formData.append("detailedDescription", detailedDescription);
     formData.append("imageLink", imageLink);
     formData.append("price", price);
+    formData.append("tags", JSON.stringify(tags)); // Append tags as JSON string
 
     try {
       const response = await axios.post("http://localhost:3000/admin/createCourse", formData, {
@@ -70,7 +75,7 @@ function AddCourse() {
     } catch (error) {
       setMessage("Network error. Please check your connection.");
       console.log("Error", error);
-    } finally{
+    } finally {
       setIsLoading(false)
     }
   };
@@ -82,6 +87,19 @@ function AddCourse() {
     if (charCount <= 150) {
       setShortDescription(value);
     }
+  };
+
+  const handleTagInput = (e) => {
+    if (e.key === 'Enter' && e.target.value.trim() !== '') {
+      setTags([...tags, e.target.value.trim()]);
+      e.target.value = ''; // Clear input after adding tag
+    }
+  };
+
+  const handleTagRemove = (index) => {
+    const newTags = [...tags];
+    newTags.splice(index, 1);
+    setTags(newTags);
   };
 
   const onClose = () => {
@@ -96,16 +114,16 @@ function AddCourse() {
     setIsOpen(false)
   }
 
-  useEffect(()=>{
-    if(isLoggedIn===false) navigate("/admin")
-  },[isLoggedIn])
-  
+  useEffect(() => {
+    if (isLoggedIn === false) navigate("/admin")
+  }, [isLoggedIn])
+
   return (
     <div>
       {
-        isLoading?(
-          <Loading/>
-        ):(
+        isLoading ? (
+          <Loading />
+        ) : (
           <div className='h-screen mb-28'>
             <div className='flex items-center justify-center mt-8'>
               <div className='bg-green-50 p-8 rounded-lg shadow-md w-1/2 min-h-[60vh] flex flex-col gap-x-60'>
@@ -126,10 +144,10 @@ function AddCourse() {
                   <div className="mb-2">
                     <textarea
                       placeholder='Enter Short Description (up to 150 characters)'
-                      className='border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 w-full  min-h-24 resize-none'
+                      className='border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 w-full min-h-24 resize-none'
                       value={shortDescription}
                       onChange={handleShortDescriptionChange}
-                      maxLength={150} 
+                      maxLength={150}
                     />
                     <div className='text-right text-gray-500'>
                       {shortDescription.length}/150 characters
@@ -162,6 +180,31 @@ function AddCourse() {
                       onChange={(e) => setPrice(e.target.value)}
                     />
                   </div>
+
+                  <div className="mb-6">
+                    <label className="block text-gray-700 font-semibold mb-2">Tags</label>
+                    <input
+                      type="text"
+                      placeholder="Press Enter to add tags"
+                      className="border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                      onKeyUp={handleTagInput}
+                    />
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {tags.map((tag, index) => (
+                        <span key={index} className="bg-blue-500 text-white py-1 px-3 rounded-full text-sm flex items-center">
+                          {tag}
+                          <button
+                            type="button"
+                            className="ml-2 text-white"
+                            onClick={() => handleTagRemove(index)}
+                          >
+                            x
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
                   <input
                     type='submit'
                     value='Add Course'
@@ -172,13 +215,11 @@ function AddCourse() {
               </div>
               <ConfirmationDialog
                 isOpen={isOpen}
-                onClose={()=>onClose()}
-                onConfirm={()=>onConfirm()}
+                onClose={() => onClose()}
+                onConfirm={() => onConfirm()}
                 title="Would you like to upload videos now?"
                 message="You can also upload videos later if you'd prefer."
-                // option1 = "Ye"
-                // option2 = "I will do it later"
-                />
+              />
             </div>
           </div>
         )
@@ -188,3 +229,4 @@ function AddCourse() {
 }
 
 export default AddCourse;
+
