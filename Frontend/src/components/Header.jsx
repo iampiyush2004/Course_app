@@ -32,6 +32,8 @@ export function Header() {
         if(isStudentLoggedIn) navigate("/user/profile")
     }
     const handleLogout = async () => {
+        const local = JSON.parse(localStorage.getItem("videoStamps"))
+        const keys = Object.keys(local)
         if(isLoggedIn){
             await axios.post('http://localhost:3000/admin/logout',null,{
                 withCredentials : true
@@ -40,6 +42,12 @@ export function Header() {
             setUserData(null)
         }
         if(isStudentLoggedIn){
+            keys.map(async(courseId)=>{
+                const response = await axios.put(`http://localhost:3000/progress/update/${courseId}`,local[keys],{withCredentials : true})
+                // if(response.status===200){
+                //     console.log("success")
+                // }
+            })
             await axios.post("http://localhost:3000/user/logout",{},{
                 withCredentials : true
             })
