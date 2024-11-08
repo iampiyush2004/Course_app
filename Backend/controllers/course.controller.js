@@ -40,47 +40,91 @@ const deleteCourse = async (req, res) => {
   }
 };
 
-const editCourse = async (req, res) => {
-  const adminId = req.admin?._id
-  if(!adminId) {
-    return res.status(401).json({
-      "message" : "Unauthorized Access!!!"
-    })
-  }
+// const editCourse = async (req, res) => {
+//   const adminId = req.admin?._id
+//   if(!adminId) {
+//     return res.status(401).json({
+//       "message" : "Unauthorized Access!!!"
+//     })
+//   }
 
-  try {
-      const courseId = req.params.courseId;
+//   try {
+//       const courseId = req.params.courseId;
 
-      const { title, description, imageLink, price } = req.body;
+//       const { title, description, imageLink, price } = req.body;
 
-      if (!title && !description && !imageLink && !price) {
-          return res.status(400).json({ message: "At least one field is required to update." });
-      }
+//       if (!title && !description && !imageLink && !price) {
+//           return res.status(400).json({ message: "At least one field is required to update." });
+//       }
 
       
+//       const course = await Course.findById(courseId);
+//       if (!course) {
+//           return res.status(404).json({ message: "Course not found." });
+//       }
+
+//       const updatedCourse = await Course.findByIdAndUpdate(courseId, {
+//           $set: {
+//               ...(title && { title }),
+//               ...(description && { description }),
+//               ...(imageLink && { imageLink }),
+//               ...(price && { price })
+//           }
+//       }, { new: true });
+
+//       res.status(200).json({
+//           message: "Course updated successfully!",
+//           updatedCourse
+//       });
+//   } catch (error) {
+//       console.error("Error editing course:", error);
+//       res.status(500).json({ message: "Internal server error while editing course." });
+//   }
+// };
+
+const editCourse = async (req, res) => {
+    const adminId = req.admin?._id;
+    if (!adminId) {
+      return res.status(401).json({
+        message: "Unauthorized Access!!!"
+      });
+    }
+  
+    try {
+      const courseId = req.params.courseId;
+      const { title, description, imageLink, price, tags } = req.body;
+  
+      if (!title && !description && !imageLink && !price && !tags) {
+        return res.status(400).json({ message: "At least one field is required to update." });
+      }
+  
       const course = await Course.findById(courseId);
       if (!course) {
-          return res.status(404).json({ message: "Course not found." });
+        return res.status(404).json({ message: "Course not found." });
       }
-
+  
+      const updateData = {
+        ...(title && { title }),
+        ...(description && { description }),
+        ...(imageLink && { imageLink }),
+        ...(price && { price }),
+        ...(tags && { tags })
+      };
+  
       const updatedCourse = await Course.findByIdAndUpdate(courseId, {
-          $set: {
-              ...(title && { title }),
-              ...(description && { description }),
-              ...(imageLink && { imageLink }),
-              ...(price && { price })
-          }
+        $set: updateData
       }, { new: true });
-
+  
       res.status(200).json({
-          message: "Course updated successfully!",
-          updatedCourse
+        message: "Course updated successfully!",
+        updatedCourse
       });
-  } catch (error) {
+    } catch (error) {
       console.error("Error editing course:", error);
       res.status(500).json({ message: "Internal server error while editing course." });
-  }
-};
+    }
+  };
+  
 
 const viewCourse = async (req, res) => {
     const courseId = req.params.courseId;
