@@ -3,33 +3,33 @@ const axios = require('axios');
 
 const createRoom = async (req, res) => {
   try {
-    const { courseId, startNow, scheduledDate } = req.body;
-    console.log("Received data:", { courseId, startNow, scheduledDate });  // Log received data
+    const { courseId, startNow, scheduledDate } = req.body; // Extract data from the request body
 
-    let roomProperties = { enable_chat: true, start_audio_off: true };
-    
-    // If the room is to be scheduled, use the scheduled date
+    // Check if you want to start the room now or schedule for later
+    const roomData = {
+      properties: {
+        enable_chat: true,
+        start_audio_off: true,
+      },
+    };
+
     if (!startNow && scheduledDate) {
-      console.log("Scheduling room for:", scheduledDate);
-      roomProperties.scheduled_time = new Date(scheduledDate).toISOString();  // Ensure correct format
+      // Set a scheduled date for later room creation (you'll need to implement scheduling logic)
+      // Example: this will just pass the scheduledDate; modify as per your backend logic for scheduling
+      roomData.properties.scheduled_at = new Date(scheduledDate).toISOString(); // Ensure correct formatting
     }
 
-    const response = await axios.post(
-      'https://api.daily.co/v1/rooms',
-      { properties: roomProperties },
-      { headers: { Authorization: `Bearer ${process.env.DAILY_API_KEY}` } }
-    );
+    // Make the request to the Daily.co API to create the room
+    const response = await axios.post('https://api.daily.co/v1/rooms', roomData, {
+      headers: { Authorization: `Bearer ${process.env.DAILY_API_KEY}` },
+    });
 
-    // Log the room creation response
-    console.log("Room created successfully:", response.data);
-    
-    // Send the response back to the client
-    res.json({ success: true, roomData: response.data });
+    // Respond with the room details (URL, ID, etc.)
+    res.json(response.data); 
   } catch (error) {
     console.error("Error creating room:", error);
-    res.status(500).send({ success: false, message: 'Error creating room' });
+    res.status(500).send('Error creating room');
   }
 };
-
 
 module.exports = { createRoom };

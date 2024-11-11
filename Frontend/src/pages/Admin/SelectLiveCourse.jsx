@@ -240,24 +240,17 @@ function SelectLiveCourse() {
   const handleScheduleLater = async () => {
     if (scheduledDate) {
       try {
-        const formattedDate = scheduledDate.toISOString();  // Format date to ISO string
-        console.log("Scheduled Date:", formattedDate);  // Log the formatted date
-        console.log("Course ID:", selectedCourse._id);
-  
+        console.log("Scheduled live session for:", selectedCourse, "on", scheduledDate);
+        
+        // Call your backend API to create the scheduled room
         const response = await axios.post('http://localhost:3000/live/create-room', {
           courseId: selectedCourse._id,
           startNow: false,
-          scheduledDate: formattedDate,  // Send formatted date
+          scheduledDate: scheduledDate,
         });
-  
-        // Check the response status from the backend
-        if (response.data.success) {
-          console.log("Scheduled live session:", response.data.roomData);
-          closeModal();  // Close the modal on success
-          alert("Live session scheduled successfully!");
-        } else {
-          alert("Failed to schedule live session.");
-        }
+        
+        console.log("Live session scheduled:", response.data);
+        closeModal();
       } catch (error) {
         console.error("Failed to schedule live session:", error);
         alert("Failed to schedule live session.");
@@ -266,7 +259,6 @@ function SelectLiveCourse() {
       alert("Please select a date and time.");
     }
   };
-  
 
   return (
     <div className="py-10 px-4 max-w-7xl mx-auto relative">
