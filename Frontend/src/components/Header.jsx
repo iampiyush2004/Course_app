@@ -40,13 +40,13 @@ export function Header() {
             setUserData(null)
         }
         if(isStudentLoggedIn){
-            const local = JSON.parse(localStorage.getItem("videoStamps"))
-            if(local){
-                const keys = Object.keys(local)
-                keys.map(async(courseId)=>{
-                    await axios.put(`http://localhost:3000/progress/update/${courseId}`,local[keys],{withCredentials : true})
-                })
-            }
+            // const local = JSON.parse(localStorage.getItem("videoStamps"))
+            // if(local){
+            //     const keys = Object.keys(local)
+            //     keys.map(async(courseId)=>{
+            //         await axios.put(`http://localhost:3000/progress/update/${courseId}`,local[keys],{withCredentials : true})
+            //     })
+            // }
             await axios.post("http://localhost:3000/user/logout",{},{
                 withCredentials : true
             })

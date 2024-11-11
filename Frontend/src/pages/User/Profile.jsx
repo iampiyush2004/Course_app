@@ -10,6 +10,7 @@ function Profile() {
   const [newAvatar, setNewAvatar] = useState(null)  // Track the new avatar
   const imgRef = useRef()
   const navigate = useNavigate()
+  const [lastWatched,setLastWatched] = useState()
 
   // Load user data from localStorage
   useEffect(() => {
@@ -60,6 +61,25 @@ function Profile() {
     }
   }
 
+  useEffect(()=>{
+    const fetchLastWatched = async() => {
+      try {
+        const response = await axios.get("http://localhost:3000/user/lastWatched",{
+          withCredentials:true
+        })
+        if(response.status===200){
+          setLastWatched(response.data.lastWatched)
+        }
+        else{
+          console.log("error in fetching data")
+        }
+      } catch (error) {
+        console.error("error in fetchong last watched ",error)
+      }
+    }
+    fetchLastWatched()
+  },[])
+
   return (
     <div className='min-h-screen mb-20 p-4'>
       <div className='bg-green-100 p-5 rounded-md shadow-md flex justify-between gap-x-5'>
@@ -106,23 +126,23 @@ function Profile() {
               </div>
 
               {/* Resume Learning Section */}
-              <div className="bg-green-50 w-full flex flex-col p-4 rounded-3xl gap-y-4 h-1/2">
+              {lastWatched && <div className="bg-green-50 w-full flex flex-col p-4 rounded-3xl gap-y-4 h-1/2">
                 <div className="flex items-center gap-x-6 border border-gray-100 p-1 rounded-lg">
                   <img
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcHOuJUC70-SBuxXzcVpS4p_zw90DzsMf-nQ&s"
+                    src={lastWatched.imageLink}
                     alt={"course_name"}
-                    className="w-1/3 h-24 rounded-xl"
+                    className="w-1/3 h-28 rounded-xl"
                   />
                   <div>
-                    <div>Course Name</div>
-                    <div>Course description</div>
+                    <div className='font-medium'>{lastWatched.title}</div>
+                    <div>{lastWatched.description}</div>
                   </div>
                 </div>
-                <button className="bg-blue-400 py-2 px-6 rounded-lg flex items-center gap-x-2 justify-center">
+                <button className="bg-blue-400 py-2 px-6 rounded-lg flex items-center gap-x-2 justify-center" onClick={()=>navigate(`/courses/${lastWatched._id}/videos/132`)}>
                   Resume Learning
                   <span className="text-2xl">&#8594;</span>
                 </button>
-              </div>
+              </div>}
             </div>
           </div>
 
@@ -212,7 +232,7 @@ function Profile() {
 
           {
             data && data.coursePurchased.length > 0 && data.coursePurchased.slice(0, Math.min(3, data.coursePurchased.length)).map((course) => (
-              <div key={course._id} className="flex bg-white rounded-lg shadow-md mb-4 p-2 hover:shadow-xl transition-all gap-x-2" onClick={() => navigate(`/courses/${course._id}/videos/132`)}>
+              <div key={course._id} className="flex bg-white rounded-lg shadow-md mb-4 p-2 hover:shadow-xl transition-all gap-x-2 cursor-pointer" onClick={() => navigate(`/courses/${course._id}/videos/132`)}>
                 <img
                   src={course?.imageLink}
                   alt="Course Name"

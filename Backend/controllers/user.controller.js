@@ -148,7 +148,7 @@ const isLoggedin = async (req,res) => {
     }
     try {
         const decodedValue = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decodedValue._id).select("-password").populate("coursePurchased","imageLink title description ")
+        const user = await User.findById(decodedValue._id).select("-password").populate("coursePurchased","imageLink title description ").populate("lastWatched","imageLink title description ")
         if (user) {
             return res.status(200).json({
                 message : "Student is Logged In",
@@ -256,6 +256,35 @@ const updateUserAvatar = async (req, res) => {
     }
 };
 
+const lastWatched = async (req, res) => {
+    const userId = req.user;  
+    
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is missing." });
+    }
+  
+    try {
+      const user = await User.findById(userId)
+        .populate("lastWatched", "title description imageLink"); // Populate the course fields you want
+  
+      if (!user) {
+        return res.status(404).json({ message: "User not found." });
+      }
+  
+      if (!user.lastWatched) {
+        return res.status(404).json({ message: "No last watched course found." });
+      }
+  
+      return res.status(200).json({
+        lastWatched: user.lastWatched,  
+      });
+  
+    } catch (error) {
+      console.error("Error occurred in fetching last watched course", error);
+      return res.status(500).json({ message: "Server Error" });
+    }
+  };
+  
 
 
-module.exports = {signin , signup , logout , myCourses, isLoggedin , returnMe , editUserProfile , updateUserAvatar}
+module.exports = {signin , signup , logout , myCourses, isLoggedin , returnMe , editUserProfile , updateUserAvatar, lastWatched}
