@@ -1,9 +1,11 @@
+
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Context } from '../../Context/Context';
 import axios from 'axios';
 import { AiOutlineEdit } from 'react-icons/ai';
-import Loading from "../../components/Loading"
+import Loading from "../../components/Loading";
+
 function Admin() {
   const [name, setName] = useState();
   const [photoUrl, setPhotoUrl] = useState("");
@@ -14,7 +16,7 @@ function Admin() {
   const [isLoading, setIsLoading] = useState(true);
   const { dataFetcher, changeNotificationData } = useContext(Context);
   const navigate = useNavigate();
-  const fileInputRef = useRef(null); // Ref for file input
+  const fileInputRef = useRef(null);
 
   const fillInfo = () => {
     const savedUserData = localStorage.getItem('data');
@@ -38,8 +40,6 @@ function Admin() {
         if (response.status === 200) {
           if (response.data.isLoggedin === true) fillInfo();
           else navigate("/admin");
-        } else {
-          // Handle unexpected response
         }
       } catch (error) {
         console.error("Error checking login status:", error);
@@ -58,15 +58,14 @@ function Admin() {
     else setIsLoading(false);
   }, [data]);
 
-
   const handleEditClick = () => {
-    fileInputRef.current.click(); // Trigger the file input
+    fileInputRef.current.click();
   };
 
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
-      changeNotificationData("Uploading Your Avatar!!!")
+      changeNotificationData("Uploading Your Avatar!!!");
       const formData = new FormData();
       formData.append('avatar', file);
       try {
@@ -78,17 +77,14 @@ function Admin() {
         });
 
         if (response.status === 200) {
-          setPhotoUrl(URL.createObjectURL(file)); // Update photo URL with the new image
-          dataFetcher()
-          console.log('Profile photo uploaded successfully:', response.data);
-          changeNotificationData("Avatar Uploaded Successfully!!!")
+          setPhotoUrl(URL.createObjectURL(file));
+          dataFetcher();
+          changeNotificationData("Avatar Uploaded Successfully!!!");
         } else {
-          console.error('Error uploading photo:', response);
-          changeNotificationData("Some Error Ocurred in uploading avatar!!!")
+          changeNotificationData("Some Error Occurred in uploading avatar!!!");
         }
       } catch (error) {
-        console.error('Error uploading photo:', error);
-        changeNotificationData("Some Error Ocurred in uploading avatar!!!")
+        changeNotificationData("Some Error Occurred in uploading avatar!!!");
       }
     }
   };
@@ -96,7 +92,7 @@ function Admin() {
   return (
     <div>
       {isLoading ? (
-        <Loading/>
+        <Loading />
       ) : (
         <div className='mt-16 flex justify-center'>
           <div className="flex bg-green-50 shadow-2xl rounded-lg overflow-hidden w-[60vw] h-[75vh] transform transition-transform duration-300 hover:scale-105">
@@ -109,7 +105,6 @@ function Admin() {
               <button 
                 onClick={handleEditClick} 
                 className="absolute top-2 left-2 bg-white rounded-full p-2 shadow hover:bg-gray-100"
-                style={{ display: isLoading ? 'none' : 'block' }} // To prevent interaction while loading
               >
                 <AiOutlineEdit className="text-gray-600" size={24} />
               </button>
@@ -118,7 +113,7 @@ function Admin() {
                 accept="image/*" 
                 ref={fileInputRef} 
                 onChange={handleFileChange} 
-                style={{ display: 'none' }} // Hide the file input
+                style={{ display: 'none' }}
               />
             </div>
 
@@ -147,17 +142,18 @@ function Admin() {
               </div>
 
               <div className='flex justify-around mt-8 gap-3'>
-                <Link to="/adminName/editProfile"
-                  className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                <Link to="/adminName/editProfile" className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500">
                   Edit Your Profile
                 </Link>
-                <Link to="/adminName/AddCourse" className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                <Link to="/adminName/AddCourse" className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500">
                   Add More Courses
                 </Link>
-                <Link to="/adminName/Courses"
-                  className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                >
+                <Link to="/adminName/Courses" className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500">
                   All Your Courses
+                </Link>
+                {/* New Button to Schedule a Live Class */}
+                <Link to="/adminName/scheduleClass" className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500">
+                  Schedule a Live Class
                 </Link>
               </div>
             </div>
@@ -169,3 +165,4 @@ function Admin() {
 }
 
 export default Admin;
+

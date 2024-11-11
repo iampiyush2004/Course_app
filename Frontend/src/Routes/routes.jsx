@@ -18,6 +18,7 @@ import UserLogin from '../pages/User/UserLogin'
 import Profile from '../pages/User/Profile'
 import UserCourses from "../pages/User/UserCourses"
 import EditProfile from '../pages/User/EditProfile'
+import SelectLiveCourse from '../pages/Admin/SelectLiveCourse'
 export const router = createBrowserRouter([
   {
     path:"/",
@@ -42,6 +43,10 @@ export const router = createBrowserRouter([
       {
         path:"/adminName",
         element:<Admin/>,
+      },
+      {
+        path:"/adminName/scheduleClass",
+        element:<SelectLiveCourse/>
       },
       {
         path:"/adminName/Courses",
