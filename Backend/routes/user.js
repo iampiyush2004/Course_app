@@ -8,7 +8,8 @@ const { signin ,
         isLoggedin,
         returnMe,
         editUserProfile,
-        updateUserAvatar} = require("../controllers/user.controller");
+        updateUserAvatar,
+        lastWatched } = require("../controllers/user.controller");
 
 const { viewCourse } = require("../controllers/course.controller");
 const {upload} = require('../middleware/multer');
@@ -37,6 +38,8 @@ router.post("/buyCourse/capture", verifyJwt, capture); // Route to capture payme
 router.get("/hasPurchased/:courseId", verifyJwt, hasPurchased);
 
 router.get("/loggedin",isLoggedin)
+
+router.get("/lastWatched",verifyJwt,lastWatched)
 
 module.exports = router;
 
