@@ -2,7 +2,8 @@ const { Router } = require("express");
 const router = Router();
 
 const {upload} = require('../middleware/multer');
-
+const notificationRoutes = require('../routes/notification')
+router.use('/notifications', notificationRoutes);
 
 const { signup,
         signin,
