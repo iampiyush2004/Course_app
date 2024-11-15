@@ -3,7 +3,8 @@ const razorpayInstance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
-const User = require("../models/user.model")
+const User = require("../models/user.model");
+const Course = require("../models/course.model");
 
 const order = async (req, res) => {
     const { amount } = req.body; // Amount in the smallest currency unit (e.g., paise for INR)
@@ -50,12 +51,26 @@ const capture = async (req, res) => {
           await user.save();
       }
 
+       // Fetch the course and add the user to the enrolled users list
+      const course = await Course.findById(courseId);
+      //console.log(course)
+      if (!course) {
+      return res.status(404).json({ success: false, error: "Course not found" });
+      }
+
+      if (!course.enrolledStudents.includes(userId)) {
+      course.enrolledStudents.push(userId);
+      await course.save();
+      }
+
+
       res.json({ success: true, payment: paymentDetails });
   } catch (error) {
       console.error("Error in capture function:", error);
       res.status(500).json({ success: false, error: error.message });
   }
 };
+
 
 
 

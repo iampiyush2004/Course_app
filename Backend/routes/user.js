@@ -10,6 +10,8 @@ const { signin ,
         editUserProfile,
         updateUserAvatar} = require("../controllers/user.controller");
 
+const {deleteNotification , getNotifications , markAsRead} = require("../controllers/notification.controller")        
+
 const { viewCourse } = require("../controllers/course.controller");
 const {upload} = require('../middleware/multer');
 const { order, capture, hasPurchased } = require("../controllers/payment.controller");
@@ -23,6 +25,12 @@ router.get('/me', verifyJwt, returnMe);
 router.post('/signup', upload.single("avatar"), signup);
 
 router.post('/signin', signin);
+
+
+// Notification Routes
+router.get('/notifications', verifyJwt, getNotifications); // View all notifications
+router.delete("/notifications/:notificationId", verifyJwt, deleteNotification); // delete specific notifications
+router.put("/notifications/:notificationId/mark-as-read", verifyJwt, markAsRead); //  mark notifications as read
 
 router.post('/logout', verifyJwt, logout);
 
