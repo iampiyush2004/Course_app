@@ -1,6 +1,7 @@
 const Admin  = require("../models/admin.model")
 const jwt = require('jsonwebtoken');
 const Course = require("../models/course.model");
+const { sendNotificationToCourseStudents } = require('../controllers/notification.controller');
 const { uploadOnCloudinary , destroy } = require('../utils/cloudinary');
 const Video = require("../models/video.model")
 require('dotenv').config();
@@ -185,12 +186,64 @@ const updateAvatar = async (req, res) => {
 };
 
 
+// const createCourse = async (req, res) => {
+//     const adminId = req.admin?._id;
+
+//     if (!adminId) {
+//         return res.status(401).json({
+//         message: "Unauthorized Access!!!"
+//         });
+//     }
+
+//     try {
+//         const { title, shortDescription, detailedDescription, price } = req.body;
+
+//         if (!title || !shortDescription || !detailedDescription || !price || !req.file || !req.file.path) {
+//             return res.status(400).json({ message: "All fields are required." });
+//         }
+
+//         const imageLink = await uploadOnCloudinary(req.file.path);
+//         if (!imageLink) {
+//             return res.status(500).json({
+//                 message: "Internal Server Error while uploading to Cloudinary!!!"
+//             });
+//         }
+
+//         // Create new course
+//         const newCourse = await Course.create({
+//             title,
+//             description : shortDescription,
+//             bio : detailedDescription,
+//             imageLink,
+//             price,
+//             teacher: adminId
+//         });
+
+//         // Update admin with the new course
+//         await Admin.findByIdAndUpdate(adminId, {
+//             $push: { createdCourses: newCourse._id }
+//         });
+
+//         // Send success response
+//         res.status(200).json({
+//             adminId,
+//             message: "Course created successfully!",
+//             courseId: newCourse._id
+//         });
+
+//     } catch (error) {
+//         console.error("Error creating course:", error);
+//         res.status(500).json({ message: "Internal server error while creating course." });
+//     }
+// };
+
+
 const createCourse = async (req, res) => {
     const adminId = req.admin?._id;
 
     if (!adminId) {
         return res.status(401).json({
-        message: "Unauthorized Access!!!"
+            message: "Unauthorized Access!!!"
         });
     }
 
@@ -223,6 +276,10 @@ const createCourse = async (req, res) => {
             $push: { createdCourses: newCourse._id }
         });
 
+        // Send notifications to users enrolled in the course
+        // Send a notification to users (you might want to create a general notification type or custom message)
+        await sendNotificationToCourseStudents(adminId, newCourse._id, "A new course has been created!", "course");
+
         // Send success response
         res.status(200).json({
             adminId,
@@ -235,7 +292,7 @@ const createCourse = async (req, res) => {
         res.status(500).json({ message: "Internal server error while creating course." });
     }
 };
-  
+
 
 const isLoggedin = async(req, res) => {
     const token = req.cookies?.token
