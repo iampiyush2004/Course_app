@@ -1,5 +1,5 @@
 const Progress = require("../models/progress.model")
-
+const User = require("../models/user.model")
 const updateProgress = async(req,res) => {
   const userId = req.user?._id
   if(!userId) {
@@ -11,9 +11,6 @@ const updateProgress = async(req,res) => {
   }
   try {
     const {videoId,timeStamp} = req.body
-    // if(!videoId || !timeStamp){
-    //   return res.status(400).json({message : "VideoId or TimeStamp not provided"})
-    // }
     const progress = await Progress.findOneAndUpdate(
       {
         userId,
@@ -30,6 +27,12 @@ const updateProgress = async(req,res) => {
     if(!progress){
       return res.status(500).json({message: "Internal Server Error in updating progress"})
     }
+    await User.findOneAndUpdate({_id:userId},{
+      $set:{lastWatched:courseId}
+    },
+    { upsert: true }
+    )
+    // console.log("hi")
     return res.status(200).json({
       message : "Updated Progess Successfully",
       progress

@@ -42,7 +42,11 @@ const UserSchema = new mongoose.Schema({
   coursePurchased: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "Course"
-  }]
+  }],
+  lastWatched : {
+    type : mongoose.Schema.Types.ObjectId,
+    ref : "Course"
+  }
 });
 
 //Hash password before saving

@@ -17,7 +17,6 @@ const CoursePage = () => {
     const [hasLogged, setHasLogged] = useState(true); // To ensure the log happens only once
     const [currentTime,setCurrentTime] = useState(0)
     const [progress,setProgress] = useState(null)
-    // const [prevStoredTime,setPrevStoredTime] = useState(null)
     const currentTimeRef = useRef(currentTime);
     const selectedRef = useRef(selected);
     const playingRef = useRef(playing)
@@ -65,26 +64,26 @@ const CoursePage = () => {
     const updateProgress = async() => {
         if(!currentTimeRef.current===null || currentTimeRef.current===0) return
         if(!selectedRef.current===null) return
-
-        // differnt work
-        const videoStamp = {
-            videoId : selectedRef.current,
-            timeStamp : currentTimeRef.current
+        try {
+            const response = await axios.put(`http://localhost:3000/progress/update/${courseId}`,{
+                videoId : selectedRef.current,
+                timeStamp : currentTimeRef.current
+            },{withCredentials : true})
+            if(response.status===200){
+                // console.log("Success!!!")
+            }
+            else{
+                console.log("Error in updating timestamp")
+            }
+        } catch (error) {
+            console.error("Error",error)
         }
-        let videoStamps = JSON.parse(localStorage.getItem('videoStamps'));
-        if (!videoStamps) {
-            videoStamps = {};
-        }
-
-        videoStamps = {...videoStamps,[courseId]:videoStamp}
-        
-        localStorage.setItem("videoStamps",JSON.stringify(videoStamps))
     }
     useEffect(() => {
         // Function to be called every 10 seconds
         const intervalId = setInterval(() => {
           updateProgress()
-        }, 1000); 
+        }, 10000); 
     
         return () => {
           clearInterval(intervalId);
@@ -108,13 +107,14 @@ const CoursePage = () => {
                 console.error(error)
             }
         }
-        const local = JSON.parse(localStorage.getItem("videoStamps"))
-        if(local && local[courseId]){
-            setProgress(local[courseId])
-        }
-        else{
-            fetchProgress()
-        }
+        fetchProgress()
+        // const local = JSON.parse(localStorage.getItem("videoStamps"))
+        // if(local && local[courseId]){
+        //     setProgress(local[courseId])
+        // }
+        // else{
+            
+        // }
     },[])
 
     useEffect(()=>{
@@ -144,13 +144,6 @@ const CoursePage = () => {
         setSelected(index);
         setCurrentVideo(video);
     };
-    const handlePlay = () => {
-        setPlaying(true);  // Set playing to true when the video starts
-    };
-
-    const handlePause = () => {
-        setPlaying(false); // Set playing to false when the video is paused
-    };
     return (
         <div>
             {
@@ -166,11 +159,8 @@ const CoursePage = () => {
                                     url={currentVideo?.videoFile}
                                     ref={videoRef}
                                     playing={playing}
-                                    onPlay={handlePlay}   // Set playing to true when the video plays
-                                    onPause={handlePause}
                                     className="absolute top-0 left-0 w-full h-full bg-black"
                                     controls
-                                    light={<img src={currentVideo?.thumbnail} alt='Thumbnail' className='h-full' />}
                                     width="100%"
                                     height="100%"
                                     muted={true}  
