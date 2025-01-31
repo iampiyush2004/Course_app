@@ -1,0 +1,7 @@
+razorpay acc = 5267 3181 8797 5449
+
+teacher cred == username -----> Professor
+                password -----> responsibility
+
+student cred == username -----> piyush2
+                password -----> newacc               
