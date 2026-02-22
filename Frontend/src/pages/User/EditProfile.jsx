@@ -44,7 +44,7 @@ function EditProfile() {
       gender,
     };
     try {
-      const response  = await axios.put("http://localhost:3000/user/editProfile",updatedData,{
+      const response  = await axios.put(`${import.meta.env.VITE_BACKEND_URI}/user/editProfile`,updatedData,{
         withCredentials:true
       })
       if(response.status===200){

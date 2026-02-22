@@ -66,7 +66,7 @@ function AdminLogin() {
     setIsLoading(true); // Start loading
 
     try {
-      const response = await axios.post(`http://localhost:3000${url}`, data, {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}${url}`, data, {
         withCredentials: true,
       });
 

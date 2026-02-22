@@ -20,7 +20,7 @@ const handleRazorpayPayment = async (courseId, onSuccess) => {
 
     // First, get course details including price
     const courseResponse = await axios.get(
-      `http://localhost:3000/courses/${courseId}`,
+      `${import.meta.env.VITE_BACKEND_URI}/courses/${courseId}`,
       { withCredentials: true }
     );
     
@@ -29,7 +29,7 @@ const handleRazorpayPayment = async (courseId, onSuccess) => {
     console.log("hello");
     // Create order //dikkat
     const orderResponse = await axios.post(
-      'http://localhost:3000/user/buyCourse/order',
+      `${import.meta.env.VITE_BACKEND_URI}/user/buyCourse/order`,
       { amount, courseId },
       { withCredentials: true }
     );
@@ -50,7 +50,7 @@ const handleRazorpayPayment = async (courseId, onSuccess) => {
       handler: async function (response) {
         try {
           const captureResponse = await axios.post(
-            'http://localhost:3000/user/buyCourse/capture',
+            `${import.meta.env.VITE_BACKEND_URI}/user/buyCourse/capture`,
             {
               paymentId: response.razorpay_payment_id,
               orderId: response.razorpay_order_id,

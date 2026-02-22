@@ -16,7 +16,7 @@ function Reviews({ course_id }) {
   useEffect(() => {
     const fetchReview = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/review/course/${course_id}`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/review/course/${course_id}`);
         if (response.status === 200) {
           setReviews(response.data.reviews); 
         } else {
@@ -51,7 +51,7 @@ function Reviews({ course_id }) {
       return;
     }
     try {
-      const response = await axios.post(`http://localhost:3000/review/${course_id}`, {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/review/${course_id}`, {
         comment,
         stars
       }, {
@@ -78,7 +78,7 @@ function Reviews({ course_id }) {
     const getUserReview = async() => {
       if(!isStudentLoggedIn) return
       try {
-        const response = await axios.get(`http://localhost:3000/review/student/${course_id}`,{
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/review/student/${course_id}`,{
           withCredentials:true
         }) 
         if(response.status===200){
@@ -106,7 +106,7 @@ function Reviews({ course_id }) {
 
   const handleEditSubmit = async() => {
     try {
-      const response = await axios.put(`http://localhost:3000/review/edit/${course_id}`,{comment,stars},{
+      const response = await axios.put(`${import.meta.env.VITE_BACKEND_URI}/review/edit/${course_id}`,{comment,stars},{
         withCredentials:true
       })
       if(response.status===200){
@@ -122,7 +122,7 @@ function Reviews({ course_id }) {
 
   const handleDelete = async() => {
     try {
-      const response = await axios.delete(`http://localhost:3000/review/student/${course_id}`,{
+      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URI}/review/student/${course_id}`,{
         withCredentials:true
       })
       if(response.status===200){
