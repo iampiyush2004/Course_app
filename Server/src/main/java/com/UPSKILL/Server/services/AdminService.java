@@ -11,10 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -72,12 +70,52 @@ public class AdminService {
         cookieUtils.clearCookie(response, "token");
     }
 
-    public Admin teacherInfo(String adminId) {
+    public java.util.Map<String, Object> teacherInfo(String adminId) {
         Admin admin = adminRepository.findById(adminId)
                 .orElseThrow(() -> new RuntimeException("Admin not found."));
-        admin.setPassword(null);
-        // populated courses logic will be handled if needed, or just return as is
-        return admin;
+
+        List<com.UPSKILL.Server.entities.Course> courses = new ArrayList<>();
+        if (admin.getCreatedCourses() != null && !admin.getCreatedCourses().isEmpty()) {
+            courses = courseRepository.findByIdIn(admin.getCreatedCourses());
+        }
+
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        response.put("_id", admin.getId());
+        response.put("username", admin.getUsername());
+        response.put("name", admin.getName());
+        response.put("avatar", admin.getAvatar());
+        response.put("age", admin.getAge());
+        response.put("experience", admin.getExperience());
+        response.put("gender", admin.getGender());
+        response.put("company", admin.getCompany());
+        response.put("bio", admin.getBio());
+        response.put("createdCourses", courses);
+
+        return response;
+    }
+
+    public java.util.Map<String, Object> teacherPage(String id) {
+        Admin admin = adminRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Admin not found."));
+
+        List<com.UPSKILL.Server.entities.Course> courses = new ArrayList<>();
+        if (admin.getCreatedCourses() != null && !admin.getCreatedCourses().isEmpty()) {
+            courses = courseRepository.findByIdIn(admin.getCreatedCourses());
+        }
+
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        response.put("_id", admin.getId());
+        response.put("username", admin.getUsername());
+        response.put("name", admin.getName());
+        response.put("avatar", admin.getAvatar());
+        response.put("age", admin.getAge());
+        response.put("experience", admin.getExperience());
+        response.put("gender", admin.getGender());
+        response.put("company", admin.getCompany());
+        response.put("bio", admin.getBio());
+        response.put("createdCourses", courses);
+
+        return response;
     }
 
     public Admin editProfile(String adminId, EditAdminProfileRequest request) {
@@ -100,8 +138,8 @@ public class AdminService {
         return adminRepository.save(admin);
     }
 
-    public String updateAvatar(String adminId, org.springframework.web.multipart.MultipartFile file)
-            throws java.io.IOException {
+    public String updateAvatar(String adminId, MultipartFile file)
+            throws IOException {
         Admin admin = adminRepository.findById(adminId)
                 .orElseThrow(() -> new RuntimeException("Admin not found."));
 
@@ -123,7 +161,7 @@ public class AdminService {
     }
 
     public String createCourse(String adminId, CreateCourseRequest request,
-            org.springframework.web.multipart.MultipartFile imageFile) throws java.io.IOException {
+            MultipartFile imageFile) throws IOException {
         Admin admin = adminRepository.findById(adminId)
                 .orElseThrow(() -> new RuntimeException("Admin not found."));
 
@@ -136,6 +174,7 @@ public class AdminService {
                 .imageLink(imageLink)
                 .price(request.getPrice())
                 .teacher(adminId)
+                .tags(request.getTags())
                 .build();
 
         com.UPSKILL.Server.entities.Course savedCourse = courseRepository.save(course);
@@ -160,10 +199,10 @@ public class AdminService {
         return courseRepository.findByIdIn(admin.getCreatedCourses());
     }
 
-    public com.UPSKILL.Server.entities.Video uploadVideo(String adminId, String courseId, String title,
+    public Video uploadVideo(String adminId, String courseId, String title,
             String description, Double duration,
-            org.springframework.web.multipart.MultipartFile videoFile,
-            org.springframework.web.multipart.MultipartFile thumbnailFile) throws java.io.IOException {
+            MultipartFile videoFile,
+            MultipartFile thumbnailFile) throws IOException {
 
         com.UPSKILL.Server.entities.Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
@@ -194,7 +233,7 @@ public class AdminService {
         return savedVideo;
     }
 
-    public void deleteVideo(String adminId, String courseId, String videoId) throws java.io.IOException {
+    public void deleteVideo(String adminId, String courseId, String videoId) throws IOException {
         com.UPSKILL.Server.entities.Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
 
@@ -222,11 +261,4 @@ public class AdminService {
         videoRepository.deleteById(videoId);
     }
 
-    public Admin teacherPage(String id) {
-        Admin admin = adminRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Admin not found."));
-        admin.setPassword(null);
-        // populated courses logic or response mapping can be done in controller
-        return admin;
-    }
 }

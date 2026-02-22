@@ -13,8 +13,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
@@ -44,26 +42,36 @@ public class PaymentService {
             throws RazorpayException {
         RazorpayClient razorpay = new RazorpayClient(keyId, keySecret);
 
-        JSONObject captureRequest = new JSONObject();
-        captureRequest.put("amount", (int) (amount * 100));
-        captureRequest.put("currency", "INR");
+        // Fetch payment details first to check status
+        Payment payment = razorpay.payments.fetch(paymentId);
+        String status = payment.get("status");
 
-        Payment payment = razorpay.payments.capture(paymentId, captureRequest);
+        if (!"captured".equals(status)) {
+            JSONObject captureRequest = new JSONObject();
+            captureRequest.put("amount", (int) (amount * 100));
+            captureRequest.put("currency", "INR");
+            payment = razorpay.payments.capture(paymentId, captureRequest);
+            status = payment.get("status");
+        }
 
-        if (payment.get("status").equals("captured")) {
+        if ("captured".equals(status)) {
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
-            if (user.getCoursePurchased() == null)
-                user.setCoursePurchased(new ArrayList<>());
-            user.getCoursePurchased().add(courseId);
-            userRepository.save(user);
+            if (user.getCoursePurchased() == null) {
+                user.setCoursePurchased(new java.util.ArrayList<>());
+            }
 
-            Course course = courseRepository.findById(courseId)
-                    .orElseThrow(() -> new RuntimeException("Course not found"));
+            if (!user.getCoursePurchased().contains(courseId)) {
+                user.getCoursePurchased().add(courseId);
+                userRepository.save(user);
 
-            course.setUsersEnrolled((course.getUsersEnrolled() != null ? course.getUsersEnrolled() : 0) + 1);
-            courseRepository.save(course);
+                Course course = courseRepository.findById(courseId)
+                        .orElseThrow(() -> new RuntimeException("Course not found"));
+
+                course.setUsersEnrolled((course.getUsersEnrolled() != null ? course.getUsersEnrolled() : 0) + 1);
+                courseRepository.save(course);
+            }
 
             return true;
         }

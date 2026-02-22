@@ -8,4 +8,5 @@ public class CreateCourseRequest {
     private String shortDescription;
     private String detailedDescription;
     private Double price;
+    private java.util.List<String> tags;
 }

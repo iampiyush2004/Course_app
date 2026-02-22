@@ -46,7 +46,7 @@ function CourseInfo() {
       }
     };
     retrieveData();
-  }, [course_id]);
+  }, [course_id, isStudentLoggedIn]);
 
   const handleReadMore = () => {
     setIsReadMore(!isReadMore);

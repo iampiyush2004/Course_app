@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {useNavigate} from 'react-router-dom'
+import axios from 'axios';
 function UserCourses() {
   const [data,setData] = useState(null)
   const [filteredData,setFilteredData] = useState(null)
@@ -7,11 +8,30 @@ function UserCourses() {
   const [coursesShown,setCoursesShown] = useState(8)
   const navigate = useNavigate()
   useEffect(()=>{
+    // First render from localStorage for instant display
     const localData = localStorage.getItem("user")
     if(localData){
-      setData(JSON.parse(localData).coursePurchased)
-      setFilteredData(JSON.parse(localData).coursePurchased)
+      const parsed = JSON.parse(localData)
+      if(parsed.coursePurchased && parsed.coursePurchased.length > 0 && typeof parsed.coursePurchased[0] === 'object') {
+        setData(parsed.coursePurchased)
+        setFilteredData(parsed.coursePurchased)
+      }
     }
+    // Then fetch fresh data from server (catches newly purchased courses)
+    const fetchCourses = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/user/myCourses`, {
+          withCredentials: true
+        })
+        if(response.status === 200 && response.data.courses) {
+          setData(response.data.courses)
+          setFilteredData(response.data.courses)
+        }
+      } catch (error) {
+        console.error("Error fetching purchased courses:", error)
+      }
+    }
+    fetchCourses()
   },[])
 
   useEffect(() => {

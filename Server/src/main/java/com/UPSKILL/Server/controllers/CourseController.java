@@ -14,9 +14,9 @@ public class CourseController {
 
     private final CourseService courseService;
 
-    @GetMapping
+    @GetMapping({ "", "/" })
     public ResponseEntity<?> viewAllCourses() {
-        return ResponseEntity.ok(courseService.viewAllCourses());
+        return ResponseEntity.ok(Map.of("courses", courseService.viewAllCourses()));
     }
 
     @GetMapping("/{courseId}")

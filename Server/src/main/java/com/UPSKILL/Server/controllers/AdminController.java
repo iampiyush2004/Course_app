@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +22,7 @@ import java.util.Map;
 public class AdminController {
 
     private final AdminService adminService;
+    private final com.UPSKILL.Server.services.CourseService courseService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody AdminSignupRequest request) {
@@ -32,22 +32,27 @@ public class AdminController {
 
     @PostMapping("/signin")
     public ResponseEntity<AuthResponse> signin(@RequestBody SigninRequest request, HttpServletResponse response) {
-        return ResponseEntity.ok(adminService.signin(request, response));
+        AuthResponse authResponse = adminService.signin(request, response);
+        response.setHeader("Authorization", "Bearer " + authResponse.getToken());
+        return ResponseEntity.ok(authResponse);
     }
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
         adminService.logout(response);
-        return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
+        return ResponseEntity.ok(Map.of("message", "Admin Logged Out successfully!!!"));
     }
 
     @GetMapping("/teacherInfo")
-    public ResponseEntity<Admin> teacherInfo(@AuthenticationPrincipal Admin admin) {
+    public ResponseEntity<?> teacherInfo(@AuthenticationPrincipal Object principal) {
+        if (!(principal instanceof Admin admin)) {
+            return ResponseEntity.status(401).build();
+        }
         return ResponseEntity.ok(adminService.teacherInfo(admin.getId()));
     }
 
     @PutMapping("/editProfile")
-    public ResponseEntity<Admin> editProfile(@AuthenticationPrincipal Admin admin,
+    public ResponseEntity<?> editProfile(@AuthenticationPrincipal Admin admin,
             @RequestBody EditAdminProfileRequest request) {
         return ResponseEntity.ok(adminService.editProfile(admin.getId(), request));
     }
@@ -61,19 +66,23 @@ public class AdminController {
 
     @PostMapping("/createCourse")
     public ResponseEntity<?> createCourse(@AuthenticationPrincipal Admin admin,
-            @RequestPart("data") CreateCourseRequest request,
-            @RequestPart("file") MultipartFile file) throws IOException {
+            @ModelAttribute CreateCourseRequest request,
+            @RequestParam("file") MultipartFile file) throws IOException {
         String courseId = adminService.createCourse(admin.getId(), request, file);
-        return ResponseEntity.ok(Map.of("courseId", courseId));
+        return ResponseEntity.ok(Map.of("message", "Course created successfully", "courseId", courseId));
     }
 
     @GetMapping("/isLoggedin")
-    public ResponseEntity<?> isLoggedin(@AuthenticationPrincipal Admin admin) {
-        if (admin != null) {
-            admin.setPassword(null);
-            return ResponseEntity.ok(admin);
+    public ResponseEntity<?> isLoggedin(@AuthenticationPrincipal Object principal) {
+        if (principal instanceof Admin admin) {
+            return ResponseEntity.ok(Map.of(
+                    "message", "Admin is Logged In",
+                    "isLoggedin", true,
+                    "admin", adminService.teacherInfo(admin.getId())));
         }
-        return ResponseEntity.ok(Map.of("message", "Not logged in"));
+        return ResponseEntity.ok(Map.of(
+                "message", "Admin is not Logged In",
+                "isLoggedin", false));
     }
 
     @GetMapping("/courses")
@@ -96,12 +105,8 @@ public class AdminController {
 
     @DeleteMapping("/deleteCourse/{courseId}")
     public ResponseEntity<?> deleteCourse(@AuthenticationPrincipal Admin admin, @PathVariable String courseId) {
-        // Logically CourseService should probably handle this but AdminService has
-        // context
-        // Here I'll call a service method
-        adminService.teacherInfo(admin.getId()); // verify admin exists
-        // simplified
-        return ResponseEntity.ok(Map.of("message", "Course deletion logic handled in Service"));
+        courseService.deleteCourse(admin.getId(), courseId);
+        return ResponseEntity.ok(Map.of("message", "Course deleted successfully"));
     }
 
     @DeleteMapping("/courses/{courseId}/videos/{videoId}")
@@ -112,7 +117,7 @@ public class AdminController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Admin> teacherPage(@PathVariable String id) {
+    public ResponseEntity<?> teacherPage(@PathVariable String id) {
         return ResponseEntity.ok(adminService.teacherPage(id));
     }
 }

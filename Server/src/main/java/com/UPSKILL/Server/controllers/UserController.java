@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -34,24 +34,28 @@ public class UserController {
 
     @PostMapping("/signin")
     public ResponseEntity<AuthResponse> signin(@RequestBody SigninRequest request, HttpServletResponse response) {
-        return ResponseEntity.ok(userService.signin(request, response));
+        AuthResponse authResponse = userService.signin(request, response);
+        response.setHeader("Authorization", "Bearer " + authResponse.getToken());
+        return ResponseEntity.ok(authResponse);
     }
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
         userService.logout(response);
-        return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
+        return ResponseEntity.ok(Map.of("message", "User Logged Out successfully!!!"));
     }
 
     @GetMapping("/me")
-    public ResponseEntity<User> returnMe(@AuthenticationPrincipal User user) {
-        user.setPassword(null);
-        return ResponseEntity.ok(user);
+    public ResponseEntity<?> returnMe(@AuthenticationPrincipal Object principal) {
+        if (!(principal instanceof User user)) {
+            return ResponseEntity.status(401).build();
+        }
+        return ResponseEntity.ok(userService.getUserData(user.getId()));
     }
 
     @GetMapping("/myCourses")
-    public ResponseEntity<List<Course>> myCourses(@AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(userService.myCourses(user.getId()));
+    public ResponseEntity<?> myCourses(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(Map.of("courses", userService.myCourses(user.getId())));
     }
 
     @PutMapping("/editProfile")
@@ -68,10 +72,16 @@ public class UserController {
     }
 
     @PostMapping("/buyCourse/order")
-    public ResponseEntity<?> createOrder(@AuthenticationPrincipal User user, @RequestBody Map<String, Double> body)
-            throws RazorpayException {
-        String order = paymentService.createOrder(body.get("amount"));
-        return ResponseEntity.ok(order);
+    public ResponseEntity<?> createOrder(@AuthenticationPrincipal User user, @RequestBody Map<String, Object> body)
+            throws Exception {
+        Double amount = Double.valueOf(body.get("amount").toString());
+        String orderJson = paymentService.createOrder(amount);
+
+        // Return structured JSON as expected by frontend
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("order", new com.fasterxml.jackson.databind.ObjectMapper().readValue(orderJson, Map.class));
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/buyCourse/capture")
@@ -82,24 +92,28 @@ public class UserController {
         Double amount = Double.valueOf(body.get("amount").toString());
 
         boolean success = paymentService.capturePayment(user.getId(), courseId, paymentId, amount);
-        if (success) {
-            return ResponseEntity.ok(Map.of("message", "Payment captured successfully"));
-        }
-        return ResponseEntity.status(400).body(Map.of("message", "Payment capture failed"));
+        return ResponseEntity.ok(Map.of("success", success, "message",
+                success ? "Payment captured successfully" : "Payment capture failed"));
     }
 
     @GetMapping("/hasPurchased/{courseId}")
     public ResponseEntity<?> hasPurchased(@AuthenticationPrincipal User user, @PathVariable String courseId) {
-        return ResponseEntity.ok(Map.of("hasPurchased", paymentService.isCoursePurchased(user.getId(), courseId)));
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "hasPurchased", paymentService.isCoursePurchased(user.getId(), courseId)));
     }
 
     @GetMapping("/loggedin")
-    public ResponseEntity<?> isLoggedin(@AuthenticationPrincipal User user) {
-        if (user != null) {
-            user.setPassword(null);
-            return ResponseEntity.ok(user);
+    public ResponseEntity<?> isLoggedin(@AuthenticationPrincipal Object principal) {
+        if (principal instanceof User user) {
+            return ResponseEntity.ok(Map.of(
+                    "message", "Student is Logged In",
+                    "isLoggedin", true,
+                    "user", userService.getFullUserData(user.getId())));
         }
-        return ResponseEntity.ok(Map.of("message", "Not logged in"));
+        return ResponseEntity.ok(Map.of(
+                "message", "Student is not Logged In",
+                "isLoggedin", false));
     }
 
     @GetMapping("/lastWatched")

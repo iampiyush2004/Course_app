@@ -32,9 +32,12 @@ public class CourseService {
                 .orElseThrow(() -> new RuntimeException("Course not found."));
 
         // Populate teacher
-        Admin teacher = adminRepository.findById(course.getTeacher()).orElse(null);
-        if (teacher != null)
-            teacher.setPassword(null);
+        Admin teacher = null;
+        if (course.getTeacher() != null) {
+            teacher = adminRepository.findById(course.getTeacher()).orElse(null);
+            if (teacher != null)
+                teacher.setPassword(null);
+        }
 
         // Populate videos (excluding videoFile - logic done in controller usually, but
         // here DTO can help)
@@ -48,7 +51,7 @@ public class CourseService {
         }
 
         Map<String, Object> response = new HashMap<>();
-        response.put("id", course.getId());
+        response.put("_id", course.getId());
         response.put("title", course.getTitle());
         response.put("description", course.getDescription());
         response.put("bio", course.getBio());
@@ -57,6 +60,8 @@ public class CourseService {
         response.put("teacher", teacher);
         response.put("videos", videos);
         response.put("tags", course.getTags());
+        response.put("users", course.getUsersEnrolled()); // Map usersEnrolled to users
+        response.put("rating", 4); // Default rating if not in DB
 
         return response;
     }
@@ -65,9 +70,12 @@ public class CourseService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("Course not found."));
 
-        Admin teacher = adminRepository.findById(course.getTeacher()).orElse(null);
-        if (teacher != null)
-            teacher.setPassword(null);
+        Admin teacher = null;
+        if (course.getTeacher() != null) {
+            teacher = adminRepository.findById(course.getTeacher()).orElse(null);
+            if (teacher != null)
+                teacher.setPassword(null);
+        }
 
         List<Video> videos = new ArrayList<>();
         if (course.getVideos() != null) {
@@ -75,7 +83,9 @@ public class CourseService {
         }
 
         Map<String, Object> response = new HashMap<>();
-        response.put("course", course);
+        response.put("_id", course.getId());
+        response.put("course", course); // Some frontend parts might expect the course object itself
+        response.put("title", course.getTitle());
         response.put("teacher", teacher);
         response.put("videos", videos);
 

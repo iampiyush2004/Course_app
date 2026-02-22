@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -19,32 +18,48 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
+    // GET all reviews for a course (public)
     @GetMapping("/course/{courseId}")
-    public ResponseEntity<List<Review>> reviewsOfCourse(@PathVariable String courseId) {
-        return ResponseEntity.ok(reviewService.reviewsOfCourse(courseId));
+    public ResponseEntity<?> reviewsOfCourse(@PathVariable String courseId) {
+        return ResponseEntity.ok(Map.of("success", true, "reviews", reviewService.reviewsOfCourse(courseId)));
     }
 
+    // POST a new review — frontend sends courseId in URL path, not body
     @PostMapping("/{courseId}")
-    public ResponseEntity<?> addReview(@AuthenticationPrincipal User user, @RequestBody AddReviewRequest request) {
-        return ResponseEntity.ok(reviewService.addReview(user.getId(), request));
+    public ResponseEntity<?> addReview(@AuthenticationPrincipal User user,
+            @PathVariable String courseId,
+            @RequestBody AddReviewRequest request) {
+        request.setCourseId(courseId);
+        return ResponseEntity.ok(Map.of("review", reviewService.addReview(user.getId(), request)));
     }
 
-    @PutMapping("/edit/{reviewId}")
-    public ResponseEntity<?> editReview(@AuthenticationPrincipal User user, @PathVariable String reviewId,
+    // PUT edit review — original backend uses courseId (not reviewId) in path
+    // and finds review by {courseId, userId}
+    @PutMapping("/edit/{courseId}")
+    public ResponseEntity<?> editReview(@AuthenticationPrincipal User user,
+            @PathVariable String courseId,
             @RequestBody Map<String, Object> body) {
         String comment = (String) body.get("comment");
         Integer stars = (Integer) body.get("stars");
-        return ResponseEntity.ok(reviewService.editReview(user.getId(), reviewId, comment, stars));
+        return ResponseEntity.ok(reviewService.editReviewByCourse(user.getId(), courseId, comment, stars));
     }
 
+    // GET student's own review for a course
     @GetMapping("/student/{courseId}")
-    public ResponseEntity<?> studentReviewForCourse(@AuthenticationPrincipal User user, @PathVariable String courseId) {
-        return ResponseEntity.ok(reviewService.studentReviewForCourse(user.getId(), courseId).orElse(null));
+    public ResponseEntity<?> studentReviewForCourse(@AuthenticationPrincipal User user,
+            @PathVariable String courseId) {
+        Review review = reviewService.studentReviewForCourse(user.getId(), courseId).orElse(null);
+        if (review == null) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(Map.of("review", review));
     }
 
-    @DeleteMapping("/student/{reviewId}")
-    public ResponseEntity<?> deleteReview(@AuthenticationPrincipal User user, @PathVariable String reviewId) {
-        reviewService.deleteReview(user.getId(), reviewId);
+    // DELETE student's review for a course — original backend uses courseId in path
+    @DeleteMapping("/student/{courseId}")
+    public ResponseEntity<?> deleteReview(@AuthenticationPrincipal User user,
+            @PathVariable String courseId) {
+        reviewService.deleteReviewByCourse(user.getId(), courseId);
         return ResponseEntity.ok(Map.of("message", "Review deleted successfully"));
     }
 }

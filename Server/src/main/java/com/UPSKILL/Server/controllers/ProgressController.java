@@ -27,6 +27,18 @@ public class ProgressController {
 
     @GetMapping("/getProgress/{courseId}")
     public ResponseEntity<?> getProgress(@AuthenticationPrincipal User user, @PathVariable String courseId) {
-        return ResponseEntity.ok(progressService.getProgress(user.getId(), courseId).orElse(null));
+        // If no progress exists yet (newly purchased course), return a default progress
+        // so CoursePage.jsx doesn't crash on progress.timeStamp being null
+        com.UPSKILL.Server.entities.Progress progress = progressService.getProgress(user.getId(), courseId)
+                .orElse(com.UPSKILL.Server.entities.Progress.builder()
+                        .userId(user.getId())
+                        .courseId(courseId)
+                        .videoId(0)
+                        .timeStamp(0.0)
+                        .build());
+
+        Map<String, Object> response = new java.util.HashMap<>();
+        response.put("progress", progress);
+        return ResponseEntity.ok(response);
     }
 }
