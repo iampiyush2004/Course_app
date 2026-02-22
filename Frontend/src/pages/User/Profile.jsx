@@ -26,7 +26,7 @@ function Profile() {
   useEffect(() => {
     const retrieveReview = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/review/reviewStudent", { withCredentials: true })
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/review/reviewStudent`, { withCredentials: true })
         if (response.status === 200) {
           setReviews(response.data.reviews)
         }
@@ -45,7 +45,7 @@ function Profile() {
       const uplImg = new FormData()
       uplImg.append("avatar",file)
       try {
-      const response = await axios.put("http://localhost:3000/user/updateAvatar",
+      const response = await axios.put(`${import.meta.env.VITE_BACKEND_URI}/user/updateAvatar`,
         uplImg,
         {
           withCredentials : true
@@ -64,7 +64,7 @@ function Profile() {
   useEffect(()=>{
     const fetchLastWatched = async() => {
       try {
-        const response = await axios.get("http://localhost:3000/user/lastWatched",{
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/user/lastWatched`,{
           withCredentials:true
         })
         if(response.status===200){

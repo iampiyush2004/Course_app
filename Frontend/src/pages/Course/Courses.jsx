@@ -13,7 +13,7 @@ function Courses() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/courses/");
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/courses/`);
         setData(res.data.courses);
         setSortedData(res.data.courses); // Initialize sortedData
       } catch (error) {

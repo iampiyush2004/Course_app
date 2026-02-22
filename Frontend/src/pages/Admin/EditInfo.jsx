@@ -56,7 +56,7 @@ function EditInfo() {
     const data = {name,age,experience,company,bio,gender}
 
     try {
-      const response = await axios.put("http://localhost:3000/admin/editProfile",data,{
+      const response = await axios.put(`${import.meta.env.VITE_BACKEND_URI}/admin/editProfile`,data,{
         withCredentials : true
       })
 

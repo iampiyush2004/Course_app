@@ -33,7 +33,7 @@ export function Header() {
     }
     const handleLogout = async () => {
         if(isLoggedIn){
-            await axios.post('http://localhost:3000/admin/logout',null,{
+            await axios.post(`${import.meta.env.VITE_BACKEND_URI}/admin/logout`,null,{
                 withCredentials : true
             });
             checkAdmin()
@@ -44,10 +44,10 @@ export function Header() {
             // if(local){
             //     const keys = Object.keys(local)
             //     keys.map(async(courseId)=>{
-            //         await axios.put(`http://localhost:3000/progress/update/${courseId}`,local[keys],{withCredentials : true})
+            //         await axios.put(`${import.meta.env.VITE_BACKEND_URI}/progress/update/${courseId}`,local[keys],{withCredentials : true})
             //     })
             // }
-            await axios.post("http://localhost:3000/user/logout",{},{
+            await axios.post(`${import.meta.env.VITE_BACKEND_URI}/user/logout`,{},{
                 withCredentials : true
             })
             checkStudent()

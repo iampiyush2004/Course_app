@@ -56,7 +56,7 @@ function AddCourse() {
     formData.append("tags", JSON.stringify(tags)); // Append tags as JSON string
 
     try {
-      const response = await axios.post("http://localhost:3000/admin/createCourse", formData, {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/admin/createCourse`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

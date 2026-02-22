@@ -34,7 +34,7 @@ const CoursePage = () => {
         
             setLoading(true);
             try {
-                const response = await axios.get(`http://localhost:3000/courses/videos/${courseId}`, {
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/courses/videos/${courseId}`, {
                     withCredentials: true
                 });
     
@@ -65,7 +65,7 @@ const CoursePage = () => {
         if(!currentTimeRef.current===null || currentTimeRef.current===0) return
         if(!selectedRef.current===null) return
         try {
-            const response = await axios.put(`http://localhost:3000/progress/update/${courseId}`,{
+            const response = await axios.put(`${import.meta.env.VITE_BACKEND_URI}/progress/update/${courseId}`,{
                 videoId : selectedRef.current,
                 timeStamp : currentTimeRef.current
             },{withCredentials : true})
@@ -94,7 +94,7 @@ const CoursePage = () => {
     useEffect(()=>{
         const fetchProgress = async() => {
             try {
-                const response = await axios.get(`http://localhost:3000/progress/getProgress/${courseId}`,{
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/progress/getProgress/${courseId}`,{
                     withCredentials : true
                 })
                 if(response.status===200){

@@ -20,7 +20,7 @@ function CourseInfo() {
     const retrieveData = async () => {
       try {
         // Fetch course details
-        const courseResponse = await axios.get(`http://localhost:3000/courses/${course_id}`, {
+        const courseResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/courses/${course_id}`, {
           withCredentials: true,
         });
         if (courseResponse.status === 200) {
@@ -29,7 +29,7 @@ function CourseInfo() {
 
         // Fetch user details to check purchase status
         if(isStudentLoggedIn){
-          const userResponse = await axios.get(`http://localhost:3000/user/me`, {
+          const userResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/user/me`, {
             withCredentials: true,
           });
   
