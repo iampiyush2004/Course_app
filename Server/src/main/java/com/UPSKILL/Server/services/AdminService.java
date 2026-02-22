@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +32,7 @@ public class AdminService {
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
 
-    private void validateSignup(String username, String password, String ageStr) {
+    private void validateSignup(String username, String password, String dob) {
         if (username == null || username.isEmpty()) {
             throw new RuntimeException("Username is required.");
         }
@@ -39,24 +42,36 @@ public class AdminService {
         if (password == null || password.length() < 8) {
             throw new RuntimeException("Password must be at least 8 characters long.");
         }
-        if (ageStr != null && !ageStr.isEmpty()) {
+        if (dob != null && !dob.isEmpty()) {
             try {
-                int age = Integer.parseInt(ageStr);
+                LocalDate birthDate = LocalDate.parse(dob);
+                int age = Period.between(birthDate, LocalDate.now()).getYears();
                 if (age < 21) {
                     throw new RuntimeException("You must be at least 21 years old to sign up as a teacher.");
                 }
-            } catch (NumberFormatException e) {
-                // Ignore if not a number
+            } catch (DateTimeParseException e) {
+                throw new RuntimeException("Invalid Date of Birth format. Please use YYYY-MM-DD.");
             }
         } else {
-            throw new RuntimeException("Age is required.");
+            throw new RuntimeException("Date of Birth is required.");
+        }
+    }
+
+    private int calculateAge(String dob) {
+        if (dob == null || dob.isEmpty())
+            return 0;
+        try {
+            LocalDate birthDate = LocalDate.parse(dob);
+            return Period.between(birthDate, LocalDate.now()).getYears();
+        } catch (DateTimeParseException e) {
+            return 0;
         }
     }
 
     private static final String DEFAULT_AVATAR = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
 
     public void signup(AdminSignupRequest request, MultipartFile avatarFile) throws IOException {
-        validateSignup(request.getUsername(), request.getPassword(), request.getAge());
+        validateSignup(request.getUsername(), request.getPassword(), request.getDob());
 
         if (adminRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new RuntimeException("Username already taken. Please choose a different one.");
@@ -71,7 +86,7 @@ public class AdminService {
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .name(request.getName())
-                .age(request.getAge())
+                .dob(request.getDob())
                 .experience(request.getExperience())
                 .gender(request.getGender())
                 .company(request.getCompany())
@@ -132,7 +147,8 @@ public class AdminService {
         response.put("username", admin.getUsername());
         response.put("name", admin.getName());
         response.put("avatar", admin.getAvatar() != null ? admin.getAvatar() : DEFAULT_AVATAR);
-        response.put("age", admin.getAge());
+        response.put("dob", admin.getDob());
+        response.put("age", calculateAge(admin.getDob()));
         response.put("experience", admin.getExperience());
         response.put("gender", admin.getGender());
         response.put("company", admin.getCompany());
@@ -156,7 +172,8 @@ public class AdminService {
         response.put("username", admin.getUsername());
         response.put("name", admin.getName());
         response.put("avatar", admin.getAvatar() != null ? admin.getAvatar() : DEFAULT_AVATAR);
-        response.put("age", admin.getAge());
+        response.put("dob", admin.getDob());
+        response.put("age", calculateAge(admin.getDob()));
         response.put("experience", admin.getExperience());
         response.put("gender", admin.getGender());
         response.put("company", admin.getCompany());
@@ -172,8 +189,8 @@ public class AdminService {
 
         if (request.getName() != null)
             admin.setName(request.getName());
-        if (request.getAge() != null)
-            admin.setAge(request.getAge());
+        if (request.getDob() != null)
+            admin.setDob(request.getDob());
         if (request.getExperience() != null)
             admin.setExperience(request.getExperience());
         if (request.getGender() != null)

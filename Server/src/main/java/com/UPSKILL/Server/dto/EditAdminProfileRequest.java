@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class EditAdminProfileRequest {
     private String name;
-    private String age;
+    private String dob;
     private Integer experience;
     private String gender;
     private String company;

@@ -7,7 +7,7 @@ public class AdminSignupRequest {
     private String username;
     private String password;
     private String name;
-    private String age;
+    private String dob;
     private Integer experience;
     private String gender;
     private String company;
