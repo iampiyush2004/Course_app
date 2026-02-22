@@ -8,8 +8,10 @@ import com.UPSKILL.Server.repositories.UserRepository;
 import com.UPSKILL.Server.utils.CloudinaryService;
 import com.UPSKILL.Server.utils.CookieUtils;
 import com.UPSKILL.Server.utils.JwtUtil;
+import com.UPSKILL.Server.utils.MailService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +24,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
@@ -30,6 +33,7 @@ public class UserService {
     private final CookieUtils cookieUtils;
     private final CloudinaryService cloudinaryService;
     private final PasswordEncoder passwordEncoder;
+    private final MailService mailService;
 
     private void validateSignup(String username, String password, String email, String dob) {
         if (username == null || username.isEmpty()) {
@@ -87,8 +91,19 @@ public class UserService {
                 .institution(request.getInstitution())
                 .coursePurchased(new ArrayList<>())
                 .build();
+        User savedUser = userRepository.save(user);
 
-        return userRepository.save(user);
+        // Send Welcome Email with recommendations
+        try {
+            List<Course> allCourses = courseRepository.findAll();
+            java.util.Collections.shuffle(allCourses);
+            List<Course> recommendations = allCourses.subList(0, Math.min(allCourses.size(), 5));
+            mailService.sendWelcomeEmail(savedUser.getEmail(), savedUser.getName(), recommendations);
+        } catch (Exception e) {
+            log.error("Could not send welcome email: {}", e.getMessage());
+        }
+
+        return savedUser;
     }
 
     public AuthResponse signin(SigninRequest request, HttpServletResponse response) {

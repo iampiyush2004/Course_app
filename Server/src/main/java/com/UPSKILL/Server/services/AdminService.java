@@ -6,6 +6,7 @@ import com.UPSKILL.Server.repositories.*;
 import com.UPSKILL.Server.utils.*;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AdminService {
 
     private final AdminRepository adminRepository;
@@ -25,6 +27,7 @@ public class AdminService {
     private final CookieUtils cookieUtils;
     private final CloudinaryService cloudinaryService;
     private final PasswordEncoder passwordEncoder;
+    private final MailService mailService;
 
     private void validateSignup(String username, String password, String ageStr) {
         if (username == null || username.isEmpty()) {
@@ -72,10 +75,21 @@ public class AdminService {
                 .experience(request.getExperience())
                 .gender(request.getGender())
                 .company(request.getCompany())
+                .email(request.getEmail())
                 .avatar(avatarUrl)
                 .build();
 
-        adminRepository.save(admin);
+        Admin savedAdmin = adminRepository.save(admin);
+
+        // Send Welcome Email
+        try {
+            List<Course> allCourses = courseRepository.findAll();
+            java.util.Collections.shuffle(allCourses);
+            List<Course> recommendations = allCourses.subList(0, Math.min(allCourses.size(), 5));
+            mailService.sendWelcomeEmail(savedAdmin.getEmail(), savedAdmin.getName(), recommendations);
+        } catch (Exception e) {
+            System.err.println("Could not send welcome email: " + e.getMessage());
+        }
     }
 
     public AuthResponse signin(SigninRequest request, HttpServletResponse response) {
@@ -234,6 +248,13 @@ public class AdminService {
         }
         admin.getCreatedCourses().add(savedCourse.getId());
         adminRepository.save(admin);
+
+        // Send Course Published Email
+        try {
+            mailService.sendCoursePublishedEmail(admin.getEmail(), admin.getName(), savedCourse.getTitle());
+        } catch (Exception e) {
+            log.error("Could not send course published email: {}", e.getMessage());
+        }
 
         return savedCourse.getId();
     }

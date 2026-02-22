@@ -26,6 +26,8 @@ public class Admin {
     private Integer experience;
     private String gender;
     private String company;
+    @Indexed(unique = true)
+    private String email;
     private String bio;
     private String avatar;
 
