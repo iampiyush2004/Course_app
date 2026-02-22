@@ -26,12 +26,40 @@ public class AdminService {
     private final CloudinaryService cloudinaryService;
     private final PasswordEncoder passwordEncoder;
 
+    private void validateSignup(String username, String password, String ageStr) {
+        if (username == null || username.isEmpty()) {
+            throw new RuntimeException("Username is required.");
+        }
+        if (Character.isDigit(username.charAt(0))) {
+            throw new RuntimeException("Username should not start with a number.");
+        }
+        if (password == null || password.length() < 8) {
+            throw new RuntimeException("Password must be at least 8 characters long.");
+        }
+        if (ageStr != null && !ageStr.isEmpty()) {
+            try {
+                int age = Integer.parseInt(ageStr);
+                if (age < 21) {
+                    throw new RuntimeException("You must be at least 21 years old to sign up as a teacher.");
+                }
+            } catch (NumberFormatException e) {
+                // Ignore if not a number
+            }
+        } else {
+            throw new RuntimeException("Age is required.");
+        }
+    }
+
+    private static final String DEFAULT_AVATAR = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+
     public void signup(AdminSignupRequest request, MultipartFile avatarFile) throws IOException {
+        validateSignup(request.getUsername(), request.getPassword(), request.getAge());
+
         if (adminRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new RuntimeException("Username already taken. Please choose a different one.");
         }
 
-        String avatarUrl = null;
+        String avatarUrl = DEFAULT_AVATAR;
         if (avatarFile != null && !avatarFile.isEmpty()) {
             avatarUrl = cloudinaryService.uploadFile(avatarFile);
         }
@@ -89,7 +117,7 @@ public class AdminService {
         response.put("_id", admin.getId());
         response.put("username", admin.getUsername());
         response.put("name", admin.getName());
-        response.put("avatar", admin.getAvatar());
+        response.put("avatar", admin.getAvatar() != null ? admin.getAvatar() : DEFAULT_AVATAR);
         response.put("age", admin.getAge());
         response.put("experience", admin.getExperience());
         response.put("gender", admin.getGender());
@@ -113,7 +141,7 @@ public class AdminService {
         response.put("_id", admin.getId());
         response.put("username", admin.getUsername());
         response.put("name", admin.getName());
-        response.put("avatar", admin.getAvatar());
+        response.put("avatar", admin.getAvatar() != null ? admin.getAvatar() : DEFAULT_AVATAR);
         response.put("age", admin.getAge());
         response.put("experience", admin.getExperience());
         response.put("gender", admin.getGender());
