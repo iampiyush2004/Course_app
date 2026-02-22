@@ -35,6 +35,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Public Admin routes
                         .requestMatchers("/admin/signup", "/admin/signin", "/admin/isLoggedin").permitAll()
+                        // Specific admin routes that need authentication (preventing permitAll for
+                        // /admin/* from matching them)
+                        .requestMatchers(HttpMethod.GET, "/admin/courses", "/admin/teacherInfo",
+                                "/admin/adminSpecificCourses")
+                        .authenticated()
                         .requestMatchers(HttpMethod.GET, "/admin/*").permitAll() // matches teacherPage GET /admin/:id
 
                         // Public User routes
