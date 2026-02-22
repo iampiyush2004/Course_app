@@ -8,7 +8,7 @@ import Loading from "../../components/Loading"
 function EditInfo() {
   const navigate = useNavigate();
   const [name, setName] = useState('');
-  const [age, setAge] = useState('');
+  const [dob, setDob] = useState('');
   const [experience, setExperience] = useState('');
   const [company, setCompany] = useState('');
   const [bio, setBio] = useState('');
@@ -21,7 +21,7 @@ function EditInfo() {
     if (!userData) dataFetcher();
     else {
       setName(userData.name || ''); 
-      setAge(userData.age || ''); 
+      setDob(userData.dob || ''); 
       setExperience(userData.experience || ''); 
       setCompany(userData.company || ''); 
       setBio(userData.bio || '');
@@ -35,11 +35,11 @@ function EditInfo() {
 
   useEffect(() => {
     setMessage('');
-  }, [name, age, company, experience, bio, gender]);
+  }, [name, dob, company, experience, bio, gender]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!name || !age || !company || !experience || !bio || !gender) {
+    if (!name || !dob || !company || !experience || !bio || !gender) {
       setMessage('All fields are required.');
       return;
     }
@@ -53,7 +53,7 @@ function EditInfo() {
   const handleConfirm = async (e) => {
     e.preventDefault();
     setLoading(true)
-    const data = {name,age,experience,company,bio,gender}
+    const data = {name,dob,experience,company,bio,gender}
 
     try {
       const response = await axios.put(`${import.meta.env.VITE_BACKEND_URI}/admin/editProfile`,data,{
@@ -108,13 +108,13 @@ function EditInfo() {
                 {/* Second Line: Date of Birth and Gender */}
                 <div className='flex flex-row items-center gap-x-10'>
                   <div className='flex flex-col'>
-                    <label htmlFor="age" className="font-semibold text-gray-700">Date of Birth</label>
+                    <label htmlFor="dob" className="font-semibold text-gray-700">Date of Birth</label>
                     <input
-                      id="age"
+                      id="dob"
                       type="date"
-                      value={age}
+                      value={dob}
                       className="border border-gray-300 rounded-md p-2 focus:border-blue-500 focus:ring focus:ring-blue-200"
-                      onChange={(e) => setAge(e.target.value)}
+                      onChange={(e) => setDob(e.target.value)}
                     />
                   </div>
 

@@ -13,6 +13,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeParseException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -50,16 +54,36 @@ public class UserService {
         }
         if (dob != null && !dob.isEmpty()) {
             try {
-                int age = Integer.parseInt(dob);
+                LocalDate birthDate = LocalDate.parse(dob);
+                int age = Period.between(birthDate, LocalDate.now()).getYears();
                 if (age < 15) {
                     throw new RuntimeException("You must be at least 15 years old to sign up.");
                 }
-            } catch (NumberFormatException e) {
-                // If parsing fails, it might be a date string; for now we favor the age-check
-                // from frontend input
+            } catch (DateTimeParseException | NumberFormatException e) {
+                // If parsing fails, we could optionally try parsing as age integer for backward
+                // compatibility
+                try {
+                    int age = Integer.parseInt(dob);
+                    if (age < 15) {
+                        throw new RuntimeException("You must be at least 15 years old to sign up.");
+                    }
+                } catch (NumberFormatException nfe) {
+                    // Ignore or log
+                }
             }
         } else {
             throw new RuntimeException("Age/DOB is required.");
+        }
+    }
+
+    private int calculateAge(String dob) {
+        if (dob == null || dob.isEmpty())
+            return 0;
+        try {
+            LocalDate birthDate = LocalDate.parse(dob);
+            return Period.between(birthDate, LocalDate.now()).getYears();
+        } catch (DateTimeParseException | NumberFormatException e) {
+            return 0;
         }
     }
 
@@ -204,6 +228,7 @@ public class UserService {
                 user.getCoursePurchased() != null ? user.getCoursePurchased() : new ArrayList<>());
         response.put("lastWatched", user.getLastWatched());
         response.put("dob", user.getDob());
+        response.put("age", calculateAge(user.getDob()));
         response.put("gender", user.getGender());
         response.put("institution", user.getInstitution());
 
@@ -233,6 +258,7 @@ public class UserService {
         response.put("coursePurchased", purchasedCourses);
         response.put("lastWatched", lastWatchedCourse);
         response.put("dob", user.getDob());
+        response.put("age", calculateAge(user.getDob()));
         response.put("gender", user.getGender());
         response.put("institution", user.getInstitution());
 
