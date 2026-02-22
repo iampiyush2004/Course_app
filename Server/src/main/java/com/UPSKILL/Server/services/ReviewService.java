@@ -48,15 +48,11 @@ public class ReviewService {
         return savedReview;
     }
 
-    public Review editReview(String userId, String reviewId, String comment, Integer stars) {
-        Review review = reviewRepository.findById(reviewId)
+    public Review editReviewByCourse(String userId, String courseId, String comment, Integer stars) {
+        Review review = reviewRepository.findByCourseIdAndUserId(courseId, userId)
                 .orElseThrow(() -> new RuntimeException("Review not found"));
 
-        if (!review.getUserId().equals(userId)) {
-            throw new RuntimeException("Unauthorized: You can only edit your own reviews");
-        }
-
-        Course course = courseRepository.findById(review.getCourseId())
+        Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
 
         // Adjust total stars
@@ -68,6 +64,43 @@ public class ReviewService {
         return reviewRepository.save(review);
     }
 
+    // Legacy method kept if needed (edit by reviewId)
+    public Review editReview(String userId, String reviewId, String comment, Integer stars) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+
+        if (!review.getUserId().equals(userId)) {
+            throw new RuntimeException("Unauthorized: You can only edit your own reviews");
+        }
+
+        Course course = courseRepository.findById(review.getCourseId())
+                .orElseThrow(() -> new RuntimeException("Course not found"));
+
+        course.setTotalStars(course.getTotalStars() - review.getStars() + stars);
+        courseRepository.save(course);
+
+        review.setComment(comment);
+        review.setStars(stars);
+        return reviewRepository.save(review);
+    }
+
+    public void deleteReviewByCourse(String userId, String courseId) {
+        Review review = reviewRepository.findByCourseIdAndUserId(courseId, userId)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new RuntimeException("Course not found"));
+
+        if (course.getReviews() != null)
+            course.getReviews().remove(review.getId());
+        course.setTotalStars(course.getTotalStars() - review.getStars());
+        course.setTotalReviews(course.getTotalReviews() - 1);
+        courseRepository.save(course);
+
+        reviewRepository.deleteById(review.getId());
+    }
+
+    // Legacy method (delete by reviewId)
     public void deleteReview(String userId, String reviewId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new RuntimeException("Review not found"));

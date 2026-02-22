@@ -16,8 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -140,5 +141,54 @@ public class UserService {
         }
 
         return courseRepository.findById(user.getLastWatched()).orElse(null);
+    }
+
+    public Map<String, Object> getUserData(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("_id", user.getId());
+        response.put("username", user.getUsername());
+        response.put("email", user.getEmail());
+        response.put("name", user.getName());
+        response.put("avatar", user.getAvatar());
+        response.put("coursePurchased",
+                user.getCoursePurchased() != null ? user.getCoursePurchased() : new ArrayList<>());
+        response.put("lastWatched", user.getLastWatched());
+        response.put("dob", user.getDob());
+        response.put("gender", user.getGender());
+        response.put("institution", user.getInstitution());
+
+        return response;
+    }
+
+    public Map<String, Object> getFullUserData(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<Course> purchasedCourses = new ArrayList<>();
+        if (user.getCoursePurchased() != null && !user.getCoursePurchased().isEmpty()) {
+            purchasedCourses = courseRepository.findByIdIn(user.getCoursePurchased());
+        }
+
+        Course lastWatchedCourse = null;
+        if (user.getLastWatched() != null) {
+            lastWatchedCourse = courseRepository.findById(user.getLastWatched()).orElse(null);
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("_id", user.getId());
+        response.put("username", user.getUsername());
+        response.put("email", user.getEmail());
+        response.put("name", user.getName());
+        response.put("avatar", user.getAvatar());
+        response.put("coursePurchased", purchasedCourses);
+        response.put("lastWatched", lastWatchedCourse);
+        response.put("dob", user.getDob());
+        response.put("gender", user.getGender());
+        response.put("institution", user.getInstitution());
+
+        return response;
     }
 }

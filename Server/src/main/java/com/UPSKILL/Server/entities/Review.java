@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Data
 @Builder
@@ -14,6 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "reviews")
 public class Review {
     @Id
+    @JsonProperty("_id")
     private String id;
     private String courseId;
     private String userId;

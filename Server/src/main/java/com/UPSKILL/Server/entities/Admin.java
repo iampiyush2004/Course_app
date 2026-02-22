@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ import java.util.List;
 @Document(collection = "admins")
 public class Admin {
     @Id
+    @JsonProperty("_id")
     private String id;
 
     private String name;
