@@ -13,7 +13,7 @@ function CourseInfo() {
   const [isReadMore, setIsReadMore] = useState(false);
   const [isPurchased, setIsPurchased] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const {isStudentLoggedIn,changeNotificationData,isLoggedIn} = useContext(Context)
+  const {isStudentLoggedIn,changeNotificationData,isLoggedIn,checkStudent} = useContext(Context)
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -67,9 +67,9 @@ function CourseInfo() {
     } else {
       // Proceed with the payment process
       try {
-        await handleRazorpayPayment(course_id, () => {
+        await handleRazorpayPayment(course_id, async () => {
+          await checkStudent(); // Refresh user data after purchase
           changeNotificationData("Payment successful! Redirecting to 'My Courses' page...")
-          // alert("Payment successful! Redirecting to 'My Courses' page...");
           navigate(`/courses/${course_id}/videos/123`);
         });
       } catch (error) {
