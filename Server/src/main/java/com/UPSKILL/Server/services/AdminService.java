@@ -103,7 +103,7 @@ public class AdminService {
             List<Course> recommendations = allCourses.subList(0, Math.min(allCourses.size(), 5));
             mailService.sendWelcomeEmail(savedAdmin.getEmail(), savedAdmin.getName(), recommendations);
         } catch (Exception e) {
-            System.err.println("Could not send welcome email: " + e.getMessage());
+            log.error("Could not send welcome email: {}", e.getMessage());
         }
     }
 

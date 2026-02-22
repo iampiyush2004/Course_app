@@ -93,7 +93,7 @@ public class PaymentService {
                 try {
                     mailService.sendThankYouEmail(user.getEmail(), user.getName(), course);
                 } catch (Exception e) {
-                    System.err.println("Could not send thank you email: " + e.getMessage());
+                    log.error("Could not send thank you email: {}", e.getMessage());
                 }
             }
 

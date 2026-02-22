@@ -52,19 +52,21 @@ export const ContextProvider = ({ children }) => {
   };
 
   const checkAdmin = async () => {
-    setIsLoggedIn(false)
     try {
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/admin/isLoggedin`, {
           withCredentials: true
       });
       if (response.status === 200) {
-          if(response.data.isLoggedin === true) setIsLoggedIn(true),setStudentLoggedIn(false);
-          else setIsLoggedIn(false)
+          if(response.data.isLoggedin === true) {
+            setIsLoggedIn(true);
+            setStudentLoggedIn(false);
+          } else {
+            setIsLoggedIn(false);
+          }
       } else {
           setIsLoggedIn(false);
       }
     } catch (error) {
-        console.error("Error checking login status:", error);
         setIsLoggedIn(false); 
     }
   }
