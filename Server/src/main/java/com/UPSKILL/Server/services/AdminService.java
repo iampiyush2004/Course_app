@@ -167,6 +167,22 @@ public class AdminService {
 
         String imageLink = cloudinaryService.uploadFile(imageFile);
 
+        // Parse tags — frontend sends them as a JSON string via FormData
+        java.util.List<String> tags = new java.util.ArrayList<>();
+        if (request.getTagsJson() != null && !request.getTagsJson().isBlank()) {
+            try {
+                com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                tags = mapper.readValue(request.getTagsJson(),
+                        mapper.getTypeFactory().constructCollectionType(java.util.List.class, String.class));
+            } catch (Exception e) {
+                // Fallback: try as plain list from form binding
+                if (request.getTags() != null)
+                    tags = request.getTags();
+            }
+        } else if (request.getTags() != null) {
+            tags = request.getTags();
+        }
+
         com.UPSKILL.Server.entities.Course course = com.UPSKILL.Server.entities.Course.builder()
                 .title(request.getTitle())
                 .description(request.getShortDescription())
@@ -174,7 +190,7 @@ public class AdminService {
                 .imageLink(imageLink)
                 .price(request.getPrice())
                 .teacher(adminId)
-                .tags(request.getTags())
+                .tags(tags)
                 .build();
 
         com.UPSKILL.Server.entities.Course savedCourse = courseRepository.save(course);

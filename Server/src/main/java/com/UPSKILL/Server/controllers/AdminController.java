@@ -67,7 +67,7 @@ public class AdminController {
     @PostMapping("/createCourse")
     public ResponseEntity<?> createCourse(@AuthenticationPrincipal Admin admin,
             @ModelAttribute CreateCourseRequest request,
-            @RequestParam("file") MultipartFile file) throws IOException {
+            @RequestParam("imageLink") MultipartFile file) throws IOException {
         String courseId = adminService.createCourse(admin.getId(), request, file);
         return ResponseEntity.ok(Map.of("message", "Course created successfully", "courseId", courseId));
     }
@@ -95,7 +95,7 @@ public class AdminController {
             @PathVariable String courseId,
             @RequestParam("title") String title,
             @RequestParam("description") String description,
-            @RequestParam("duration") Double duration,
+            @RequestParam(value = "duration", required = false, defaultValue = "0.0") Double duration,
             @RequestPart("videoFile") MultipartFile videoFile,
             @RequestPart("thumbnail") MultipartFile thumbnailFile) throws IOException {
 
@@ -107,6 +107,13 @@ public class AdminController {
     public ResponseEntity<?> deleteCourse(@AuthenticationPrincipal Admin admin, @PathVariable String courseId) {
         courseService.deleteCourse(admin.getId(), courseId);
         return ResponseEntity.ok(Map.of("message", "Course deleted successfully"));
+    }
+
+    @PutMapping("/editCourse/{courseId}")
+    public ResponseEntity<?> editCourse(@AuthenticationPrincipal Admin admin,
+            @PathVariable String courseId,
+            @RequestBody EditCourseRequest request) {
+        return ResponseEntity.ok(courseService.editCourse(admin.getId(), courseId, request));
     }
 
     @DeleteMapping("/courses/{courseId}/videos/{videoId}")

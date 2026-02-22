@@ -92,6 +92,7 @@ export const ContextProvider = ({ children }) => {
         setStudentLoggedIn(response.data.isLoggedin)
         if(response.data.isLoggedin===true) {
           localStorage.setItem("user",JSON.stringify(response.data.user))
+          setStudentData(response.data.user)
           setIsLoggedIn(false)
         }
       } else setStudentLoggedIn(false)
@@ -101,12 +102,16 @@ export const ContextProvider = ({ children }) => {
     }
   }
 
-  useEffect( () => {
-    const data = localStorage.getItem("user") 
-    if(data){
-      setStudentData(data)
+  useEffect(() => {
+    const data = localStorage.getItem("user");
+    if (data) {
+      try {
+        setStudentData(JSON.parse(data));
+      } catch (e) {
+        console.error("Error parsing user data from localStorage", e);
+      }
     }
-  },[localStorage])
+  }, []); 
 
   useEffect(() => {
     checkStudent();
