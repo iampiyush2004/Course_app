@@ -86,7 +86,7 @@ export function Header() {
                             isStudentLoggedIn && <UserDropdown data={{ avatar: data?.avatar, name: data?.name }} handleLogout={handleLogout} redirectCourses={redirectCourses} redirectProfile={redirectProfile} />
                         }    
 
-                        {!isLoggedIn && !isStudentLoggedIn &&
+                        {isLoggedIn === false && isStudentLoggedIn === false &&
                         <Link to="/login" title="" className="inline-flex items-center justify-center px-5 py-2.5 text-base font-semibold text-black border-2 border-black hover:bg-green-200 hover:text-white transition-all duration-200  focus:text-white" role="button">
                             Log In
                         </Link>}

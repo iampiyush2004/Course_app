@@ -8,6 +8,21 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: {
+        // Force ALL API requests to always go to the network, never cache them.
+        // This is critical - without this, the SW caches "not logged in" responses
+        // and serves them on every soft reload.
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) =>
+              url.pathname.startsWith('/admin') ||
+              url.pathname.startsWith('/user') ||
+              url.pathname.startsWith('/course') ||
+              url.pathname.startsWith('/payment'),
+            handler: 'NetworkOnly',
+          },
+        ],
+      },
       manifest: {
         name: 'Upscale',
         short_name: 'crs_app',
