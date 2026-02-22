@@ -8,9 +8,15 @@ import com.UPSKILL.Server.repositories.UserRepository;
 import com.UPSKILL.Server.utils.CloudinaryService;
 import com.UPSKILL.Server.utils.CookieUtils;
 import com.UPSKILL.Server.utils.JwtUtil;
+import com.UPSKILL.Server.utils.MailService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeParseException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +28,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
@@ -30,8 +37,61 @@ public class UserService {
     private final CookieUtils cookieUtils;
     private final CloudinaryService cloudinaryService;
     private final PasswordEncoder passwordEncoder;
+    private final MailService mailService;
+
+    private void validateSignup(String username, String password, String email, String dob) {
+        if (username == null || username.isEmpty()) {
+            throw new RuntimeException("Username is required.");
+        }
+        if (Character.isDigit(username.charAt(0))) {
+            throw new RuntimeException("Username should not start with a number.");
+        }
+        if (password == null || password.length() < 8) {
+            throw new RuntimeException("Password must be at least 8 characters long.");
+        }
+        if (email != null && !email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new RuntimeException("Invalid email format.");
+        }
+        if (dob != null && !dob.isEmpty()) {
+            try {
+                LocalDate birthDate = LocalDate.parse(dob);
+                int age = Period.between(birthDate, LocalDate.now()).getYears();
+                if (age < 15) {
+                    throw new RuntimeException("You must be at least 15 years old to sign up.");
+                }
+            } catch (DateTimeParseException | NumberFormatException e) {
+                // If parsing fails, we could optionally try parsing as age integer for backward
+                // compatibility
+                try {
+                    int age = Integer.parseInt(dob);
+                    if (age < 15) {
+                        throw new RuntimeException("You must be at least 15 years old to sign up.");
+                    }
+                } catch (NumberFormatException nfe) {
+                    // Ignore or log
+                }
+            }
+        } else {
+            throw new RuntimeException("Age/DOB is required.");
+        }
+    }
+
+    private int calculateAge(String dob) {
+        if (dob == null || dob.isEmpty())
+            return 0;
+        try {
+            LocalDate birthDate = LocalDate.parse(dob);
+            return Period.between(birthDate, LocalDate.now()).getYears();
+        } catch (DateTimeParseException | NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    private static final String DEFAULT_AVATAR = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
 
     public User signup(UserSignupRequest request, MultipartFile avatarFile) throws IOException {
+        validateSignup(request.getUsername(), request.getPassword(), request.getEmail(), request.getDob());
+
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new RuntimeException("Username already taken. Please choose a different one.");
         }
@@ -39,7 +99,7 @@ public class UserService {
             throw new RuntimeException("Email already taken. Please choose a different one.");
         }
 
-        String avatarUrl = null;
+        String avatarUrl = DEFAULT_AVATAR;
         if (avatarFile != null && !avatarFile.isEmpty()) {
             avatarUrl = cloudinaryService.uploadFile(avatarFile);
         }
@@ -55,8 +115,19 @@ public class UserService {
                 .institution(request.getInstitution())
                 .coursePurchased(new ArrayList<>())
                 .build();
+        User savedUser = userRepository.save(user);
 
-        return userRepository.save(user);
+        // Send Welcome Email with recommendations
+        try {
+            List<Course> allCourses = courseRepository.findAll();
+            java.util.Collections.shuffle(allCourses);
+            List<Course> recommendations = allCourses.subList(0, Math.min(allCourses.size(), 5));
+            mailService.sendWelcomeEmail(savedUser.getEmail(), savedUser.getName(), recommendations);
+        } catch (Exception e) {
+            log.error("Could not send welcome email: {}", e.getMessage());
+        }
+
+        return savedUser;
     }
 
     public AuthResponse signin(SigninRequest request, HttpServletResponse response) {
@@ -152,11 +223,12 @@ public class UserService {
         response.put("username", user.getUsername());
         response.put("email", user.getEmail());
         response.put("name", user.getName());
-        response.put("avatar", user.getAvatar());
+        response.put("avatar", user.getAvatar() != null ? user.getAvatar() : DEFAULT_AVATAR);
         response.put("coursePurchased",
                 user.getCoursePurchased() != null ? user.getCoursePurchased() : new ArrayList<>());
         response.put("lastWatched", user.getLastWatched());
         response.put("dob", user.getDob());
+        response.put("age", calculateAge(user.getDob()));
         response.put("gender", user.getGender());
         response.put("institution", user.getInstitution());
 
@@ -182,10 +254,11 @@ public class UserService {
         response.put("username", user.getUsername());
         response.put("email", user.getEmail());
         response.put("name", user.getName());
-        response.put("avatar", user.getAvatar());
+        response.put("avatar", user.getAvatar() != null ? user.getAvatar() : DEFAULT_AVATAR);
         response.put("coursePurchased", purchasedCourses);
         response.put("lastWatched", lastWatchedCourse);
         response.put("dob", user.getDob());
+        response.put("age", calculateAge(user.getDob()));
         response.put("gender", user.getGender());
         response.put("institution", user.getInstitution());
 

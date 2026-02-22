@@ -8,17 +8,21 @@ import com.UPSKILL.Server.entities.Course;
 import com.UPSKILL.Server.entities.User;
 import com.UPSKILL.Server.repositories.CourseRepository;
 import com.UPSKILL.Server.repositories.UserRepository;
+import com.UPSKILL.Server.utils.MailService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PaymentService {
 
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
+    private final MailService mailService;
 
     @Value("${razorpay.key-id}")
     private String keyId;
@@ -84,6 +88,13 @@ public class PaymentService {
 
                 course.setUsersEnrolled((course.getUsersEnrolled() != null ? course.getUsersEnrolled() : 0) + 1);
                 courseRepository.save(course);
+
+                // Send Thank You Email
+                try {
+                    mailService.sendThankYouEmail(user.getEmail(), user.getName(), course);
+                } catch (Exception e) {
+                    System.err.println("Could not send thank you email: " + e.getMessage());
+                }
             }
 
             return true;

@@ -14,7 +14,7 @@ function UserLogin() {
   const [isLoading, setIsLoading] = useState(false);
   const { changeNotificationData, checkStudent } = useContext(Context);
   const [name, setName] = useState('');
-  const [age, setAge] = useState('');
+  const [dob, setDob] = useState('');
   const [experience, setExperience] = useState('');
   const [gender, setGender] = useState('');
   const [company, setCompany] = useState('');
@@ -24,7 +24,7 @@ function UserLogin() {
     setUsername('');
     setPassword('');
     setName('');
-    setAge('');
+    setDob('');
     setExperience('');
     setGender('');
     setCompany('');
@@ -57,7 +57,7 @@ function UserLogin() {
       data.append("username", username);
       data.append("password", password);
       data.append("name", name);
-      data.append("dob", age);
+      data.append("dob", dob);
       data.append("institution", company);
       data.append("gender", gender);
       data.append("email",experience)
@@ -121,8 +121,8 @@ function UserLogin() {
         <SignUp 
           name={name}
           setName={setName}
-          age={age}
-          setAge={setAge}
+          dob={dob}
+          setDob={setDob}
           experience={experience}
           setExperience={setExperience}
           gender={gender}

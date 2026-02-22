@@ -8,7 +8,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import org.springframework.data.annotation.Transient;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 
 @Data
@@ -22,10 +24,12 @@ public class Admin {
     private String id;
 
     private String name;
-    private String age;
+    private String dob;
     private Integer experience;
     private String gender;
     private String company;
+    @Indexed(unique = true)
+    private String email;
     private String bio;
     private String avatar;
 
@@ -35,4 +39,17 @@ public class Admin {
     private String password;
 
     private List<String> createdCourses; // List of Course IDs
+
+    @Transient
+    private Integer age;
+
+    public Integer getAge() {
+        if (dob == null || dob.isEmpty())
+            return null;
+        try {
+            return Period.between(LocalDate.parse(dob), LocalDate.now()).getYears();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

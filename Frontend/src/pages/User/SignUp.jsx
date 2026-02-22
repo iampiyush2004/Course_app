@@ -3,8 +3,8 @@ import React from 'react';
 const SignUp = ({
   name,
   setName,
-  age,
-  setAge,
+  dob,
+  setDob,
   experience,
   setExperience,
   gender,
@@ -47,6 +47,8 @@ const SignUp = ({
             placeholder="Enter your username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            pattern="^[^0-9].*"
+            title="Username should not start with a number"
             required
           />
         </div>
@@ -54,16 +56,15 @@ const SignUp = ({
 
       <div className="flex space-x-4">
         <div className="flex-1">
-          <label htmlFor="age" className="block text-sm font-medium text-gray-700">
-            Age
+          <label htmlFor="dob" className="block text-sm font-medium text-gray-700">
+            Date of Birth
           </label>
           <input
-            type="number"
+            type="date"
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            id="age"
-            placeholder="Enter your age"
-            value={age}
-            onChange={(e) => setAge(e.target.value)}
+            id="dob"
+            value={dob}
+            onChange={(e) => setDob(e.target.value)}
             required
           />
         </div>
@@ -106,7 +107,7 @@ const SignUp = ({
           email 
           </label>
           <input
-            type="text"
+            type="email"
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             id="experience"
             placeholder="Enter your email"
@@ -140,6 +141,7 @@ const SignUp = ({
           placeholder="Enter your password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          minLength="8"
           required
         />
       </div>

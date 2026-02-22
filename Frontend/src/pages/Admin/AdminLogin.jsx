@@ -16,10 +16,11 @@ function AdminLogin() {
   const [isLoading, setIsLoading] = useState(false);
   const { dataFetcher,changeNotificationData, checkAdmin } = useContext(Context);
   const [name,setName] = useState('')
-  const [age,setAge] = useState('')
+  const [dob,setDob] = useState('')
   const [experience,setExperience] = useState('')
   const [gender,setGender] = useState('')
   const [company,setCompany] = useState('')
+  const [email,setEmail] = useState('')
   const [avatar, setAvatar] = useState(null)
   
   const {isLoggedin} = useLoggedin()
@@ -36,10 +37,11 @@ function AdminLogin() {
     setUsername('')
     setPassword('')
     setName('')
-    setAge('')
+    setDob('')
     setExperience('')
     setGender('')
     setCompany('')
+    setEmail('')
     setAvatar(null)
   }
 
@@ -69,10 +71,11 @@ function AdminLogin() {
       data.append("username", username);
       data.append("password", password);
       data.append("name", name);
-      data.append("age", age);
+      data.append("dob", dob);
       data.append("experience", experience);
       data.append("gender", gender);
       data.append("company", company);
+      data.append("email", email);
       if (avatar) {
         data.append("avatar", avatar);
       }
@@ -135,14 +138,16 @@ function AdminLogin() {
         <SignUp 
           name={name}
           setName={setName}
-          age={age}
-          setAge={setAge}
+          dob={dob}
+          setDob={setDob}
           experience={experience}
           setExperience={setExperience}
           gender={gender}
           setGender={setGender}
           company={company}
           setCompany={setCompany}
+          email={email}
+          setEmail={setEmail}
           username={username} 
           setUsername={setUsername} 
           password={password} 
