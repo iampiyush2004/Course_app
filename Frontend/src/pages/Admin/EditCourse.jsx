@@ -31,7 +31,7 @@ const EditCourse = () => {
   const deleteCourse = async () => {
     setLoading(true);
     try {
-      const response = await axios.delete(`http://localhost:3000/admin/deleteCourse/${val._id}`, {
+      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URI}/admin/deleteCourse/${val._id}`, {
         withCredentials: true
       });
 
@@ -66,7 +66,7 @@ const EditCourse = () => {
     setLoading(true);
     const data = { title, description, imageLink, price, tags };
     try {
-      const response = await axios.put(`http://localhost:3000/admin/editCourse/${val._id}`, data, {
+      const response = await axios.put(`${import.meta.env.VITE_BACKEND_URI}/admin/editCourse/${val._id}`, data, {
         withCredentials: true
       });
 

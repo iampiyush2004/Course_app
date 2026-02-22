@@ -32,7 +32,7 @@ function Admin() {
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/admin/isLoggedin", {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/admin/isLoggedin`, {
           withCredentials: true,
         });
         if (response.status === 200) {
@@ -70,7 +70,7 @@ function Admin() {
       const formData = new FormData();
       formData.append('avatar', file);
       try {
-        const response = await axios.post("http://localhost:3000/admin/upload-image", formData, {
+        const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/admin/upload-image`, formData, {
           withCredentials: true,
           headers: {
             'Content-Type': 'multipart/form-data',

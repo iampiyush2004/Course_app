@@ -47,7 +47,7 @@ function AddVideo() {
     formData.append('description', description);
 
     try {
-      const response = await axios.post(`http://localhost:3000/admin/uploadVideo/${courseId}`, formData, {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/admin/uploadVideo/${courseId}`, formData, {
         withCredentials: true,
         headers: {
           'Content-Type': 'multipart/form-data',

@@ -11,7 +11,7 @@ function TeacherInfo() {
   useEffect(() => {
     const fetchTeacherInfo = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/admin/${teacher_id}`, {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/admin/${teacher_id}`, {
           withCredentials: true
         });
         if (response.status === 200) {  

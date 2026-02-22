@@ -13,14 +13,14 @@ function CourseInfo() {
   const [isReadMore, setIsReadMore] = useState(false);
   const [isPurchased, setIsPurchased] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const {isStudentLoggedIn,changeNotificationData,isLoggedIn} = useContext(Context)
+  const {isStudentLoggedIn,changeNotificationData,isLoggedIn,checkStudent} = useContext(Context)
   const navigate = useNavigate();
 
   useEffect(() => {
     const retrieveData = async () => {
       try {
         // Fetch course details
-        const courseResponse = await axios.get(`http://localhost:3000/courses/${course_id}`, {
+        const courseResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/courses/${course_id}`, {
           withCredentials: true,
         });
         if (courseResponse.status === 200) {
@@ -29,7 +29,7 @@ function CourseInfo() {
 
         // Fetch user details to check purchase status
         if(isStudentLoggedIn){
-          const userResponse = await axios.get(`http://localhost:3000/user/me`, {
+          const userResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/user/me`, {
             withCredentials: true,
           });
   
@@ -46,7 +46,7 @@ function CourseInfo() {
       }
     };
     retrieveData();
-  }, [course_id]);
+  }, [course_id, isStudentLoggedIn]);
 
   const handleReadMore = () => {
     setIsReadMore(!isReadMore);
@@ -67,9 +67,9 @@ function CourseInfo() {
     } else {
       // Proceed with the payment process
       try {
-        await handleRazorpayPayment(course_id, () => {
+        await handleRazorpayPayment(course_id, async () => {
+          await checkStudent(); // Refresh user data after purchase
           changeNotificationData("Payment successful! Redirecting to 'My Courses' page...")
-          // alert("Payment successful! Redirecting to 'My Courses' page...");
           navigate(`/courses/${course_id}/videos/123`);
         });
       } catch (error) {

@@ -70,12 +70,12 @@ function UserLogin() {
     try {
       let response = null
       if(hasAccount){
-        response = await axios.post(`http://localhost:3000${url}`, data, {
+        response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}${url}`, data, {
           withCredentials: true,
         });
       }
       else {
-        response = await axios.post(`http://localhost:3000${url}`, data, {
+        response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}${url}`, data, {
           withCredentials: true,
           headers: {
             'Content-Type': 'multipart/form-data',

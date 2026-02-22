@@ -20,6 +20,7 @@ function AdminLogin() {
   const [experience,setExperience] = useState('')
   const [gender,setGender] = useState('')
   const [company,setCompany] = useState('')
+  const [avatar, setAvatar] = useState(null)
   
   const {isLoggedin} = useLoggedin()
   // Auto Login Implemented Here
@@ -39,6 +40,7 @@ function AdminLogin() {
     setExperience('')
     setGender('')
     setCompany('')
+    setAvatar(null)
   }
 
   const toggleForm = () => {
@@ -59,16 +61,39 @@ function AdminLogin() {
     }
 
     const url = hasAccount ? `/admin/signin` : `/admin/signup`;
-    const data = hasAccount 
-      ? { username, password } 
-      : { username, password, name, age, experience, gender, company };
+    let data = null;
+    if (hasAccount) {
+      data = { username, password };
+    } else {
+      data = new FormData();
+      data.append("username", username);
+      data.append("password", password);
+      data.append("name", name);
+      data.append("age", age);
+      data.append("experience", experience);
+      data.append("gender", gender);
+      data.append("company", company);
+      if (avatar) {
+        data.append("avatar", avatar);
+      }
+    }
 
     setIsLoading(true); // Start loading
 
     try {
-      const response = await axios.post(`http://localhost:3000${url}`, data, {
-        withCredentials: true,
-      });
+      let response = null;
+      if (hasAccount) {
+        response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}${url}`, data, {
+          withCredentials: true,
+        });
+      } else {
+        response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}${url}`, data, {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          }
+        });
+      }
 
 
       if (response.status === 200) {
@@ -124,6 +149,7 @@ function AdminLogin() {
           setPassword={setPassword} 
           handleSubmit={handleSubmit} 
           isLoading={isLoading} 
+          setAvatar={setAvatar}
         />
       )}
   

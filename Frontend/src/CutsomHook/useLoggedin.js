@@ -11,7 +11,7 @@ const useLoggedin = () => {
     // changeLoaderData("Loading")
     const checkLoginStatus = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/admin/isLoggedin", {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/admin/isLoggedin`, {
           withCredentials: true,
         });
         if (response.status === 200) {

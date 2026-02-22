@@ -39,7 +39,7 @@ export const ContextProvider = ({ children }) => {
   const dataFetcher = async () => {
     setLoaderdata("Loading...")
     try {
-      const response = await axios.get("http://localhost:3000/admin/teacherInfo", {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/admin/teacherInfo`, {
         withCredentials: true, 
       });
       localStorage.setItem('data', JSON.stringify(response.data));
@@ -54,7 +54,7 @@ export const ContextProvider = ({ children }) => {
   const checkAdmin = async () => {
     setIsLoggedIn(false)
     try {
-      const response = await axios.get("http://localhost:3000/admin/isLoggedin", {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/admin/isLoggedin`, {
           withCredentials: true
       });
       if (response.status === 200) {
@@ -85,13 +85,14 @@ export const ContextProvider = ({ children }) => {
   
   const checkStudent = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/user/loggedin",{
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/user/loggedin`,{
         withCredentials:true
       })
       if(response.status===200){
         setStudentLoggedIn(response.data.isLoggedin)
         if(response.data.isLoggedin===true) {
           localStorage.setItem("user",JSON.stringify(response.data.user))
+          setStudentData(response.data.user)
           setIsLoggedIn(false)
         }
       } else setStudentLoggedIn(false)
@@ -101,12 +102,16 @@ export const ContextProvider = ({ children }) => {
     }
   }
 
-  useEffect( () => {
-    const data = localStorage.getItem("user") 
-    if(data){
-      setStudentData(data)
+  useEffect(() => {
+    const data = localStorage.getItem("user");
+    if (data) {
+      try {
+        setStudentData(JSON.parse(data));
+      } catch (e) {
+        console.error("Error parsing user data from localStorage", e);
+      }
     }
-  },[localStorage])
+  }, []); 
 
   useEffect(() => {
     checkStudent();
