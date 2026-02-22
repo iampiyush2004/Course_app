@@ -15,6 +15,8 @@ const SignUp = ({
   setUsername,
   password,
   setPassword,
+  email,
+  setEmail,
   handleSubmit,
   isLoading,
   setAvatar,
@@ -104,6 +106,23 @@ const SignUp = ({
             required
           />
         </div>
+        <div className="flex-1">
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            Email
+          </label>
+          <input
+            type="email"
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            id="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+      </div>
+
+      <div className="flex space-x-4">
         <div className="flex-1">
           <label htmlFor="experience" className="block text-sm font-medium text-gray-700">
             Experience (in years)

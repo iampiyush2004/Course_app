@@ -20,6 +20,7 @@ function AdminLogin() {
   const [experience,setExperience] = useState('')
   const [gender,setGender] = useState('')
   const [company,setCompany] = useState('')
+  const [email,setEmail] = useState('')
   const [avatar, setAvatar] = useState(null)
   
   const {isLoggedin} = useLoggedin()
@@ -40,6 +41,7 @@ function AdminLogin() {
     setExperience('')
     setGender('')
     setCompany('')
+    setEmail('')
     setAvatar(null)
   }
 
@@ -73,6 +75,7 @@ function AdminLogin() {
       data.append("experience", experience);
       data.append("gender", gender);
       data.append("company", company);
+      data.append("email", email);
       if (avatar) {
         data.append("avatar", avatar);
       }
@@ -143,6 +146,8 @@ function AdminLogin() {
           setGender={setGender}
           company={company}
           setCompany={setCompany}
+          email={email}
+          setEmail={setEmail}
           username={username} 
           setUsername={setUsername} 
           password={password} 

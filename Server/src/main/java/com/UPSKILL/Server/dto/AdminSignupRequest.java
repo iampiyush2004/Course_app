@@ -11,4 +11,5 @@ public class AdminSignupRequest {
     private Integer experience;
     private String gender;
     private String company;
+    private String email;
 }
