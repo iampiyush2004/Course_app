@@ -26,9 +26,14 @@ public class AdminService {
     private final CloudinaryService cloudinaryService;
     private final PasswordEncoder passwordEncoder;
 
-    public void signup(AdminSignupRequest request) {
+    public void signup(AdminSignupRequest request, MultipartFile avatarFile) throws IOException {
         if (adminRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new RuntimeException("Username already taken. Please choose a different one.");
+        }
+
+        String avatarUrl = null;
+        if (avatarFile != null && !avatarFile.isEmpty()) {
+            avatarUrl = cloudinaryService.uploadFile(avatarFile);
         }
 
         Admin admin = Admin.builder()
@@ -39,6 +44,7 @@ public class AdminService {
                 .experience(request.getExperience())
                 .gender(request.getGender())
                 .company(request.getCompany())
+                .avatar(avatarUrl)
                 .build();
 
         adminRepository.save(admin);

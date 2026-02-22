@@ -17,6 +17,7 @@ const SignUp = ({
   setPassword,
   handleSubmit,
   isLoading,
+  setAvatar,
 }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -114,6 +115,18 @@ const SignUp = ({
             required
           />
         </div>
+      </div>
+
+      <div className="mb-2">
+        <label htmlFor="avatar" className="block text-sm font-medium text-gray-700">
+          Avatar
+        </label>
+        <input
+          type="file"
+          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          id="avatar"
+          onChange={(e) => setAvatar(e.target.files[0])}
+        />
       </div>
 
       <div className="mb-4">

@@ -25,8 +25,10 @@ public class AdminController {
     private final com.UPSKILL.Server.services.CourseService courseService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody AdminSignupRequest request) {
-        adminService.signup(request);
+    public ResponseEntity<?> signup(@ModelAttribute AdminSignupRequest request,
+            @RequestParam(value = "avatar", required = false) MultipartFile file)
+            throws IOException {
+        adminService.signup(request, file);
         return ResponseEntity.ok(Map.of("message", "Signup Successful"));
     }
 
