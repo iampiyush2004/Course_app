@@ -31,7 +31,39 @@ public class UserService {
     private final CloudinaryService cloudinaryService;
     private final PasswordEncoder passwordEncoder;
 
+    private void validateSignup(String username, String password, String email, String dob) {
+        if (username == null || username.isEmpty()) {
+            throw new RuntimeException("Username is required.");
+        }
+        if (Character.isDigit(username.charAt(0))) {
+            throw new RuntimeException("Username should not start with a number.");
+        }
+        if (password == null || password.length() < 8) {
+            throw new RuntimeException("Password must be at least 8 characters long.");
+        }
+        if (email != null && !email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new RuntimeException("Invalid email format.");
+        }
+        if (dob != null && !dob.isEmpty()) {
+            try {
+                int age = Integer.parseInt(dob);
+                if (age < 15) {
+                    throw new RuntimeException("You must be at least 15 years old to sign up.");
+                }
+            } catch (NumberFormatException e) {
+                // If parsing fails, it might be a date string; for now we favor the age-check
+                // from frontend input
+            }
+        } else {
+            throw new RuntimeException("Age/DOB is required.");
+        }
+    }
+
+    private static final String DEFAULT_AVATAR = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+
     public User signup(UserSignupRequest request, MultipartFile avatarFile) throws IOException {
+        validateSignup(request.getUsername(), request.getPassword(), request.getEmail(), request.getDob());
+
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new RuntimeException("Username already taken. Please choose a different one.");
         }
@@ -39,7 +71,7 @@ public class UserService {
             throw new RuntimeException("Email already taken. Please choose a different one.");
         }
 
-        String avatarUrl = null;
+        String avatarUrl = DEFAULT_AVATAR;
         if (avatarFile != null && !avatarFile.isEmpty()) {
             avatarUrl = cloudinaryService.uploadFile(avatarFile);
         }
@@ -152,7 +184,7 @@ public class UserService {
         response.put("username", user.getUsername());
         response.put("email", user.getEmail());
         response.put("name", user.getName());
-        response.put("avatar", user.getAvatar());
+        response.put("avatar", user.getAvatar() != null ? user.getAvatar() : DEFAULT_AVATAR);
         response.put("coursePurchased",
                 user.getCoursePurchased() != null ? user.getCoursePurchased() : new ArrayList<>());
         response.put("lastWatched", user.getLastWatched());
@@ -182,7 +214,7 @@ public class UserService {
         response.put("username", user.getUsername());
         response.put("email", user.getEmail());
         response.put("name", user.getName());
-        response.put("avatar", user.getAvatar());
+        response.put("avatar", user.getAvatar() != null ? user.getAvatar() : DEFAULT_AVATAR);
         response.put("coursePurchased", purchasedCourses);
         response.put("lastWatched", lastWatchedCourse);
         response.put("dob", user.getDob());

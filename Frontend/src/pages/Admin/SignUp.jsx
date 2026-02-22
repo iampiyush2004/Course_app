@@ -47,6 +47,8 @@ const SignUp = ({
             placeholder="Enter your username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            pattern="^[^0-9].*"
+            title="Username should not start with a number"
             required
           />
         </div>
@@ -64,6 +66,7 @@ const SignUp = ({
             placeholder="Enter your age"
             value={age}
             onChange={(e) => setAge(e.target.value)}
+            min="21"
             required
           />
         </div>
@@ -140,6 +143,7 @@ const SignUp = ({
           placeholder="Enter your password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          minLength="8"
           required
         />
       </div>

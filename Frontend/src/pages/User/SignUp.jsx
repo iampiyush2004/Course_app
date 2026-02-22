@@ -47,6 +47,8 @@ const SignUp = ({
             placeholder="Enter your username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            pattern="^[^0-9].*"
+            title="Username should not start with a number"
             required
           />
         </div>
@@ -64,6 +66,7 @@ const SignUp = ({
             placeholder="Enter your age"
             value={age}
             onChange={(e) => setAge(e.target.value)}
+            min="15"
             required
           />
         </div>
@@ -106,7 +109,7 @@ const SignUp = ({
           email 
           </label>
           <input
-            type="text"
+            type="email"
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             id="experience"
             placeholder="Enter your email"
@@ -140,6 +143,7 @@ const SignUp = ({
           placeholder="Enter your password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          minLength="8"
           required
         />
       </div>
