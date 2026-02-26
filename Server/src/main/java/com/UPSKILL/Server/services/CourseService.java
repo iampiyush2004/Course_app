@@ -22,6 +22,7 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final AdminRepository adminRepository;
     private final VideoRepository videoRepository;
+    private final ChatbotService chatbotService;
 
     public List<Course> viewAllCourses() {
         return courseRepository.findAll();
@@ -126,6 +127,11 @@ public class CourseService {
         if (request.getTags() != null)
             course.setTags(request.getTags());
 
-        return courseRepository.save(course);
+        Course updatedCourse = courseRepository.save(course);
+
+        // Trigger chatbot re-embedding
+        chatbotService.embedCourse(updatedCourse);
+
+        return updatedCourse;
     }
 }

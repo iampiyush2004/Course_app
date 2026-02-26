@@ -5,6 +5,8 @@ import Footer from './components/Footer'
 import Notification from './pages/Notification'
 import { ContextProvider } from './Context/Context'
 import LoadingSpinner from './components/LoadingSpinner'
+import Chatbot from './components/Chatbot'
+
 function Layout() {
   return (
     <ContextProvider>
@@ -12,6 +14,7 @@ function Layout() {
         <Header/>
         <Notification/>
         <LoadingSpinner/>
+        <Chatbot/>
         <div className='h-20'></div>
         <Outlet/>
         <Footer/>

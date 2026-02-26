@@ -34,6 +34,7 @@ public class AdminService {
     private final CloudinaryService cloudinaryService;
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
+    private final ChatbotService chatbotService;
 
     private void validateSignup(String username, String password, String dob) {
         if (username == null || username.isEmpty()) {
@@ -272,6 +273,9 @@ public class AdminService {
         }
         admin.getCreatedCourses().add(savedCourse.getId());
         adminRepository.save(admin);
+
+        // Trigger chatbot embedding
+        chatbotService.embedCourse(savedCourse);
 
         // Send Course Published Email
         try {
