@@ -12,7 +12,7 @@ COLLECTION_NAME = "courses"
 
 client = MongoClient(MONGODB_URI)
 collection = client[DB_NAME][COLLECTION_NAME]
-embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001")
+embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001", output_dimensionality=768)
 
 def index_existing_courses():
     courses = list(collection.find({}))

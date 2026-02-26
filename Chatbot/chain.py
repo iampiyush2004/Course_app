@@ -1,4 +1,5 @@
 import os
+import json
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_mongodb import MongoDBAtlasVectorSearch
@@ -15,13 +16,13 @@ ATLAS_VECTOR_SEARCH_INDEX_NAME = "course_vector_index"
 client = MongoClient(MONGODB_URI)
 collection = client[DB_NAME][COLLECTION_NAME]
 
-embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
+embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001", output_dimensionality=768)
 
 vector_search = MongoDBAtlasVectorSearch(
     collection=collection,
     embedding=embeddings,
     index_name=ATLAS_VECTOR_SEARCH_INDEX_NAME,
-    text_key="embedding_text",  # We will store concatenated text here
+    text_key="embedding_text",
     embedding_key="embedding",
 )
 
@@ -74,9 +75,8 @@ def chat_with_bot(user_message):
     """
     
     response = llm.invoke(prompt)
-    import json
+    
     try:
-        # Handling potential markdown formatting in response
         content = response.content.strip()
         if content.startswith("```json"):
             content = content[7:-3].strip()
@@ -84,14 +84,14 @@ def chat_with_bot(user_message):
     except:
         return {"reply": "Sorry, I'm having trouble understanding. Could you try rephrasing?", "courses": []}
 
-    if data["intent_is_recommendation"]:
+    if data.get("intent_is_recommendation"):
         courses = get_recommendations(data["search_query"])
-        return {{
+        return {
             "reply": data["reply"],
             "courses": courses
-        }}
+        }
     else:
-        return {{
+        return {
             "reply": data["reply"],
             "courses": []
-        }}
+        }
