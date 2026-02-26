@@ -17,7 +17,8 @@ public class Review {
     @Id
     @JsonProperty("_id")
     private String id;
-    private String courseId;
+    private String courseId; // null if this is a teacher review
+    private String adminId; // null if this is a course review
     private String userId;
     private String comment;
     private Integer stars;

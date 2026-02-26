@@ -40,6 +40,9 @@ public class Admin {
 
     private List<String> createdCourses; // List of Course IDs
 
+    private Double totalStars; // Sum of all teacher review stars
+    private Integer totalReviews; // Count of all teacher reviews
+
     @Transient
     private Integer age;
 

@@ -1,8 +1,10 @@
 package com.UPSKILL.Server.services;
 
 import com.UPSKILL.Server.dto.AddReviewRequest;
+import com.UPSKILL.Server.entities.Admin;
 import com.UPSKILL.Server.entities.Course;
 import com.UPSKILL.Server.entities.Review;
+import com.UPSKILL.Server.repositories.AdminRepository;
 import com.UPSKILL.Server.repositories.CourseRepository;
 import com.UPSKILL.Server.repositories.ReviewRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final CourseRepository courseRepository;
+    private final AdminRepository adminRepository;
 
     public List<Review> reviewsOfCourse(String courseId) {
         return reviewRepository.findByCourseId(courseId);
@@ -122,5 +125,66 @@ public class ReviewService {
 
     public Optional<Review> studentReviewForCourse(String userId, String courseId) {
         return reviewRepository.findByCourseIdAndUserId(courseId, userId);
+    }
+
+    // Admin Review Methods
+
+    public List<Review> reviewsOfAdmin(String adminId) {
+        return reviewRepository.findByAdminId(adminId);
+    }
+
+    public Review addAdminReview(String userId, String adminId, AddReviewRequest request) {
+        Admin admin = adminRepository.findById(adminId)
+                .orElseThrow(() -> new RuntimeException("Admin not found"));
+
+        Review review = Review.builder()
+                .userId(userId)
+                .adminId(adminId)
+                .comment(request.getComment())
+                .stars(request.getStars())
+                .build();
+
+        Review savedReview = reviewRepository.save(review);
+
+        // Update Admin stats
+        admin.setTotalStars((admin.getTotalStars() != null ? admin.getTotalStars() : 0) + request.getStars());
+        admin.setTotalReviews((admin.getTotalReviews() != null ? admin.getTotalReviews() : 0) + 1);
+
+        adminRepository.save(admin);
+        return savedReview;
+    }
+
+    public Review editAdminReviewByAdmin(String userId, String adminId, String comment, Integer stars) {
+        Review review = reviewRepository.findByAdminIdAndUserId(adminId, userId)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+
+        Admin admin = adminRepository.findById(adminId)
+                .orElseThrow(() -> new RuntimeException("Admin not found"));
+
+        // Adjust total stars
+        admin.setTotalStars(admin.getTotalStars() - review.getStars() + stars);
+        adminRepository.save(admin);
+
+        review.setComment(comment);
+        review.setStars(stars);
+        return reviewRepository.save(review);
+    }
+
+    public void deleteAdminReviewByAdmin(String userId, String adminId) {
+        Review review = reviewRepository.findByAdminIdAndUserId(adminId, userId)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+
+        Admin admin = adminRepository.findById(adminId)
+                .orElseThrow(() -> new RuntimeException("Admin not found"));
+
+        admin.setTotalStars(admin.getTotalStars() - review.getStars());
+        admin.setTotalReviews(admin.getTotalReviews() - 1);
+        adminRepository.save(admin);
+
+        reviewRepository.deleteById(review.getId());
+    }
+
+    public Optional<Review> studentReviewForAdmin(String userId, String adminId) {
+        return reviewRepository.findByAdminIdAndUserId(adminId, userId);
     }
 }

@@ -21,10 +21,10 @@ function Card({
         <p className="mt-2 text-gray-600">{description}</p>
         <div className="flex justify-between items-center mt-4">
           <p className="text-lg font-semibold text-gray-800">{price==0?"FREE":`₹ ${price}`}</p>
-          <div className="flex items-center">
-            {Array.from({ length: rating }, (_, index) => (
-              <span key={index}>⭐</span>
-            ))}
+          <div className="flex items-center gap-1">
+            <span className="text-yellow-500 font-bold">{rating > 0 ? rating.toFixed(1) : "0.0"}</span>
+            <span className="text-yellow-400">★</span>
+            <span className="text-gray-400 text-sm">({usersEnrolled ? usersEnrolled : 0})</span>
           </div>
         </div>
         <div className="flex-grow"></div> {/* This spacer pushes the button to the bottom */}

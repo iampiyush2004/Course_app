@@ -156,6 +156,8 @@ public class AdminService {
         response.put("gender", admin.getGender());
         response.put("company", admin.getCompany());
         response.put("bio", admin.getBio());
+        response.put("totalStars", admin.getTotalStars() != null ? admin.getTotalStars() : 0.0);
+        response.put("totalReviews", admin.getTotalReviews() != null ? admin.getTotalReviews() : 0);
         response.put("createdCourses", courses);
 
         return response;
@@ -181,6 +183,8 @@ public class AdminService {
         response.put("gender", admin.getGender());
         response.put("company", admin.getCompany());
         response.put("bio", admin.getBio());
+        response.put("totalStars", admin.getTotalStars() != null ? admin.getTotalStars() : 0.0);
+        response.put("totalReviews", admin.getTotalReviews() != null ? admin.getTotalReviews() : 0);
         response.put("createdCourses", courses);
 
         return response;

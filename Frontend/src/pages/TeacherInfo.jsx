@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Loading from '../components/Loading';
+import TeacherReviews from './TeacherReviews';
 
 function TeacherInfo() {
   const { teacher_id } = useParams();
@@ -59,18 +60,27 @@ function TeacherInfo() {
                   <div className="text-6xl font-bold text-gray-800">{data?.name}</div>
                   <div className="text-3xl text-gray-500">@{data?.username}</div>
                 </div>
-                <div className="flex justify-around border border-gray-300 p-8 bg-gray-50 rounded-lg shadow-md gap-x-32">
+                <div className="flex justify-around border border-gray-300 p-8 bg-gray-50 rounded-lg shadow-md gap-x-12">
                   <div className="text-center">
-                    <div className="font-semibold text-lg text-gray-700">Total Courses Uploaded</div>
+                    <div className="font-semibold text-sm text-gray-700 uppercase tracking-wider">Courses</div>
                     <div className="text-2xl font-bold text-gray-800">{data?.createdCourses?.length || 0}</div>
                   </div>
                   <div className="text-center">
-                    <div className="font-semibold text-lg text-gray-700">Total Users Enrolled</div>
-                    <div className="text-2xl font-bold text-gray-800">1,246</div>
+                    <div className="font-semibold text-sm text-gray-700 uppercase tracking-wider">Rating</div>
+                    <div className="flex items-center justify-center gap-1">
+                      <div className="text-2xl font-bold text-gray-800">
+                        {data?.totalReviews > 0 ? (data.totalStars / data.totalReviews).toFixed(1) : "0.0"}
+                      </div>
+                      <span className="text-yellow-500 text-xl">★</span>
+                    </div>
                   </div>
                   <div className="text-center">
-                    <div className="font-semibold text-lg text-gray-700">Best-Selling Course</div>
-                    <div className="text-2xl font-bold text-gray-800">AI</div>
+                    <div className="font-semibold text-sm text-gray-700 uppercase tracking-wider">Reviews</div>
+                    <div className="text-2xl font-bold text-gray-800">{data?.totalReviews || 0}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="font-semibold text-sm text-gray-700 uppercase tracking-wider">Experience</div>
+                    <div className="text-2xl font-bold text-gray-800">{data?.experience || 0} Yrs</div>
                   </div>
                 </div>
               </div>
@@ -129,12 +139,18 @@ function TeacherInfo() {
                           <div className='text-lg font-semibold text-gray-800'>{course?.title}</div>
                           <div className='text-xl font-bold text-gray-900'>${course?.price}</div>
                         </div>
-                        <button 
-                          onClick={() => navigate(`/courses/${course._id}`)} 
-                          className='w-full bg-blue-600 text-white py-2 rounded-md font-semibold hover:bg-blue-500 transition duration-200'
-                        >
-                          Explore Now
-                        </button>
+                        <div className="px-4 pb-4 flex items-center justify-between">
+                           <div className="flex items-center gap-1">
+                              <span className="text-yellow-500 font-bold">{course.totalReviews > 0 ? (course.totalStars / course.totalReviews).toFixed(1) : "0.0"}</span>
+                              <span className="text-yellow-400">★</span>
+                           </div>
+                           <button 
+                              onClick={() => navigate(`/courses/${course._id}`)} 
+                              className='bg-blue-600 text-white py-1 px-4 rounded-md font-semibold hover:bg-blue-500 transition duration-200'
+                            >
+                              Explore
+                            </button>
+                        </div>
                       </div>
 
                     ))
@@ -142,6 +158,9 @@ function TeacherInfo() {
                 </div>
               </div>
             </div>
+
+            {/* Teacher Review Section */}
+            <TeacherReviews adminId={teacher_id} />
 
           </div>
         </div>
