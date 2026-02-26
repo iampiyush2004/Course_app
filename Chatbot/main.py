@@ -1,5 +1,6 @@
 import os
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
@@ -11,12 +12,17 @@ load_dotenv()
 
 app = FastAPI()
 
+@app.get("/")
+async def root():
+    return {"status": "ok"}
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Adjust in production
+    allow_origins=["*"],  # Simplified for deployment flexibility
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 class ChatRequest(BaseModel):
@@ -32,14 +38,13 @@ class EmbedRequest(BaseModel):
 @app.post("/chat")
 async def chat(request: ChatRequest):
     try:
-        print(f"Received message: {request.message}")
         response = chat_with_bot(request.message)
-        print(f"Bot response: {response}")
         return response
     except Exception as e:
-        import traceback
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"detail": str(e)}
+        )
 
 @app.post("/embed")
 async def embed_course(request: EmbedRequest):
