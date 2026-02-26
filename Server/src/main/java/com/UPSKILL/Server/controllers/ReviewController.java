@@ -55,11 +55,56 @@ public class ReviewController {
         return ResponseEntity.ok(Map.of("review", review));
     }
 
-    // DELETE student's review for a course — original backend uses courseId in path
+    // DELETE student's review for a course
     @DeleteMapping("/student/{courseId}")
     public ResponseEntity<?> deleteReview(@AuthenticationPrincipal User user,
             @PathVariable String courseId) {
         reviewService.deleteReviewByCourse(user.getId(), courseId);
+        return ResponseEntity.ok(Map.of("message", "Review deleted successfully"));
+    }
+
+    // --- Admin (Teacher) Review Endpoints ---
+
+    // GET all reviews for an admin
+    @GetMapping("/admin/{adminId}")
+    public ResponseEntity<?> reviewsOfAdmin(@PathVariable String adminId) {
+        return ResponseEntity.ok(Map.of("success", true, "reviews", reviewService.reviewsOfAdmin(adminId)));
+    }
+
+    // POST a new review for an admin
+    @PostMapping("/admin/{adminId}")
+    public ResponseEntity<?> addAdminReview(@AuthenticationPrincipal User user,
+            @PathVariable String adminId,
+            @RequestBody AddReviewRequest request) {
+        return ResponseEntity.ok(Map.of("review", reviewService.addAdminReview(user.getId(), adminId, request)));
+    }
+
+    // PUT edit admin review
+    @PutMapping("/admin/edit/{adminId}")
+    public ResponseEntity<?> editAdminReview(@AuthenticationPrincipal User user,
+            @PathVariable String adminId,
+            @RequestBody Map<String, Object> body) {
+        String comment = (String) body.get("comment");
+        Integer stars = (Integer) body.get("stars");
+        return ResponseEntity.ok(reviewService.editAdminReviewByAdmin(user.getId(), adminId, comment, stars));
+    }
+
+    // GET student's own review for an admin
+    @GetMapping("/admin/student/{adminId}")
+    public ResponseEntity<?> studentReviewForAdmin(@AuthenticationPrincipal User user,
+            @PathVariable String adminId) {
+        Review review = reviewService.studentReviewForAdmin(user.getId(), adminId).orElse(null);
+        if (review == null) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(Map.of("review", review));
+    }
+
+    // DELETE student's review for an admin
+    @DeleteMapping("/admin/student/{adminId}")
+    public ResponseEntity<?> deleteAdminReview(@AuthenticationPrincipal User user,
+            @PathVariable String adminId) {
+        reviewService.deleteAdminReviewByAdmin(user.getId(), adminId);
         return ResponseEntity.ok(Map.of("message", "Review deleted successfully"));
     }
 }

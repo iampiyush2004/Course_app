@@ -33,7 +33,11 @@ function Courses() {
     }
 
     if (ratingAsc) {
-      filteredData.sort((a, b) => a.rating - b.rating); // Assuming 'rating' is a field in your course data
+      filteredData.sort((a, b) => {
+        const ratingA = a.totalReviews > 0 ? a.totalStars / a.totalReviews : 0;
+        const ratingB = b.totalReviews > 0 ? b.totalStars / b.totalReviews : 0;
+        return ratingA - ratingB;
+      });
     }
 
     setSortedData(filteredData);
@@ -88,6 +92,8 @@ function Courses() {
               price={val.price} 
               buttonText={"Enroll Now"}
               handleClick = {() => handleClick(val._id)}
+              rating={val.totalReviews > 0 ? (val.totalStars / val.totalReviews) : 0}
+              usersEnrolled={val.usersEnrolled}
             />
           ))}
         </div>

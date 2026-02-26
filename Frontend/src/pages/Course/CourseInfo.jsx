@@ -132,6 +132,19 @@ function CourseInfo() {
 
           {/* Right Part  */}
           <div className='w-1/3 bg-white rounded-lg shadow-lg p-8 fixed top-28 right-10'>
+            <div className='flex justify-between items-start mb-2'>
+              <div className='flex items-center text-xs text-gray-400 bg-gray-50 px-2 py-0.5 rounded border border-gray-100'>
+                <span className='mr-1'>Course</span>
+                <span className='mx-1'>&gt;</span>
+                <span className='font-bold text-yellow-600'>
+                   {data?.totalReviews > 0 ? (data.totalStars / data.totalReviews).toFixed(1) : "0.0"} ★
+                </span>
+              </div>
+              <div className='text-xs text-gray-400'>
+                {data?.totalReviews || 0} reviews
+              </div>
+            </div>
+            
             <h1 className='text-4xl font-bold text-gray-800 mb-2'>{data?.title}</h1>
             <h2 className='text-xl text-gray-600 mb-6'>{data?.description}</h2>
 
@@ -150,10 +163,7 @@ function CourseInfo() {
 
             <div className='mb-6 border-t border-gray-200 pt-4'>
               <p className='text-md text-gray-600 mb-2'>
-                Rating: <span className='font-bold text-gray-800'>{data?.rating ? data?.rating : 3} ⭐</span>
-              </p>
-              <p className='text-md text-gray-600 mb-2'>
-                Total Users Enrolled: <span className='font-bold text-gray-800'>{data?.users ? data?.users : 45}</span>
+                Total Users Enrolled: <span className='font-bold text-gray-800'>{data?.usersEnrolled ? data?.usersEnrolled : 0}</span>
               </p>
             </div>
 
