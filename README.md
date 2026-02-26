@@ -1,6 +1,6 @@
-# 📚 UPSKILL - Advanced Course Selling Platform
+# 📚 UPSCALE - Advanced Course Selling Platform
 
-UPSKILL is a high-performance, full-stack course management and selling application. It enables admins to create premium educational content, students to purchase and track progress, and features an AI-driven ecosystem for intelligent course discovery.
+UPSCALE is a high-performance, full-stack course management and selling application. It enables admins to create premium educational content, students to purchase and track progress, and features an AI-driven ecosystem for intelligent course discovery.
 
 ---
 

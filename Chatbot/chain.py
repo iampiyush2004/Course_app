@@ -59,7 +59,7 @@ def get_recommendations(query):
 def chat_with_bot(user_message):
     # 1. Identify intent and extract topics using LLM
     prompt = f"""
-    You are a course recommendation assistant for a platform called UPSKILL.
+    You are a course recommendation assistant for a platform called UPSCALE.
     The user is asking: "{user_message}"
     
     Your goal is to identify if the user is looking for course recommendations.
