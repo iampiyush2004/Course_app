@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 const Chatbot = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
-        { role: 'bot', text: 'Hi! I am the UPSKILL Assistant. How can I help you find the perfect course today?' }
+        { role: 'bot', text: 'Hi! I am the UPSCALE Assistant. How can I help you find the perfect course today?' }
     ]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -67,7 +67,7 @@ const Chatbot = () => {
                                 <HiChatBubbleLeftRight size={20} />
                             </div>
                             <div>
-                                <h3 className="font-bold text-sm">UPSKILL AI Assistant</h3>
+                                <h3 className="font-bold text-sm">UPSCALE AI Assistant</h3>
                                 <p className="text-[10px] text-green-100">Always active</p>
                             </div>
                         </div>

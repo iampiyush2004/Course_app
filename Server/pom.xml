@@ -8,11 +8,11 @@
         <version>3.4.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-	<groupId>com.UPSKILL</groupId>
+	<groupId>com.UPSCALE</groupId>
 	<artifactId>Server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Server</name>
-	<description>Server for upskill</description>
+	<description>Server for UPSCALE</description>
 	<url/>
 	<licenses>
 		<license/>

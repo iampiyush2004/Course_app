@@ -194,7 +194,7 @@ function Home() {
       <section className="my-24 px-4">
         <div className="max-w-5xl mx-auto bg-green-500 rounded-[3rem] p-12 sm:p-20 text-center text-white relative overflow-hidden shadow-2xl shadow-green-200">
           <div className="relative z-10">
-            <h2 className="text-3xl sm:text-5xl font-bold mb-8 italic text-white/90">Ready to upskill your career?</h2>
+            <h2 className="text-3xl sm:text-5xl font-bold mb-8 italic text-white/90">Ready to UPSCALE your career?</h2>
             <p className="text-xl mb-12 text-green-50/80 max-w-2xl mx-auto">
               Join thousands of learners who are already advancing their careers with UpScale.
             </p>
