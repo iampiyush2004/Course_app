@@ -5,6 +5,7 @@ import com.UPSKILL.Server.entities.Admin;
 import com.UPSKILL.Server.entities.Course;
 import com.UPSKILL.Server.entities.Video;
 import com.UPSKILL.Server.services.AdminService;
+import com.UPSKILL.Server.services.CourseService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ import java.util.Map;
 public class AdminController {
 
     private final AdminService adminService;
-    private final com.UPSKILL.Server.services.CourseService courseService;
+    private final CourseService courseService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@ModelAttribute AdminSignupRequest request,

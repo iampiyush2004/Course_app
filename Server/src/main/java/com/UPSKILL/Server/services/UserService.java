@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -120,7 +121,7 @@ public class UserService {
         // Send Welcome Email with recommendations
         try {
             List<Course> allCourses = courseRepository.findAll();
-            java.util.Collections.shuffle(allCourses);
+            Collections.shuffle(allCourses);
             List<Course> recommendations = allCourses.subList(0, Math.min(allCourses.size(), 5));
             mailService.sendWelcomeEmail(savedUser.getEmail(), savedUser.getName(), recommendations);
         } catch (Exception e) {

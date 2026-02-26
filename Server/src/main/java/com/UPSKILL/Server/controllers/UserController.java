@@ -5,6 +5,7 @@ import com.UPSKILL.Server.entities.Course;
 import com.UPSKILL.Server.entities.User;
 import com.UPSKILL.Server.services.PaymentService;
 import com.UPSKILL.Server.services.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.razorpay.RazorpayException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -80,7 +81,7 @@ public class UserController {
         // Return structured JSON as expected by frontend
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
-        response.put("order", new com.fasterxml.jackson.databind.ObjectMapper().readValue(orderJson, Map.class));
+        response.put("order", new ObjectMapper().readValue(orderJson, Map.class));
         return ResponseEntity.ok(response);
     }
 

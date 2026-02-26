@@ -9,6 +9,7 @@ import com.UPSKILL.Server.entities.User;
 import com.UPSKILL.Server.repositories.CourseRepository;
 import com.UPSKILL.Server.repositories.UserRepository;
 import com.UPSKILL.Server.utils.MailService;
+import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
@@ -76,7 +77,7 @@ public class PaymentService {
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
             if (user.getCoursePurchased() == null) {
-                user.setCoursePurchased(new java.util.ArrayList<>());
+                user.setCoursePurchased(new ArrayList<>());
             }
 
             if (!user.getCoursePurchased().contains(courseId)) {

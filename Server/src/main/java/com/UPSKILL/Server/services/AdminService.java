@@ -13,10 +13,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -133,16 +136,16 @@ public class AdminService {
         cookieUtils.clearCookie(response, "token");
     }
 
-    public java.util.Map<String, Object> teacherInfo(String adminId) {
+    public Map<String, Object> teacherInfo(String adminId) {
         Admin admin = adminRepository.findById(adminId)
                 .orElseThrow(() -> new RuntimeException("Admin not found."));
 
-        List<com.UPSKILL.Server.entities.Course> courses = new ArrayList<>();
+        List<Course> courses = new ArrayList<>();
         if (admin.getCreatedCourses() != null && !admin.getCreatedCourses().isEmpty()) {
             courses = courseRepository.findByIdIn(admin.getCreatedCourses());
         }
 
-        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        Map<String, Object> response = new HashMap<>();
         response.put("_id", admin.getId());
         response.put("username", admin.getUsername());
         response.put("name", admin.getName());
@@ -158,16 +161,16 @@ public class AdminService {
         return response;
     }
 
-    public java.util.Map<String, Object> teacherPage(String id) {
+    public Map<String, Object> teacherPage(String id) {
         Admin admin = adminRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Admin not found."));
 
-        List<com.UPSKILL.Server.entities.Course> courses = new ArrayList<>();
+        List<Course> courses = new ArrayList<>();
         if (admin.getCreatedCourses() != null && !admin.getCreatedCourses().isEmpty()) {
             courses = courseRepository.findByIdIn(admin.getCreatedCourses());
         }
 
-        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        Map<String, Object> response = new HashMap<>();
         response.put("_id", admin.getId());
         response.put("username", admin.getUsername());
         response.put("name", admin.getName());
@@ -233,12 +236,12 @@ public class AdminService {
         String imageLink = cloudinaryService.uploadFile(imageFile);
 
         // Parse tags — frontend sends them as a JSON string via FormData
-        java.util.List<String> tags = new java.util.ArrayList<>();
+        List<String> tags = new ArrayList<>();
         if (request.getTagsJson() != null && !request.getTagsJson().isBlank()) {
             try {
                 com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
                 tags = mapper.readValue(request.getTagsJson(),
-                        mapper.getTypeFactory().constructCollectionType(java.util.List.class, String.class));
+                        mapper.getTypeFactory().constructCollectionType(List.class, String.class));
             } catch (Exception e) {
                 // Fallback: try as plain list from form binding
                 if (request.getTags() != null)
@@ -248,7 +251,7 @@ public class AdminService {
             tags = request.getTags();
         }
 
-        com.UPSKILL.Server.entities.Course course = com.UPSKILL.Server.entities.Course.builder()
+        Course course = Course.builder()
                 .title(request.getTitle())
                 .description(request.getShortDescription())
                 .bio(request.getDetailedDescription())
@@ -258,10 +261,10 @@ public class AdminService {
                 .tags(tags)
                 .build();
 
-        com.UPSKILL.Server.entities.Course savedCourse = courseRepository.save(course);
+        Course savedCourse = courseRepository.save(course);
 
         if (admin.getCreatedCourses() == null) {
-            admin.setCreatedCourses(new java.util.ArrayList<>());
+            admin.setCreatedCourses(new ArrayList<>());
         }
         admin.getCreatedCourses().add(savedCourse.getId());
         adminRepository.save(admin);
@@ -276,12 +279,12 @@ public class AdminService {
         return savedCourse.getId();
     }
 
-    public java.util.List<com.UPSKILL.Server.entities.Course> adminSpecificCourses(String adminId) {
+    public List<Course> adminSpecificCourses(String adminId) {
         Admin admin = adminRepository.findById(adminId)
                 .orElseThrow(() -> new RuntimeException("Admin not found."));
 
         if (admin.getCreatedCourses() == null || admin.getCreatedCourses().isEmpty()) {
-            return new java.util.ArrayList<>();
+            return new ArrayList<>();
         }
 
         return courseRepository.findByIdIn(admin.getCreatedCourses());
@@ -292,13 +295,13 @@ public class AdminService {
             MultipartFile videoFile,
             MultipartFile thumbnailFile) throws IOException {
 
-        com.UPSKILL.Server.entities.Course course = courseRepository.findById(courseId)
+        Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
 
         String videoUrl = cloudinaryService.uploadFile(videoFile);
         String thumbnailUrl = cloudinaryService.uploadFile(thumbnailFile);
 
-        com.UPSKILL.Server.entities.Video video = com.UPSKILL.Server.entities.Video.builder()
+        Video video = Video.builder()
                 .videoFile(videoUrl)
                 .thumbnail(thumbnailUrl)
                 .createdBy(adminId)
@@ -306,14 +309,14 @@ public class AdminService {
                 .description(description)
                 .duration(duration)
                 .belongsTo(courseId)
-                .createdAt(java.time.LocalDateTime.now())
-                .updatedAt(java.time.LocalDateTime.now())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
 
-        com.UPSKILL.Server.entities.Video savedVideo = videoRepository.save(video);
+        Video savedVideo = videoRepository.save(video);
 
         if (course.getVideos() == null) {
-            course.setVideos(new java.util.ArrayList<>());
+            course.setVideos(new ArrayList<>());
         }
         course.getVideos().add(savedVideo.getId());
         courseRepository.save(course);
@@ -322,10 +325,10 @@ public class AdminService {
     }
 
     public void deleteVideo(String adminId, String courseId, String videoId) throws IOException {
-        com.UPSKILL.Server.entities.Course course = courseRepository.findById(courseId)
+        Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
 
-        com.UPSKILL.Server.entities.Video video = videoRepository.findById(videoId)
+        Video video = videoRepository.findById(videoId)
                 .orElseThrow(() -> new RuntimeException("Video not found"));
 
         if (!video.getCreatedBy().equals(adminId)) {
