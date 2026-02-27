@@ -152,7 +152,7 @@ function Admin() {
                   Edit Your Profile
                 </Link>
                 <Link to="/adminName/AddCourse" className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                  Add More Courses
+                  Add Courses
                 </Link>
                 <Link to="/adminName/Courses"
                   className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300"

@@ -198,11 +198,11 @@ function EditInfo() {
 
                 {/* Action Buttons */}
                 <div className="flex flex-row justify-center gap-4">
-                  <button type="button" className="bg-blue-500 text-white p-2 rounded-lg" onClick={handleRevert}>
+                  <button type="button" className="bg-red-500 text-white p-2 rounded-lg" onClick={handleRevert}>
                     Revert Changes
                   </button>
-                  <button type="submit" className="bg-red-500 text-white p-2 rounded-lg">
-                    Edit Changes
+                  <button type="submit" className="bg-blue-600 text-white p-2 rounded-lg">
+                    Save Changes
                   </button>
                 </div>
 
