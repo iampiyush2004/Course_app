@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.Random;
 public class MailService {
 
     private final JavaMailSender mailSender;
+    private final com.UPSCALE.Server.repositories.CourseRepository courseRepository;
 
     private final String[] quotes = {
             "The beautiful thing about learning is that no one can take it away from you. — B.B. King",
@@ -27,7 +29,12 @@ public class MailService {
             "Learning is not attained by chance, it must be sought for with ardor and attended to with diligence. — Abigail Adams"
     };
 
-    public void sendWelcomeEmail(String toEmail, String name, List<Course> recommendations) {
+    @Async
+    public void sendWelcomeEmail(String toEmail, String name) {
+        List<Course> allCourses = courseRepository.findAll();
+        java.util.Collections.shuffle(allCourses);
+        List<Course> recommendations = allCourses.subList(0, Math.min(allCourses.size(), 5));
+
         String quote = quotes[new Random().nextInt(quotes.length)];
 
         StringBuilder coursesHtml = new StringBuilder("<h3>Recommended Courses for You:</h3><ul>");
@@ -47,6 +54,7 @@ public class MailService {
         sendEmail(toEmail, "Welcome to UpScale", content);
     }
 
+    @Async
     public void sendThankYouEmail(String toEmail, String name, Course course) {
         String content = String.format(
                 "<h1>Thank You for Your Purchase, %s!</h1>" +
@@ -58,6 +66,7 @@ public class MailService {
         sendEmail(toEmail, "Thank you for purchasing " + course.getTitle(), content);
     }
 
+    @Async
     public void sendCoursePublishedEmail(String toEmail, String name, String courseName) {
         String content = String.format(
                 "<h1>Congratulations, %s!</h1>" +
