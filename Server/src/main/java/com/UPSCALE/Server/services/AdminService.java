@@ -100,12 +100,9 @@ public class AdminService {
 
         Admin savedAdmin = adminRepository.save(admin);
 
-        // Send Welcome Email
+        // Send Welcome Email (Async)
         try {
-            List<Course> allCourses = courseRepository.findAll();
-            java.util.Collections.shuffle(allCourses);
-            List<Course> recommendations = allCourses.subList(0, Math.min(allCourses.size(), 5));
-            mailService.sendWelcomeEmail(savedAdmin.getEmail(), savedAdmin.getName(), recommendations);
+            mailService.sendWelcomeEmail(savedAdmin.getEmail(), savedAdmin.getName());
         } catch (Exception e) {
             log.error("Could not send welcome email: {}", e.getMessage());
         }
