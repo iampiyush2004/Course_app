@@ -19,6 +19,7 @@ function UserLogin() {
   const [gender, setGender] = useState('');
   const [company, setCompany] = useState('');
   const [avatar, setAvatar] = useState(null);
+  const [selectedAvatarUrl, setSelectedAvatarUrl] = useState('');
 
   const clear = () => {
     setUsername('');
@@ -28,6 +29,8 @@ function UserLogin() {
     setExperience('');
     setGender('');
     setCompany('');
+    setAvatar(null);
+    setSelectedAvatarUrl('');
   };
 
   const toggleForm = () => {
@@ -136,6 +139,9 @@ function UserLogin() {
           handleSubmit={handleSubmit} 
           isLoading={isLoading} 
           setAvatar={setAvatar}
+          selectedAvatarUrl={selectedAvatarUrl}
+          setSelectedAvatarUrl={setSelectedAvatarUrl}
+          avatar={avatar}
         />
       )}
 

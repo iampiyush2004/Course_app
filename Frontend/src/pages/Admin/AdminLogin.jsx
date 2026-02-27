@@ -22,6 +22,7 @@ function AdminLogin() {
   const [company,setCompany] = useState('')
   const [email,setEmail] = useState('')
   const [avatar, setAvatar] = useState(null)
+  const [selectedAvatarUrl, setSelectedAvatarUrl] = useState('');
   
   const {isLoggedin} = useLoggedin()
   // Auto Login Implemented Here
@@ -43,6 +44,7 @@ function AdminLogin() {
     setCompany('')
     setEmail('')
     setAvatar(null)
+    setSelectedAvatarUrl('')
   }
 
   const toggleForm = () => {
@@ -155,6 +157,9 @@ function AdminLogin() {
           handleSubmit={handleSubmit} 
           isLoading={isLoading} 
           setAvatar={setAvatar}
+          selectedAvatarUrl={selectedAvatarUrl}
+          setSelectedAvatarUrl={setSelectedAvatarUrl}
+          avatar={avatar}
         />
       )}
   
