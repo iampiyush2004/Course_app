@@ -98,9 +98,9 @@ function Admin() {
       {isLoading ? (
         <Loading/>
       ) : (
-        <div className='mt-16 flex justify-center'>
-          <div className="flex bg-green-50 shadow-2xl rounded-lg overflow-hidden w-[60vw] h-[75vh] transform transition-transform duration-300 hover:scale-105">
-            <div className="relative w-1/3 p-4">
+        <div className='mt-16 flex justify-center p-4'>
+          <div className="flex flex-col md:flex-row bg-green-50 shadow-2xl rounded-lg overflow-hidden w-full max-w-5xl min-h-[70vh] transform transition-transform duration-300 hover:scale-[1.02]">
+            <div className="relative w-full md:w-1/3 aspect-square md:aspect-auto p-4">
               <img 
                 src={photoUrl} 
                 alt={name} 
@@ -108,7 +108,7 @@ function Admin() {
               />
               <button 
                 onClick={handleEditClick} 
-                className="absolute top-2 left-2 bg-white rounded-full p-2 shadow hover:bg-gray-100"
+                className="absolute top-6 left-6 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
                 style={{ display: isLoading ? 'none' : 'block' }} // To prevent interaction while loading
               >
                 <AiOutlineEdit className="text-gray-600" size={24} />
@@ -122,42 +122,42 @@ function Admin() {
               />
             </div>
 
-            <div className="w-2/3 p-6 flex flex-col justify-center gap-y-[1%]">
+            <div className="w-full md:w-2/3 p-6 md:p-10 flex flex-col justify-center gap-y-6">
               <div>
-                <p className="text-gray-600 mt-2 text-xl">Welcome</p>
-                <h2 className="text-5xl font-bold text-gray-800">{name ? name : "John Doe"}</h2>
+                <p className="text-gray-600 text-lg md:text-xl">Welcome</p>
+                <h2 className="text-3xl md:text-5xl font-bold text-gray-800 break-words">{name ? name : "John Doe"}</h2>
               </div>
 
-              <div className='mt-4'>
-                <p className='text-2xl text-red-500 font-semibold'>Statistics</p>
-                <div className='flex flex-col bg-green-100 w-[60%] p-6 rounded-2xl shadow-inner mt-2'>
-                  <div className='flex justify-between text-gray-700 py-2'>
-                    <div>Total Courses Uploaded:</div>
-                    <div>{totalCourses}</div>
+              <div>
+                <p className='text-xl md:text-2xl text-red-500 font-semibold mb-3'>Statistics</p>
+                <div className='flex flex-col bg-green-100 w-full sm:w-[80%] md:w-[70%] p-6 rounded-2xl shadow-inner'>
+                  <div className='flex justify-between text-gray-700 py-2 border-b border-green-200/50'>
+                    <div className="font-medium">Total Courses:</div>
+                    <div className="font-bold">{totalCourses}</div>
+                  </div>
+                  <div className='flex justify-between text-gray-700 py-2 border-b border-green-200/50'>
+                    <div className="font-medium">Users Enrolled:</div>
+                    <div className="font-bold">{totalUsers}</div>
                   </div>
                   <div className='flex justify-between text-gray-700 py-2'>
-                    <div>Total Users Enrolled:</div>
-                    <div>{totalUsers}</div>
-                  </div>
-                  <div className='flex justify-between text-gray-700 py-2'>
-                    <div>Best Selling Course:</div>
-                    <div>{bestSelling}</div>
+                    <div className="font-medium">Best Selling:</div>
+                    <div className="font-bold">{bestSelling}</div>
                   </div>
                 </div>
               </div>
 
-              <div className='flex justify-around mt-8 gap-3'>
+              <div className='grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4'>
                 <Link to="/adminName/editProfile"
-                  className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                  Edit Your Profile
+                  className="bg-blue-600 text-center text-white px-4 py-3 rounded-xl shadow-md transition duration-200 hover:bg-blue-500 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 font-semibold">
+                  Edit Profile
                 </Link>
-                <Link to="/adminName/AddCourse" className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                <Link to="/adminName/AddCourse" className="bg-blue-600 text-center text-white px-4 py-3 rounded-xl shadow-md transition duration-200 hover:bg-blue-500 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 font-semibold">
                   Add Courses
                 </Link>
                 <Link to="/adminName/Courses"
-                  className="bg-blue-600 text-center w-[60%] text-white px-5 py-2 rounded-lg shadow transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                  className="bg-blue-600 text-center text-white px-4 py-3 rounded-xl shadow-md transition duration-200 hover:bg-blue-500 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 font-semibold"
                 >
-                  All Your Courses
+                  My Courses
                 </Link>
               </div>
             </div>

@@ -82,103 +82,85 @@ function EditInfo() {
           <Loading/>
         ):(
           <div>
-            <div className="w-1/2 mx-auto p-6 border border-gray-300 rounded-lg shadow-md bg-green-50 flex flex-col space-y-4">
-              <div className="mb-2 flex items-center gap-4">
-                <Link to="/adminName" className="bg-gray-800 text-white py-2 px-4 text-xl rounded-md transition-transform transform hover:bg-gray-700 hover:scale-105">
+            <div className="w-full max-w-3xl mx-auto p-4 md:p-8 border border-gray-300 rounded-2xl shadow-xl bg-green-50 flex flex-col space-y-6">
+              <div className="mb-2 flex flex-col sm:flex-row items-center gap-4">
+                <Link to="/adminName" className="bg-gray-800 text-white py-2 px-6 text-lg rounded-xl transition-all transform hover:bg-gray-700 hover:scale-105 shadow-md">
                   &larr; Back
                 </Link>
-                <h2 className='text-2xl font-bold text-center'>Edit Your Profile</h2>
+                <h2 className='text-3xl font-extrabold text-gray-800 text-center flex-1'>Edit Your Profile</h2>
               </div>
 
-              <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+              <form onSubmit={handleSubmit} className="flex flex-col space-y-6">
                 
                 {/* First Line: Name */}
                 <div className='flex flex-col'>
-                  <label htmlFor="name" className="font-semibold text-gray-700">Name</label>
+                  <label htmlFor="name" className="font-bold text-gray-700 mb-1">Full Name</label>
                   <input
                     id="name"
                     type="text"
                     value={name}
                     placeholder="Enter your name"
-                    className="border border-gray-300 rounded-md p-2 focus:border-blue-500 focus:ring focus:ring-blue-200"
+                    className="border border-gray-300 rounded-xl p-3 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all outline-none bg-white shadow-sm"
                     onChange={(e) => setName(e.target.value)}
                   />
                 </div>
 
                 {/* Second Line: Date of Birth and Gender */}
-                <div className='flex flex-row items-center gap-x-10'>
-                  <div className='flex flex-col'>
-                    <label htmlFor="dob" className="font-semibold text-gray-700">Date of Birth</label>
+                <div className='flex flex-col md:flex-row items-start md:items-center gap-6'>
+                  <div className='flex flex-col w-full md:w-1/2'>
+                    <label htmlFor="dob" className="font-bold text-gray-700 mb-1">Date of Birth</label>
                     <input
                       id="dob"
                       type="date"
                       value={dob}
-                      className="border border-gray-300 rounded-md p-2 focus:border-blue-500 focus:ring focus:ring-blue-200"
+                      className="border border-gray-300 rounded-xl p-3 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all outline-none bg-white shadow-sm"
                       onChange={(e) => setDob(e.target.value)}
                     />
                   </div>
 
-                  <div className='flex flex-col'>
-                    <label className="font-semibold text-gray-700">Gender</label>
-                    <div className="flex gap-4">
-                      <label>
-                        <input
-                          type="radio"
-                          value="male"
-                          checked={gender === 'male'}
-                          onChange={(e) => setGender(e.target.value)}
-                          className="mr-2"
-                        />
-                        Male
-                      </label>
-                      <label>
-                        <input
-                          type="radio"
-                          value="female"
-                          checked={gender === 'female'}
-                          onChange={(e) => setGender(e.target.value)}
-                          className="mr-2"
-                        />
-                        Female
-                      </label>
-                      <label>
-                        <input
-                          type="radio"
-                          value="other"
-                          checked={gender === 'other'}
-                          onChange={(e) => setGender(e.target.value)}
-                          className="mr-2"
-                        />
-                        Other
-                      </label>
+                  <div className='flex flex-col w-full md:w-1/2'>
+                    <label className="font-bold text-gray-700 mb-1">Gender</label>
+                    <div className="flex flex-wrap gap-4 p-1">
+                      {['male', 'female', 'other'].map((g) => (
+                        <label key={g} className="flex items-center cursor-pointer group">
+                          <input
+                            type="radio"
+                            value={g}
+                            checked={gender === g}
+                            onChange={(e) => setGender(e.target.value)}
+                            className="mr-2 w-4 h-4 text-blue-600 focus:ring-blue-500"
+                          />
+                          <span className="capitalize text-gray-700 group-hover:text-blue-600 transition-colors">{g}</span>
+                        </label>
+                      ))}
                     </div>
                   </div>
                 </div>
 
                 {/* Third Line: Experience and Company */}
-                <div className='flex flex-row items-center gap-x-10'>
-                  <div className='flex flex-col w-1/3'>
-                    <label htmlFor="experience" className="font-semibold text-gray-700">Experience</label>
+                <div className='flex flex-col md:flex-row items-start md:items-center gap-6'>
+                  <div className='flex flex-col w-full md:w-1/2'>
+                    <label htmlFor="experience" className="font-bold text-gray-700 mb-1">Experience (Years)</label>
                     <input
                       id="experience"
                       type="number"
                       min={1}
                       max={150}
-                      placeholder="Enter your experience"
+                      placeholder="Enter years of experience"
                       value={experience}
-                      className="border border-gray-300 rounded-md p-2 focus:border-blue-500 focus:ring focus:ring-blue-200"
+                      className="border border-gray-300 rounded-xl p-3 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all outline-none bg-white shadow-sm"
                       onChange={(e) => setExperience(e.target.value)}
                       />
                   </div>
 
-                  <div className='flex flex-col w-1/3'>
-                    <label htmlFor="company" className="font-semibold text-gray-700">Previous/Current Company</label>
+                  <div className='flex flex-col w-full md:w-1/2'>
+                    <label htmlFor="company" className="font-bold text-gray-700 mb-1">Current Company</label>
                     <input
                       id="company"
                       type="text"
                       placeholder="Enter your company"
                       value={company}
-                      className="border border-gray-300 rounded-md p-2 focus:border-blue-500 focus:ring focus:ring-blue-200"
+                      className="border border-gray-300 rounded-xl p-3 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all outline-none bg-white shadow-sm"
                       onChange={(e) => setCompany(e.target.value)}
                       />
                   </div>
@@ -186,22 +168,22 @@ function EditInfo() {
 
                 {/* Last Line: Bio */}
                 <div className='flex flex-col'>
-                  <label htmlFor="bio" className="font-semibold text-gray-700">Bio</label>
+                  <label htmlFor="bio" className="font-bold text-gray-700 mb-1">Professional Bio</label>
                   <textarea
                     id="bio"
-                    placeholder="Tell us about yourself"
+                    placeholder="Tell us about yourself and your expertise..."
                     value={bio}
-                    className="border border-gray-300 rounded-md p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 resize-y min-h-32"
+                    className="border border-gray-300 rounded-xl p-3 focus:border-blue-500 focus:ring focus:ring-blue-200 resize-y min-h-[120px] transition-all outline-none bg-white shadow-sm"
                     onChange={(e) => setBio(e.target.value)}
                   ></textarea>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-row justify-center gap-4">
-                  <button type="button" className="bg-red-500 text-white p-2 rounded-lg" onClick={handleRevert}>
+                <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
+                  <button type="button" className="bg-red-500 text-white px-8 py-3 rounded-xl font-bold shadow-md hover:bg-red-600 hover:shadow-lg transition-all active:scale-95 order-2 sm:order-1" onClick={handleRevert}>
                     Revert Changes
                   </button>
-                  <button type="submit" className="bg-blue-600 text-white p-2 rounded-lg">
+                  <button type="submit" className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold shadow-md hover:bg-blue-700 hover:shadow-lg transition-all active:scale-95 order-1 sm:order-2">
                     Save Changes
                   </button>
                 </div>
@@ -213,9 +195,9 @@ function EditInfo() {
                 onClose={handleCancel}
                 onConfirm={handleConfirm}
                 title="Confirm Edit"
-                message="Are you sure you want to edit your information?"
+                message="Are you sure you want to update your profile information?"
               />
-              {message && <div className="text-center text-blue-600">{message}</div>}
+              {message && <div className="text-center font-semibold text-blue-600 animate-pulse">{message}</div>}
             </div>
           </div>
         )
