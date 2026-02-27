@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { HiChatBubbleLeftRight, HiXMark, HiPaperAirplane } from 'react-icons/hi2';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const Chatbot = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const location = useLocation();
+    const isHomePage = location.pathname === '/';
     const [messages, setMessages] = useState([
         { role: 'bot', text: 'Hi! I am the UPSCALE Assistant. How can I help you find the perfect course today?' }
     ]);
@@ -47,19 +49,29 @@ const Chatbot = () => {
 
     return (
         <div className="fixed bottom-6 right-6 z-50 font-sans">
+            {/* Floating Heading Bubble */}
+            {!isOpen && isHomePage && (
+                <div className="absolute bottom-full right-0 mb-4 whitespace-nowrap">
+                    <div className="bg-white text-green-700 px-4 py-2 rounded-2xl shadow-xl text-sm font-bold border border-green-100 animate-bounce">
+                        Need course recommendations?
+                        <div className="absolute -bottom-2 right-6 w-4 h-4 bg-white border-r border-b border-green-100 transform rotate-45"></div>
+                    </div>
+                </div>
+            )}
+
             {/* Chat Bubble Toggle */}
             {!isOpen && (
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="bg-green-600 hover:bg-green-700 text-white p-4 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-110 flex items-center justify-center"
+                    className="bg-green-600 hover:bg-green-700 text-white p-5 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-110 flex items-center justify-center group"
                 >
-                    <HiChatBubbleLeftRight size={28} />
+                    <HiChatBubbleLeftRight size={35} className="group-hover:rotate-12 transition-transform" />
                 </button>
             )}
 
             {/* Chat Window */}
             {isOpen && (
-                <div className="bg-white w-[380px] h-[550px] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-100 transition-all duration-300 transform scale-100 origin-bottom-right">
+                <div className="bg-white w-[calc(100vw-32px)] sm:w-[380px] h-[70vh] sm:h-[550px] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-100 transition-all duration-300 transform scale-100 origin-bottom-right fixed bottom-4 right-4 sm:bottom-6 sm:right-6">
                     {/* Header */}
                     <div className="bg-green-600 p-4 text-white flex justify-between items-center shadow-md">
                         <div className="flex items-center gap-3">

@@ -19,6 +19,7 @@ function UserLogin() {
   const [gender, setGender] = useState('');
   const [company, setCompany] = useState('');
   const [avatar, setAvatar] = useState(null);
+  const [selectedAvatarUrl, setSelectedAvatarUrl] = useState('');
 
   const clear = () => {
     setUsername('');
@@ -28,6 +29,8 @@ function UserLogin() {
     setExperience('');
     setGender('');
     setCompany('');
+    setAvatar(null);
+    setSelectedAvatarUrl('');
   };
 
   const toggleForm = () => {
@@ -104,9 +107,9 @@ function UserLogin() {
   };
 
   return (
-    <div className={`container mx-auto ${hasAccount ? "mt-24 mb-32" : ""} ${hasAccount ? "w-1/3" : "w-2/5"} p-6 bg-transparent rounded-lg shadow-lg flex flex-col`}>
-      <h2 className="text-2xl font-bold text-center mb-6">
-        Student {hasAccount ? 'Login' : 'Sign Up'}
+    <div className={`container mx-auto px-4 ${hasAccount ? "mt-16 md:mt-24 mb-16 md:mb-32" : "mt-10 md:mt-16 mb-10 md:mb-16"} w-full max-w-md md:max-w-2xl p-6 md:p-10 bg-white/70 backdrop-blur-md rounded-3xl shadow-2xl flex flex-col border border-green-100`}>
+      <h2 className="text-3xl md:text-4xl font-black text-center mb-8 text-gray-800">
+        Student <span className="text-blue-600">{hasAccount ? 'Login' : 'Sign Up'}</span>
       </h2>
       {hasAccount ? (
         <SignIn 
@@ -136,19 +139,22 @@ function UserLogin() {
           handleSubmit={handleSubmit} 
           isLoading={isLoading} 
           setAvatar={setAvatar}
+          selectedAvatarUrl={selectedAvatarUrl}
+          setSelectedAvatarUrl={setSelectedAvatarUrl}
+          avatar={avatar}
         />
       )}
 
-      {message && <div className="mt-4 text-center text-blue-600">{message}</div>}
+      {message && <div className="mt-6 text-center font-semibold text-blue-600 animate-pulse">{message}</div>}
 
-      <div className="mt-4 text-center">
-        <p className="text-sm">
+      <div className="mt-8 text-center border-t border-gray-100 pt-6">
+        <p className="text-gray-600 font-medium">
           {hasAccount ? "Don't have an account? " : "Already have an account? "}
           <button
-            className="text-blue-500 font-semibold hover:underline"
+            className="text-blue-600 font-bold hover:underline transition-all"
             onClick={toggleForm}
           >
-            {hasAccount ? 'Sign Up' : 'Login'}
+            {hasAccount ? 'Create One' : 'Login Here'}
           </button>
         </p>
       </div>
