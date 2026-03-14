@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  # MongoDB - assuming you use Atlas, but for local testing:
+  # mongodb:
+  #   image: mongo:latest
+  #   ports:
+  #     - "27017:27017"
+
+  chatbot:
+    build: ./Chatbot
+    ports:
+      - "8001:8001"
+    environment:
+      - MONGODB_URI=${MONGODB_URI}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - CHATBOT_PORT=8001
+    restart: always
+
+  server:
+    build: ./Server
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATA_MONGODB_URI=${MONGODB_URI}
+      - CHATBOT_URL=http://chatbot:8001
+      - CLOUDINARY_URL=${CLOUDINARY_URL}
+      - RAZORPAY_KEY=${RAZORPAY_KEY}
+      - RAZORPAY_SECRET=${RAZORPAY_SECRET}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+    depends_on:
+      - chatbot
+    restart: always
+
+  frontend:
+    build:
+      context: ./Frontend
+      args:
+        - VITE_BACKEND_URI=${VITE_BACKEND_URI}
+        - VITE_RAZORPAY_KEY_ID=${RAZORPAY_KEY}
+    ports:
+      - "80:80"
+    restart: always
