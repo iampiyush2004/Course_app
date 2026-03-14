@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import Card from "../../components/card";
+import Card from "../../components/Card";
 import {  } from "module";
 import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../../Context/Context";

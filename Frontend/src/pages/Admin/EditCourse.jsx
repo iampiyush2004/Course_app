@@ -1,7 +1,7 @@
 
 import { useContext, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Card from '../../components/card';
+import Card from '../../components/Card';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
 import { Link } from 'react-router-dom';
 import { Context } from '../../Context/Context';
