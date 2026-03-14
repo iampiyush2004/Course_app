@@ -52,9 +52,7 @@ UPSCALE is a high-performance, full-stack course management and selling applicat
    ```
 
 2. **Configure Environment Variables**:
-   - Create `.env` in `Frontend/` for Vite.
-   - Configure `application.properties` in `Server/src/main/resources/`.
-   - Create `.env` in `Chatbot/` for Gemini and MongoDB URI.
+   Refer to the [Environment Variables](#-environment-variables) section below for the required keys in each folder.
 
 3. **Bootstrap AI Indices**:
    ```powershell
@@ -63,8 +61,41 @@ UPSCALE is a high-performance, full-stack course management and selling applicat
    python indexer.py
    ```
 
-### ⚡ Startup Commands
+## 🔑 Environment Variables
 
+To run this project, you will need to add the following environment variables to their respective directories:
+
+### 🌐 Frontend (`Frontend/.env`)
+- `VITE_BACKEND_URI`
+- `VITE_RAZORPAY_KEY_ID`
+
+### ☕ Backend Server (`Server/src/main/resources/application.properties`)
+- `spring.data.mongodb.uri`
+- `jwt.secret`
+- `jwt.expiration`
+- `cloudinary.cloud-name`
+- `cloudinary.api-key`
+- `cloudinary.api-secret`
+- `razorpay.key-id`
+- `razorpay.key-secret`
+- `spring.mail.host`
+- `spring.mail.port`
+- `spring.mail.username`
+- `spring.mail.password`
+
+### 🤖 AI Chatbot (`Chatbot/.env`)
+- `GOOGLE_API_KEY`
+- `MONGODB_URI`
+- `CHATBOT_PORT`
+
+> [!TIP]
+> You can also use a single `.env` file in the **root** directory when using Docker Compose.
+
+---
+
+## ⚡ Startup Commands
+
+### Local Development
 Open three terminal windows and run:
 
 **1. AI Chatbot Service**
@@ -83,6 +114,24 @@ cd Server
 ```powershell
 cd Frontend
 npm run dev
+```
+
+### 🐳 Docker Deployment
+If you have Docker and Docker Compose installed, you can run the entire ecosystem with a single command:
+
+**Build and Start:**
+```bash
+docker-compose up --build -d
+```
+
+**Stop Services:**
+```bash
+docker-compose down
+```
+
+**View Logs:**
+```bash
+docker-compose logs -f
 ```
 
 ---
